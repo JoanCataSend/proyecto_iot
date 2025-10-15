@@ -1,4 +1,4 @@
-# 🚗 Proyecto X — (Nombre por definir)
+# 🚗 Proyecto X — (Nombre por definir) FALTAN PONER IMÁGENES ICONOS Y DEMÁS EN LA RAMA MAIN, CUANDO ESTÉN HAREMOS UN GIT PUSH DE LA MAIN A LA RAMA DE CADA PERSONA
 
 ### Equipo 2.2
 **Categorías de la App:** Seguridad · Hogar & Estilo de vida · Herramientas · Utilidades · Vehículos · Viajes
