@@ -12,7 +12,7 @@
 
 ## Descripción general
 
-El **Proyecto X** es una solución inteligente diseñada para mejorar la **seguridad y el control de vehículos**, especialmente aquellos de entre 5 y 10 años que aún funcionan correctamente pero carecen de tecnología moderna.
+**Köva** es una solución inteligente diseñada para mejorar la **seguridad y el control de vehículos**, especialmente aquellos de entre 5 y 10 años que aún funcionan correctamente pero carecen de tecnología moderna.
 
 Su objetivo es ofrecer **una capa adicional de inteligencia y control** instalable en cualquier vehículo, sin necesidad de sustituirlo por uno nuevo.  
 Desde una aplicación móvil, el usuario puede **monitorizar, proteger y localizar su vehículo en tiempo real**.
@@ -42,7 +42,7 @@ El proyecto aborda diversas situaciones cotidianas y preocupaciones frecuentes e
 
 ## Público objetivo
 
-El Proyecto X está dirigido a:
+Köva está dirigido a:
 
 - Propietarios de coches de 5–10 años que buscan más seguridad sin cambiar de vehículo.  
 - Personas que viven en ciudades grandes y aparcan en la calle o parkings públicos.  
@@ -125,5 +125,5 @@ Este proyecto es de carácter académico y está desarrollado con fines educativ
 
 ## Notas del repositorio
 
-K FALTAN PONER IMÁGENES, ICONOS Y DEMÁS EN LA RAMA MAIN.  
-CUANDO ESTÉN, HAREMOS UN **GIT PUSH DE LA MAIN A LA RAMA DE CADA PERSONA.**
+Faltan poner imágenes, iconos y demás en la rama `main`.  
+Cuando estén, se realizará un **git push** de `main` a la rama de cada integrante.
