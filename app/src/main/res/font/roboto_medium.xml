@@ -1,0 +1,8 @@
+<font-family xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        android:font="@font/roboto_regular_ttf"
+        tools:ignore="ResourceCycle" />
+</font-family>

@@ -1,0 +1,66 @@
+<resources>
+    <string name="app_name">KöVa</string>
+    <!-- LOGIN / REGISTRO -->
+    <string name="correo">Email</string>
+    <string name="contrasena">Password</string>
+    <string name="nombre_usuario">Username</string>
+    <string name="repite_contrasena">Repeat password</string>
+    <string name="boton_entrar">Sign in</string>
+    <string name="boton_registrarse">Sign up</string>
+    <string name="redireccion_registrarse">Don t have an account? Sign up</string>
+    <string name="redireccion_entrar">Already have an account? Sign in</string>
+    <string name="olvidado_contrasena">Forgot password?</string>
+
+    <!-- REGISTRAR / MIS COCHES -->
+    <string name="mensaje_registro_coche">You must register a car to access the app</string>
+    <string name="marca">Brand</string>
+    <string name="modelo">Model</string>
+    <string name="matricula">License plate</string>
+    <string name="nombre_coche">Car name</string>
+    <string name="boton_registrar_coche">Register vehicle</string>
+    <string name="titulo_mis_coches">My registered cars</string>
+    <string name="descripcion_mis_coches">Manage your vehicles and view them on the map in real time.</string>
+    <string name="boton_añadir_coche">Add new car</string>
+
+    <!-- UBICACIÓN -->
+    <string name="titulo_ubicacion">Your cars location</string>
+    <string name="descripcion_ubicacion">See where each registered car is and access its quick controls</string>
+
+    <!-- NOTIFICACIONES -->
+    <string name="titulo_notificaciones">Notifications</string>
+    <string name="ventana_rota">Broken window detected</string>
+    <string name="mensaje_ventana_rota">The car sensor “El Champon” detected a strong vibration in the front window.</string>
+    <string name="puertas_desbloqueadas">Doors unlocked</string>
+    <string name="mensaje_puertas_desbloqueadas">The doors of car “Speedy Azul” have been opened successfully from the app</string>
+    <string name="ubicacion_actualizada">Location updated</string>
+    <string name="modo_seguro_activado">Safe mode activated</string>
+    <string name="camara_activada">Camera activated</string>
+
+    <!-- AJUSTES -->
+    <string name="ajustes">Settings</string>
+    <string name="usuario_info">Standard user · 3 cars</string>
+    <string name="cerrar_sesion">Log out</string>
+    <string name="cuenta_perfil">Account and profile</string>
+    <string name="coches_registrados">Registered cars</string>
+    <string name="notificaciones_ajustes">Notifications</string>
+    <string name="seguridad">Security</string>
+    <string name="apariencia">Appearance</string>
+    <string name="ayuda_soporte">Help and Support</string>
+
+    <!-- APARIENCIA -->
+    <string name="titulo_apariencia">Appearance</string>
+    <string name="descripcion_apariencia">Customize how your app looks</string>
+    <string name="modo_nocturno">Night mode</string>
+
+    <!-- AYUDA Y SOPORTE -->
+    <string name="titulo_ayuda">Help and Support</string>
+    <string name="descripcion_ayuda">Need help or have questions? Find all information here.</string>
+    <string name="preguntas_frecuentes">FAQ</string>
+    <string name="como_añadir_coche">How to add a car?</string>
+    <string name="como_activar_sensores">How to activate sensors?</string>
+    <string name="que_hacer_si_pierdo_coche">What to do if I lose my car?</string>
+    <string name="contactar_soporte">Contact support</string>
+    <string name="correo_soporte">support@carsecureapp.com</string>
+    <string name="terminos_privacidad">Terms and Privacy</string>
+    <string name="descripcion_terminos">Check our usage and data protection policies</string>
+</resources>

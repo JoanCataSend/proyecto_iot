@@ -1,3 +1,72 @@
 <resources>
-    <string name="app_name">proyecto_iot</string>
+    <string name="app_name">KöVa</string>
+    <!-- LOGIN / REGISTRO -->
+    <string name="correo">Correo electrónico</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="nombre_usuario">Nombre de usuario</string>
+    <string name="repite_contrasena">Repite la contraseña</string>
+    <string name="boton_entrar">Iniciar sesión</string>
+    <string name="boton_registrarse">Registrarse</string>
+    <string name="redireccion_registrarse">¿Aún no tienes cuenta? Regístrate</string>
+    <string name="redireccion_entrar">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="olvidado_contrasena">He olvidado mi contraseña</string>
+
+    <!-- REGISTRAR / MIS COCHES -->
+    <string name="mensaje_registro_coche">Es necesario que registres un coche para acceder a la aplicación</string>
+    <string name="marca">Marca</string>
+    <string name="modelo">Modelo</string>
+    <string name="matricula">Matrícula</string>
+    <string name="nombre_coche">Nombre del coche</string>
+    <string name="boton_registrar_coche">Registrar vehículo</string>
+    <string name="titulo_mis_coches">Mis coches registrados</string>
+    <string name="descripcion_mis_coches">Gestiona tus vehículos y visualízalos en el mapa en tiempo real.</string>
+    <string name="boton_añadir_coche">Añadir nuevo coche</string>
+
+    <!-- UBICACIÓN -->
+    <string name="titulo_ubicacion">Ubicación de tus coches</string>
+    <string name="descripcion_ubicacion">Mira donde se encuentra cada coche registrado y accede a sus controles rápidos</string>
+
+    <!-- NOTIFICACIONES -->
+    <string name="titulo_notificaciones">Notificaciones</string>
+    <string name="ventana_rota">Ventana rota detectada</string>
+    <string name="mensaje_ventana_rota">El sensor del coche “El Champon” ha detectado una vibración fuerte en la ventana delantera.</string>
+    <string name="puertas_desbloqueadas">Puertas desbloqueadas</string>
+    <string name="mensaje_puertas_desbloqueadas">Las puertas del coche “Speedy Azul” se han abierto correctamente desde la app</string>
+    <string name="ubicacion_actualizada">Ubicación actualizada</string>
+    <string name="modo_seguro_activado">Modo seguro activado</string>
+    <string name="camara_activada">Cámara activada</string>
+
+    <!-- AJUSTES -->
+    <string name="ajustes">Ajustes</string>
+    <string name="usuario_info">Usuario estándar · 3 coches</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="cuenta_perfil">Cuenta y perfil</string>
+    <string name="coches_registrados">Coches registrados</string>
+    <string name="notificaciones_ajustes">Notificaciones</string>
+    <string name="seguridad">Seguridad</string>
+    <string name="apariencia">Apariencia</string>
+    <string name="ayuda_soporte">Ayuda y soporte</string>
+
+    <!-- APARIENCIA -->
+    <string name="titulo_apariencia">Apariencia</string>
+    <string name="descripcion_apariencia">Personaliza cómo se ve tu aplicación</string>
+    <string name="modo_nocturno">Modo nocturno</string>
+
+    <!-- AYUDA Y SOPORTE -->
+    <string name="titulo_ayuda">Ayuda y soporte</string>
+    <string name="descripcion_ayuda">¿Necesitas ayuda o tienes dudas? Aquí puedes encontrar toda la información.</string>
+    <string name="preguntas_frecuentes">Preguntas frecuentes</string>
+    <string name="como_añadir_coche">¿Cómo añadir un coche?</string>
+    <string name="como_activar_sensores">¿Cómo activar los sensores?</string>
+    <string name="que_hacer_si_pierdo_coche">¿Qué hacer si pierdo el coche?</string>
+    <string name="contactar_soporte">Contacta con el soporte</string>
+    <string name="correo_soporte">support@carsecureapp.com</string>
+    <string name="terminos_privacidad">Términos y privacidad</string>
+    <string name="descripcion_terminos">Consulta nuestras políticas de uso y protección de datos</string>
+
+    <string-array name="lista_coches">
+        <item>El Champon</item>
+        <item>Speedy Azul</item>
+        <item>Roadster Negro</item>
+    </string-array>
 </resources>
