@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/editTextText"
+        android:layout_width="303dp"
+        android:layout_height="43dp"
+        android:ems="10"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:inputType="text"
+        android:text=""
+        tools:layout_editor_absoluteX="48dp"
+        tools:layout_editor_absoluteY="142dp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:text="TextView"
+        android:textColor="@color/icono_normal"
+        tools:layout_editor_absoluteX="46dp"
+        tools:layout_editor_absoluteY="198dp" />
+
+    <TextView
+        android:layout_width="70dp"
+        android:layout_height="39dp"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:text="KöVa"
+        android:textColor="@color/icono_normal"
+        android:textSize="26sp"
+        tools:layout_editor_absoluteX="168dp"
+        tools:layout_editor_absoluteY="43dp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="137dp"
+        android:layout_height="50dp"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:text="Iniciar sesión"
+        tools:layout_editor_absoluteX="135dp"
+        tools:layout_editor_absoluteY="316dp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:text="TextView"
+        android:textColor="@color/icono_normal"
+        tools:layout_editor_absoluteX="49dp"
+        tools:layout_editor_absoluteY="122dp" />
+
+    <EditText
+        android:id="@+id/editTextTextPassword"
+        android:layout_width="303dp"
+        android:layout_height="47dp"
+        android:ems="10"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:inputType="textPassword"
+        tools:layout_editor_absoluteX="48dp"
+        tools:layout_editor_absoluteY="225dp" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="297dp"
+        android:layout_height="44dp"
+        android:background="#00FFFFFF"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:text="¿Aun no tienes cuenta? Regístrate"
+        android:textColor="@color/icono_normal"
+        tools:layout_editor_absoluteX="57dp"
+        tools:layout_editor_absoluteY="500dp" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#00FFFFFF"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:text="He olvidado mi contraseña"
+        android:textColor="@color/icono_normal"
+        tools:layout_editor_absoluteX="96dp"
+        tools:layout_editor_absoluteY="557dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
