@@ -64,8 +64,6 @@
     <string name="terminos_privacidad">Terms and Privacy</string>
     <string name="descripcion_terminos">Check our usage and data protection policies</string>
 
-    <string name="lista_coches">Lista de coches</string>
-
     <!-- usar nombres SIN acentos/ñ para las keys -->
     <string name="camaras">Cámaras</string>
     <string name="senales">Señales</string>
@@ -75,4 +73,10 @@
     <string name="bloqueado">Bloqueado</string>
     <string name="señales">Señales</string>
     <string name="batería">Batería</string>
+
+    <string-array name="lista_coches">
+        <item>El Champon</item>
+        <item>Speedy Azul</item>
+        <item>Roadster Negro</item>
+    </string-array>
 </resources>
