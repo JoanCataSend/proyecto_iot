@@ -1,234 +1,399 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fondo_claro"
-    android:padding="16dp">
+    tools:context=".ui.home.HomeActivity">
 
-    <LinearLayout
+    <!-- Contenido scrollable -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:paddingBottom="80dp">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:padding="24dp"
+        android:clipToPadding="false">
 
-        <!-- Título superior -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="KöVa"
-            android:textColor="@color/icono_normal"
-            android:textSize="26sp"
-            android:fontFamily="@font/montserrat_bold_ttf"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Selector de coche -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="16dp"
-            android:layout_marginBottom="16dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_ubicacion"
-                app:tint="@color/icono_normal" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="El Champon"
-                android:textColor="@color/icono_normal"
-                android:textSize="18sp"
-                android:layout_marginStart="8dp" />
-
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/ic_flecha"
-                app:tint="@color/icono_normal" />
-        </LinearLayout>
-
-        <!-- Imagen del coche -->
-        <ImageView
-            android:layout_width="260dp"
-            android:layout_height="160dp"
-            android:src="@drawable/coche_naranja"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="Coche" />
-
-        <!-- Estado principal -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="El Champon está cerrado"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="@color/texto_oscuro"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Botones de control -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:weightSum="4"
-            android:layout_marginBottom="16dp">
-
-            <!-- Bloqueado -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_candado_cerrado"
-                    app:tint="@color/icono_normal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Bloqueado"
-                    android:textColor="@color/texto_oscuro"
-                    android:textSize="14sp"
-                    android:layout_marginTop="8dp" />
-            </LinearLayout>
-
-            <!-- Cámaras -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_camara"
-                    app:tint="@color/icono_normal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Cámaras"
-                    android:textColor="@color/texto_oscuro"
-                    android:textSize="14sp"
-                    android:layout_marginTop="8dp" />
-            </LinearLayout>
-
-            <!-- Señales -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_sonido"
-                    app:tint="@color/icono_normal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Señales"
-                    android:textColor="@color/texto_oscuro"
-                    android:textSize="14sp"
-                    android:layout_marginTop="8dp" />
-            </LinearLayout>
-
-            <!-- Modo seguro -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_escudo"
-                    app:tint="@color/icono_normal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Modo seguro"
-                    android:textColor="@color/texto_oscuro"
-                    android:textSize="14sp"
-                    android:layout_marginTop="8dp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Dirección -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_ubicacion"
-                android:layout_marginEnd="8dp"
-                app:tint="@color/icono_normal" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="C/ Jardines de Alejandra, Toledo"
-                android:textColor="@color/icono_normal"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <!-- Estado del sistema -->
-        <LinearLayout
+            android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+            <!-- Marca / título superior -->
+            <LinearLayout
+                android:id="@+id/headerBrand"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sistema activo y vigilando"
-                android:textStyle="bold"
-                android:textColor="@color/texto_oscuro"
-                android:textSize="16sp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Última conexión hace 2 minutos"
-                android:textColor="@color/texto_oscuro"
-                android:textSize="14sp"
-                android:layout_marginBottom="8dp" />
+                <TextView
+                    android:id="@+id/tvBrand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="KöVa"
+                    android:textColor="@color/icono_normal"
+                    android:fontFamily="@font/montserrat_bold_ttf"
+                    android:textSize="26sp"/>
+            </LinearLayout>
 
+            <!-- Selector de coche (pill) -->
+            <LinearLayout
+                android:id="@+id/vehicleSelector"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/bg_pill_soft"
+                android:layout_marginBottom="20dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_escudo"
+                    app:tint="@color/icono_normal"
+                    android:contentDescription="@string/nombre_coche" />
+
+                <TextView
+                    android:id="@+id/tvSelectedCar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/nombre_coche"
+                    android:textColor="@color/icono_normal"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/roboto_regular_ttf"
+                    tools:text="El Champon" />
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_flecha"
+                    app:tint="@color/icono_normal"
+                    android:contentDescription="@string/lista_coches" />
+            </LinearLayout>
+
+            <!-- Imagen del coche dentro de “card” blanca -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardCarImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardUseCompatPadding="true"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp"
+                android:foreground="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:id="@+id/ivCar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="@string/nombre_coche"
+                    android:src="@drawable/coche_naranja"
+                    android:padding="16dp"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Estado principal (headline) -->
             <TextView
+                android:id="@+id/tvMainState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Batería: 85% (WiFi / 5G)"
+                android:layout_marginBottom="12dp"
                 android:textColor="@color/texto_oscuro"
-                android:textSize="16sp" />
+                android:textSize="28sp"
+                android:fontFamily="@font/montserrat_bold_ttf"
+                tools:text="El Champon está cerrado"/>
+
+            <!-- Cuatro acciones redondas -->
+            <LinearLayout
+                android:id="@+id/actionsRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="20dp">
+
+                <!-- Reutilizo el mismo patrón 4 veces -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:background="@drawable/bg_circle_soft"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:clipToOutline="true">
+
+                        <ImageView
+                            android:id="@+id/ivLock"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="18dp"
+                            android:src="@drawable/ic_candado_cerrado"
+                            app:tint="@color/icono_normal"
+                            android:contentDescription="@string/bloqueado"/>
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/bloqueado"
+                        android:textColor="@color/texto_oscuro"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/bloqueado"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:background="@drawable/bg_circle_soft"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:clipToOutline="true">
+
+                        <ImageView
+                            android:id="@+id/ivCameras"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="18dp"
+                            android:src="@drawable/ic_camara"
+                            app:tint="@color/icono_normal"
+                            android:contentDescription="@string/camara_activada"/>
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/camara_activada"
+                        android:textColor="@color/texto_oscuro"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:background="@drawable/bg_circle_soft"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:clipToOutline="true">
+
+                        <ImageView
+                            android:id="@+id/ivSignals"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="18dp"
+                            android:src="@drawable/ic_sonido"
+                            app:tint="@color/icono_normal"
+                            android:contentDescription="@string/señales"/>
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/señales"
+                        android:textColor="@color/texto_oscuro"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:background="@drawable/bg_circle_soft"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:clipToOutline="true">
+
+                        <ImageView
+                            android:id="@+id/ivSafe"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="18dp"
+                            android:src="@drawable/ic_escudo"
+                            app:tint="@color/icono_normal"
+                            android:contentDescription="@string/modo_seguro_activado"/>
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/modo_seguro_activado"
+                        android:textColor="@color/texto_oscuro"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Dirección (pill) -->
+            <LinearLayout
+                android:id="@+id/addressPill"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/bg_pill_soft"
+                android:layout_marginBottom="20dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_ubicacion"
+                    app:tint="@color/icono_normal"
+                    android:contentDescription="@string/titulo_ubicacion" />
+
+                <TextView
+                    android:id="@+id/tvAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:textColor="@color/icono_normal"
+                    android:textSize="16sp"
+                    tools:text="C/ Jardines de Alejandra, Toledo"/>
+            </LinearLayout>
+
+            <!-- Estado del sistema (2 bloques) -->
+            <LinearLayout
+                android:id="@+id/systemState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="100dp">
+
+                <!-- Bloque 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="20dp">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_wifi"
+                        app:tint="@color/icono_normal"
+                        android:contentDescription="@string/titulo_ubicacion"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sistema activo y vigilando"
+                            android:textStyle="bold"
+                            android:textColor="@color/texto_oscuro"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Última conexion hace 2 minutos"
+                            android:textColor="#7A7A7A"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+
+                    <!-- Punto verde de estado -->
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:background="@drawable/bg_dot_ok"/>
+                </LinearLayout>
+
+                <!-- Bloque 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_bateria"
+                        app:tint="@color/icono_normal"
+                        android:contentDescription="@string/batería"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Batería: 85 %"
+                            android:textStyle="bold"
+                            android:textColor="@color/texto_oscuro"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Conectado vía WiFi / 5G"
+                            android:textColor="#7A7A7A"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottomBar"
+                android:layout_width="match_parent"
+                android:layout_height="78dp"
+                android:layout_gravity="bottom"
+                android:background="@android:color/transparent"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="16dp"
+                app:labelVisibilityMode="labeled"
+                app:menu="@menu/menu_bottom" />
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom navigation (no funcional) -->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

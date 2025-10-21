@@ -33,8 +33,8 @@
     <string name="puertas_desbloqueadas">Puertas desbloqueadas</string>
     <string name="mensaje_puertas_desbloqueadas">Las puertas del coche “Speedy Azul” se han abierto correctamente desde la app</string>
     <string name="ubicacion_actualizada">Ubicación actualizada</string>
-    <string name="modo_seguro_activado">Modo seguro activado</string>
-    <string name="camara_activada">Cámara activada</string>
+    <string name="modo_seguro_activado">Modo seguro</string>
+    <string name="camara_activada">Cámara on</string>
 
     <!-- AJUSTES -->
     <string name="ajustes">Ajustes</string>
@@ -64,9 +64,16 @@
     <string name="terminos_privacidad">Términos y privacidad</string>
     <string name="descripcion_terminos">Consulta nuestras políticas de uso y protección de datos</string>
 
-    <string-array name="lista_coches">
-        <item>El Champon</item>
-        <item>Speedy Azul</item>
-        <item>Roadster Negro</item>
-    </string-array>
+    <string name="lista_coches">Lista de coches</string>
+
+    <!-- usar nombres SIN acentos/ñ para las keys -->
+    <string name="camaras">Cámaras</string>
+    <string name="senales">Señales</string>
+    <string name="bateria">Batería</string>
+
+
+    <string name="home">Inicio</string>
+    <string name="bloqueado">Bloqueado</string>
+    <string name="señales">Señales</string>
+    <string name="batería">Batería</string>
 </resources>
