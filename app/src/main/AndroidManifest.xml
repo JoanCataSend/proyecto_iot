@@ -18,5 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".CamarasActivity"
+            android:exported="false"
+            android:label="@string/camara_activada"
+            android:theme="@style/Theme.Proyecto_iot" />
     </application>
 </manifest>

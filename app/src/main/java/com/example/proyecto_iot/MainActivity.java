@@ -1,7 +1,9 @@
 package com.example.proyecto_iot;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import androidx.activity.EdgeToEdge;
@@ -49,5 +51,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Asigna el adaptador al Spinner
         spinner.setAdapter(adapter);
+        LinearLayout layoutCamaras = findViewById(R.id.layoutCamaras);
+
+        layoutCamaras.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CamarasActivity.class);
+            startActivity(intent);
+        });
+
     }
 }

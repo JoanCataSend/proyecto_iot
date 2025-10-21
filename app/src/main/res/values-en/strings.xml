@@ -73,6 +73,9 @@
     <string name="bloqueado">Bloqueado</string>
     <string name="señales">Señales</string>
     <string name="batería">Batería</string>
+    <string name="calle">C/de Legazpi, 7, 46730 Gandia,Valencia</string>
+    <string name="champon">EL CHAMPON ESTA CERRADO</string>
+    <string name="wifi">Sistema activo y vigilando</string>
 
     <string-array name="lista_coches">
         <item>El Champon</item>
