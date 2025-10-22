@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Edit text -->
+    <style name="EditText">
+        <item name="android:background">@drawable/fondo_caja</item> <!-- caja -->
+        <item name="android:paddingStart">10dp</item>               <!-- espacio a la izquierda -->
+        <item name="android:paddingEnd">10dp</item>                 <!-- espacio a la derecha -->
+        <item name="android:paddingTop">8dp</item>                  <!-- espacio arriba -->
+        <item name="android:paddingBottom">8dp</item>               <!-- espacio abajo -->
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">@color/texto_oscuro</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <!-- Boton morado -->
+    <style name="BotonPrincipal">
+        <item name="android:background">@drawable/boton_principal</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textSize">14sp</item>
+
+    </style>
+
+</resources>
