@@ -37,8 +37,8 @@
 
                 <ImageView
                     android:id="@+id/imageView2"
-                    android:layout_width="match_parent"
-                    android:layout_height="76dp"
+                    android:layout_width="400dp"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     app:srcCompat="@drawable/img" />
@@ -246,61 +246,128 @@
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginBottom="16dp"
-
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="16dp">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:contentDescription="@string/titulo_ubicacion"
-                    android:src="@drawable/ic_ubicacion"
-                    app:tint="@color/icono_normal" />
-
-                <TextView
-                    android:id="@+id/tvAddress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="@string/calle"
-                    android:textColor="@color/texto_oscuro"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
-            </LinearLayout>
-
+            <!-- Dirección (pill) -->
             <LinearLayout
                 android:id="@+id/addressPill"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="16dp"
-                android:gravity="center_vertical"
+                android:layout_height="56dp"
                 android:orientation="horizontal"
-                android:paddingHorizontal="16dp">
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/bg_pill_soft"
+                android:layout_marginBottom="20dp">
 
                 <ImageView
                     android:layout_width="22dp"
                     android:layout_height="22dp"
-                    android:contentDescription="@string/titulo_ubicacion"
-                    android:src="@drawable/ic_wifi"
-                    app:tint="@color/icono_normal" />
+                    android:src="@drawable/ic_ubicacion"
+                    app:tint="@color/icono_normal"
+                    android:contentDescription="@string/titulo_ubicacion" />
 
                 <TextView
                     android:id="@+id/tvAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:text="@string/wifi"
-                    android:textColor="@color/texto_oscuro"
+                    android:textColor="@color/icono_normal"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    />
+                    tools:text="C/ Jardines de Alejandra, Toledo"/>
             </LinearLayout>
+
+            <!-- Estado del sistema (2 bloques) -->
+            <LinearLayout
+                android:id="@+id/systemState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="100dp">
+
+                <!-- Bloque 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="20dp">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_wifi"
+                        app:tint="@color/icono_normal"
+                        android:contentDescription="@string/titulo_ubicacion"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sistema activo y vigilando"
+                            android:textStyle="bold"
+                            android:textColor="@color/texto_oscuro"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Última conexion hace 2 minutos"
+                            android:textColor="#7A7A7A"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+
+                    <!-- Punto verde de estado -->
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:background="@drawable/bg_dot_ok"/>
+                </LinearLayout>
+
+                <!-- Bloque 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_bateria"
+                        app:tint="@color/icono_normal"
+                        android:contentDescription="@string/batería"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Batería: 85 %"
+                            android:textStyle="bold"
+                            android:textColor="@color/texto_oscuro"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Conectado vía WiFi / 5G"
+                            android:textColor="#7A7A7A"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+
+
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
