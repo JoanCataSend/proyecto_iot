@@ -12,7 +12,7 @@
     <string name="olvidado_contrasena">He olvidado mi contraseña</string>
 
     <!-- REGISTRAR / MIS COCHES -->
-    <string name="mensaje_registro_coche">Es necesario que registres un coche para acceder a la aplicación</string>
+    <string name="mensaje_registro_coche">Es necesario registrar un coche para acceder a la aplicación</string>
     <string name="marca">Marca</string>
     <string name="modelo">Modelo</string>
     <string name="matricula">Matrícula</string>
