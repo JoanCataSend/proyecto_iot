@@ -23,7 +23,7 @@
 
         <!-- Registro de coches -->
         <activity
-            android:name=".RegistroCocheActivity"
+            android:name=".RegistroCoche"
             android:exported="true" />
 
     </application>

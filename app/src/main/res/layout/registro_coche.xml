@@ -26,7 +26,7 @@
         android:fontFamily="@font/roboto_regular"
         android:text="@string/mensaje_registro_coche"
         android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="@+id/eTxtMarca"
+        app:layout_constraintStart_toStartOf="@+id/etMarca"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <!-- Título: Marca -->
@@ -39,12 +39,12 @@
         android:text="@string/marca"
         android:textColor="@color/icono_normal"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/eTxtMarca"
+        app:layout_constraintStart_toStartOf="@+id/etMarca"
         app:layout_constraintTop_toBottomOf="@+id/txtExplicativo" />
 
     <!-- Input de texto: Marca -->
     <EditText
-        android:id="@+id/eTxtMarca"
+        android:id="@+id/etMarca"
         android:layout_width="310dp"
         android:layout_height="34dp"
         android:layout_marginTop="7dp"
@@ -66,13 +66,13 @@
         android:text="@string/modelo"
         android:textColor="@color/icono_normal"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/eTxtModelo"
-        app:layout_constraintTop_toBottomOf="@+id/eTxtMarca"
+        app:layout_constraintStart_toStartOf="@+id/etModelo"
+        app:layout_constraintTop_toBottomOf="@+id/etMarca"
         />
 
     <!-- Input de texto: Modelo -->
     <EditText
-        android:id="@+id/eTxtModelo"
+        android:id="@+id/etModelo"
         android:layout_width="310dp"
         android:layout_height="34dp"
         android:layout_marginTop="7dp"
@@ -94,12 +94,12 @@
         android:text="@string/matricula"
         android:textColor="@color/icono_normal"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/eTxtMatricula"
-        app:layout_constraintTop_toBottomOf="@+id/eTxtModelo" />
+        app:layout_constraintStart_toStartOf="@+id/etMatricula"
+        app:layout_constraintTop_toBottomOf="@+id/etModelo" />
 
     <!-- Input de texto: Matrícula -->
     <EditText
-        android:id="@+id/eTxtMatricula"
+        android:id="@+id/etMatricula"
         android:layout_width="310dp"
         android:layout_height="34dp"
         android:layout_marginTop="7dp"
@@ -121,12 +121,12 @@
         android:text="@string/nombre_coche"
         android:textColor="@color/icono_normal"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/eTxtNombreCoche"
-        app:layout_constraintTop_toBottomOf="@+id/eTxtMatricula" />
+        app:layout_constraintStart_toStartOf="@+id/etNombreCoche"
+        app:layout_constraintTop_toBottomOf="@+id/etMatricula" />
 
     <!-- Input de texto: Nombre del coche -->
     <EditText
-        android:id="@+id/eTxtNombreCoche"
+        android:id="@+id/etNombreCoche"
         android:layout_width="310dp"
         android:layout_height="34dp"
         android:layout_marginTop="7dp"
@@ -140,14 +140,14 @@
 
     <!-- Botón para registrar vehículo -->
     <Button
-        android:id="@+id/btnRegistrarCoche"
+        android:id="@+id/btnRegistrar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="@string/boton_registrar_coche"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/eTxtNombreCoche"
+        app:layout_constraintTop_toBottomOf="@+id/etNombreCoche"
         style="@style/BotonPrincipal"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
