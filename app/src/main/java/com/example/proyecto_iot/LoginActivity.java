@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // --- GOOGLE SIGN IN ---
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id)) // ⚠️ define esto en strings.xml
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
@@ -115,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // --- X (Twitter o Apple) ---
         xButton.setOnClickListener(v ->
-                Toast.makeText(this, "Inicio con X pendiente de implementación 🚧", Toast.LENGTH_SHORT).show());
+                Toast.makeText(this, "Inicio con X pendiente de implementación ", Toast.LENGTH_SHORT).show());
     }
 
     // ---------------- CORREO Y CONTRASEÑA ----------------
@@ -140,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                             // finish();
                         } else {
                             Toast.makeText(this,
-                                    "Tu cuenta no está verificada. Revisa tu correo electrónico 📧",
+                                    "Tu cuenta no está verificada. Revisa tu correo electrónico ",
                                     Toast.LENGTH_LONG).show();
                             mAuth.signOut();
                         }
