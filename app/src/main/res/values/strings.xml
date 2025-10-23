@@ -1,5 +1,10 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">KöVa</string>
+    <!--    Facebook-->
+
+    <string name="facebook_app_id" tools:ignore="MissingTranslation">859031526463616</string>
+    <string name="fb_login_protocol_scheme" tools:ignore="MissingTranslation">fb859031526463616</string>
+    <string name="facebook_client_token" tools:ignore="MissingTranslation">506bc7ed4f8a20eaea05dc837381b64e</string>
     <!-- LOGIN / REGISTRO -->
     <string name="correo">Correo electrónico</string>
     <string name="contrasena">Contraseña</string>
@@ -10,6 +15,8 @@
     <string name="redireccion_registrarse">¿Aún no tienes cuenta? Regístrate</string>
     <string name="redireccion_entrar">¿Ya tienes cuenta? Inicia sesión</string>
     <string name="olvidado_contrasena">He olvidado mi contraseña</string>
+    <string name="default_web_client_id">523985247931-do2tpl6e497k2vnkinkd8u2hppbj7kr1.apps.googleusercontent.com</string>
+
 
     <!-- REGISTRAR / MIS COCHES -->
     <string name="mensaje_registro_coche">Es necesario registrar un coche para acceder a la aplicación</string>
@@ -76,4 +83,13 @@
     <string name="bloqueado">Bloqueado</string>
     <string name="señales">Señales</string>
     <string name="batería">Batería</string>
+    <string-array name="lista_coches">
+        <item>El Champon</item>
+        <item>Speedy Azul</item>
+        <item>Roadster Negro</item>
+    </string-array>
+
+
+
+
 </resources>

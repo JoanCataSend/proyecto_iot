@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:text="KöVa"
+        android:textColor="@color/icono_normal"
+        android:textSize="28sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <!-- Label: correo -->
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:text="Correo electrónico"
+        android:textColor="@color/icono_normal"
+        app:layout_constraintTop_toBottomOf="@id/textTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="32dp" />
+
+    <!-- Campo: correo -->
+    <EditText
+        android:id="@+id/editTextText"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:background="@drawable/rounded_edittext_selector"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:inputType="textEmailAddress"
+        app:layout_constraintTop_toBottomOf="@id/textView2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Label: contraseña -->
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:text="Contraseña"
+        android:textColor="@color/icono_normal"
+        app:layout_constraintTop_toBottomOf="@id/editTextText"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <!-- Campo: contraseña -->
+    <EditText
+        android:id="@+id/editTextTextPassword"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:background="@drawable/rounded_edittext_selector"
+        android:inputType="textPassword"
+        app:layout_constraintTop_toBottomOf="@id/textView3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Botón: iniciar sesión -->
+    <Button
+        android:id="@+id/button"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:text="Iniciar sesión"
+        app:layout_constraintTop_toBottomOf="@id/editTextTextPassword"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Botón: registrarse -->
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="277dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:background="#00FFFFFF"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:text="¿Aún no tienes cuenta? Regístrate"
+        android:textColor="@color/icono_normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button" />
+
+    <!-- Botón: olvidar contraseña -->
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="247dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="5dp"
+        android:background="#00FFFFFF"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:text="He olvidado mi contraseña"
+        android:textColor="@color/icono_normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button2" />
+
+    <!-- Botón Google -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button4"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:text="Inicia sesión con Google"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:textColor="#FFFFFF"
+        app:icon="@drawable/google"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:cornerRadius="24dp"
+        app:backgroundTint="#CE4343"
+        app:strokeColor="#CE4343"
+        app:strokeWidth="1dp"
+        app:layout_constraintTop_toBottomOf="@id/button3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp" />
+
+    <!-- Botón X -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button5"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:text="Inicia sesión con X"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:textColor="#FFFFFF"
+        app:icon="@drawable/twitter"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:cornerRadius="24dp"
+        app:backgroundTint="#000000"
+        app:layout_constraintTop_toBottomOf="@id/button4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp" />
+
+    <!-- Botón Facebook -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button6"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        android:text="Inicia sesión con Facebook"
+        android:textColor="#FFFFFF"
+        app:backgroundTint="#1877F2"
+        app:cornerRadius="24dp"
+        app:icon="@drawable/facebook"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
