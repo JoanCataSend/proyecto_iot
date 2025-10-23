@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fondo_claro"
+    tools:context=".CamarasActivity">
+
+    <TextView
+        android:id="@+id/tvTituloCamaras"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/camara_activada"
+        android:textColor="@color/texto_oscuro"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/montserrat_bold_ttf"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp" />
+
+    <ImageView
+        android:id="@+id/ivCamaraDemo"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/ic_camara"
+        app:tint="@color/icono_normal"
+        app:layout_constraintTop_toBottomOf="@id/tvTituloCamaras"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Aqui se mostraran la camaras en directo y esas cosas"
+        android:textColor="@color/texto_oscuro"
+        android:textSize="16sp"
+        android:fontFamily="@font/roboto_regular_ttf"
+        app:layout_constraintTop_toBottomOf="@id/ivCamaraDemo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

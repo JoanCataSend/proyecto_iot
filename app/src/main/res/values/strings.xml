@@ -70,19 +70,19 @@
     <string name="correo_soporte">support@carsecureapp.com</string>
     <string name="terminos_privacidad">Términos y privacidad</string>
     <string name="descripcion_terminos">Consulta nuestras políticas de uso y protección de datos</string>
-
-    <string name="lista_coches">Lista de coches</string>
-
     <!-- usar nombres SIN acentos/ñ para las keys -->
     <string name="camaras">Cámaras</string>
     <string name="senales">Señales</string>
     <string name="bateria">Batería</string>
 
-
     <string name="home">Inicio</string>
     <string name="bloqueado">Bloqueado</string>
     <string name="señales">Señales</string>
     <string name="batería">Batería</string>
+    <string name="calle">C/de Legazpi, 7, 46730 Gandia,Valencia</string>
+    <string name="champon">EL CHAMPON ESTA CERRADO</string>
+    <string name="wifi">Sistema activo y vigilando</string>
+
     <string-array name="lista_coches">
         <item>El Champon</item>
         <item>Speedy Azul</item>
