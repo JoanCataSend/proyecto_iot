@@ -49,7 +49,6 @@
             android:scaleType="fitCenter"
             android:padding="10dp"
             android:layout_marginEnd="16dp"
-            android:contentDescription="@string/profile"
             />
 
         <LinearLayout
@@ -130,7 +129,6 @@
                 android:src="@drawable/ic_perfil1"
                 android:layout_marginEnd="12dp"
                 app:tint="@color/icono_normal"
-                android:contentDescription="@string/profile"
                 />
 
             <TextView
@@ -160,7 +158,6 @@
                 android:layout_height="22dp"
                 android:src="@drawable/ic_coche"
                 android:layout_marginEnd="12dp"
-                android:contentDescription="@string/cars"
                 app:tint="@color/icono_normal"/>
 
             <TextView
@@ -190,7 +187,6 @@
                 android:layout_height="22dp"
                 android:src="@drawable/ic_notificacion1"
                 android:layout_marginEnd="12dp"
-                android:contentDescription="@string/notifications"
                 app:tint="@color/icono_normal"/>
 
             <TextView
@@ -220,7 +216,6 @@
                 android:layout_height="22dp"
                 android:src="@drawable/ic_candado_cerrado"
                 android:layout_marginEnd="12dp"
-                android:contentDescription="@string/security"
                 app:tint="@color/icono_normal"/>
 
             <TextView
@@ -250,7 +245,6 @@
                 android:layout_height="22dp"
                 android:src="@drawable/ic_editar"
                 android:layout_marginEnd="12dp"
-                android:contentDescription="@string/appearance"
                 app:tint="@color/icono_normal"/>
 
             <TextView
@@ -280,7 +274,6 @@
                 android:layout_height="22dp"
                 android:src="@drawable/ic_config"
                 android:layout_marginEnd="12dp"
-                android:contentDescription="@string/help"
                 app:tint="@color/icono_normal"/>
 
             <TextView
@@ -302,6 +295,4 @@
         android:id="@+id/navbar_include"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
