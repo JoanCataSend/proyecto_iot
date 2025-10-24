@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-permission android:name="android.permission.INTERNET"/>
-
-
 
     <application
         android:allowBackup="true"
@@ -15,10 +12,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto_iot">
+
         <activity android:name=".RegistroCoche" />
         <activity android:name=".MainActivity" />
-<!--        modificado para que se abra el login siempre-->
-        <activity android:name=".LoginActivity"
+
+        <!-- modificado para que se abra el login siempre -->
+        <activity
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,10 +26,9 @@
             </intent-filter>
         </activity>
 
-
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
         <activity
             android:name="com.facebook.CustomTabActivity"
@@ -45,15 +44,20 @@
         <activity android:name=".RegisterActivity" />
         <activity android:name=".ForgotPasswordActivity" />
 
-
-
-
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
 
-        <activity android:name=".CamarasActivity"
+        <activity
+            android:name=".CamarasActivity"
             android:exported="false"
             android:label="@string/camara_activada"
+            android:theme="@style/Theme.Proyecto_iot" />
+
+        <!-- ➕ NUEVO: Activity para el layout config.xml -->
+        <activity
+            android:name=".ConfigActivity"
+            android:exported="false"
+            android:label="@string/ajustes"
             android:theme="@style/Theme.Proyecto_iot" />
     </application>
 </manifest>

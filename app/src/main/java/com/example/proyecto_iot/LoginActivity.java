@@ -136,8 +136,9 @@ public class LoginActivity extends AppCompatActivity {
                         if (user != null && user.isEmailVerified()) {
                             Toast.makeText(this, "Bienvenido, " + user.getEmail(), Toast.LENGTH_SHORT).show();
                             // Aquí puedes abrir tu MainActivity
-                             startActivity(new Intent(this, MainActivity.class));
-                             finish();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                             //finish();
                         } else {
                             Toast.makeText(this,
                                     "Tu cuenta no está verificada. Revisa tu correo electrónico ",
@@ -198,8 +199,8 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         Toast.makeText(this, "Inicio con Facebook exitoso: " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(this, MainActivity.class));
-                        finish();
+                        //startActivity(new Intent(this, MainActivity.class));
+                        //finish();
                     } else {
                         Toast.makeText(this, "Error en inicio con Facebook", Toast.LENGTH_SHORT).show();
                     }
