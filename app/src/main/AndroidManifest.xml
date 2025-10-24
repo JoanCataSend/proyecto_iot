@@ -15,6 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto_iot">
+        <activity android:name=".RegistroCoche" />
+        <activity android:name=".MainActivity" />
 <!--        modificado para que se abra el login siempre-->
         <activity android:name=".LoginActivity"
             android:exported="true">
