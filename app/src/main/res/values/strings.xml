@@ -88,6 +88,17 @@
     <string name="hacer_foto">Hacer foto</string>
     <string name="camara_superior">Cámara superior</string>
     <string name="camara_inferior">Cámara inferior</string>
+    <string name="toggle_notification">Activar o desactivar notificación</string>
+    <string name="nventana_rota">Ventana rota</string>
+    <string name="ncamara_activada">Cámara activada</string>
+    <string name="title_notificaciones">Notificaciones</string>
+    <string name="back">Volver</string>
+    <string name="elige_alertas">Elige qué tipo de alertas quieres recibir:</string>
+    <string name="puertas_abiertas">Puertas abiertas</string>
+    <string name="movimiento_detectado">Movimiento detectado</string>
+    <string name="sonido_o_luces">Sonido o luces de aviso</string>
+    <string name="cambios_ubicacion">Cambios de ubicación</string>
+    <string name="apertura_puertas">Apertura de puertas</string>
 
     <string-array name="lista_coches">
         <item>El Champon</item>

@@ -12,20 +12,17 @@
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="top"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:foregroundGravity="center"
         android:padding="24dp"
-        app:layout_anchorGravity="center"
+        android:paddingBottom="80dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="64dp">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/headerBrand"
@@ -42,7 +39,6 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     app:srcCompat="@drawable/img" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -79,7 +75,6 @@
                     app:tint="@color/icono_normal" />
             </LinearLayout>
 
-            <!-- Imagen del coche sin el MaterialCardView -->
             <ImageView
                 android:id="@+id/ivCar"
                 android:layout_width="match_parent"
@@ -152,7 +147,7 @@
                     android:orientation="vertical"
                     android:clickable="true"
                     android:focusable="true"
-                    android:foreground="?attr/selectableItemBackgroundBorderless">   <!-- efecto ripple -->
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
 
                     <FrameLayout
                         android:layout_width="64dp"
@@ -178,7 +173,6 @@
                         android:textColor="@color/texto_oscuro"
                         android:textSize="14sp" />
                 </LinearLayout>
-
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -246,7 +240,7 @@
                         android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
-            <!-- Dirección (pill) -->
+
             <LinearLayout
                 android:id="@+id/addressPill"
                 android:layout_width="match_parent"
@@ -274,7 +268,6 @@
                     android:text="@string/calle"/>
             </LinearLayout>
 
-            <!-- Estado del sistema (2 bloques) -->
             <LinearLayout
                 android:id="@+id/systemState"
                 android:layout_width="match_parent"
@@ -282,7 +275,6 @@
                 android:orientation="vertical"
                 android:layout_marginBottom="100dp">
 
-                <!-- Bloque 1 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -320,14 +312,12 @@
                             android:textSize="14sp"/>
                     </LinearLayout>
 
-                    <!-- Punto verde de estado -->
                     <View
                         android:layout_width="10dp"
                         android:layout_height="10dp"
                         android:background="@drawable/bg_dot_ok"/>
                 </LinearLayout>
 
-                <!-- Bloque 2 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -365,13 +355,16 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-    <!-- Incluimos la navbar -->
-    <include
-        layout="@layout/navbar"
-        android:id="@+id/navbar_include"
+
+    <FrameLayout
+        android:id="@+id/navbarContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <include layout="@layout/navbar"/>
+    </FrameLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

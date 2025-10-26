@@ -22,4 +22,6 @@
     <!-- Botones -->
     <color name="boton_claro">#F9F9FB</color>
     <color name="boton_oscuro">#5B47A0</color>
+
+    <color name="lavender_divider">#EAE2F8</color>
 </resources>
