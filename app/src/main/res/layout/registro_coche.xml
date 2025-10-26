@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:contentDescription="Logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_launcher_background" />
+
+    <!-- Texto explicativo -->
+    <TextView
+        android:id="@+id/txtExplicativo"
+        android:layout_width="310dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/mensaje_registro_coche"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/etMarca"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <!-- Título: Marca -->
+    <TextView
+        android:id="@+id/txtMarca"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/marca"
+        android:textColor="@color/icono_normal"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@+id/etMarca"
+        app:layout_constraintTop_toBottomOf="@+id/txtExplicativo" />
+
+    <!-- Input de texto: Marca -->
+    <EditText
+        android:id="@+id/etMarca"
+        android:layout_width="310dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="7dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtMarca"
+        style="@style/EditText" />
+
+    <!-- Input de texto: Modelo -->
+    <TextView
+        android:id="@+id/txtModelo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/modelo"
+        android:textColor="@color/icono_normal"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@+id/etModelo"
+        app:layout_constraintTop_toBottomOf="@+id/etMarca"
+        />
+
+    <!-- Input de texto: Modelo -->
+    <EditText
+        android:id="@+id/etModelo"
+        android:layout_width="310dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="7dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtModelo"
+        style="@style/EditText"/>
+
+    <!-- Título: Matrícula -->
+    <TextView
+        android:id="@+id/txtMatricula"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/matricula"
+        android:textColor="@color/icono_normal"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@+id/etMatricula"
+        app:layout_constraintTop_toBottomOf="@+id/etModelo" />
+
+    <!-- Input de texto: Matrícula -->
+    <EditText
+        android:id="@+id/etMatricula"
+        android:layout_width="310dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="7dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtMatricula"
+        style="@style/EditText"/>
+
+    <!-- Título: Nombre del coche -->
+    <TextView
+        android:id="@+id/txtNombreCoche"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/nombre_coche"
+        android:textColor="@color/icono_normal"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@+id/etNombreCoche"
+        app:layout_constraintTop_toBottomOf="@+id/etMatricula" />
+
+    <!-- Input de texto: Nombre del coche -->
+    <EditText
+        android:id="@+id/etNombreCoche"
+        android:layout_width="310dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="7dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtNombreCoche"
+        style="@style/EditText"/>
+
+    <!-- Botón para registrar vehículo -->
+    <Button
+        android:id="@+id/btnRegistrar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/boton_registrar_coche"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etNombreCoche"
+        style="@style/BotonPrincipal"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

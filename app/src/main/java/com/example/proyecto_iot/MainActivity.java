@@ -5,12 +5,13 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.core.graphics.Insets;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,45 +19,47 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Activa el modo "Edge to Edge" (diseño hasta los bordes)
         EdgeToEdge.enable(this);
-
-        // Carga el layout 'intento.xml'
         setContentView(R.layout.intento);
 
-        // Ajuste para respetar los márgenes del sistema (barras de estado, navegación, etc.)
+        // Ajuste de los márgenes del sistema (status bar / nav bar)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
-            // Obtenemos los márgenes de las barras del sistema (barra de estado, barra de navegación)
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars()); // Cambié el tipo a 'Insets'
-            // Aplicamos los márgenes de las barras del sistema
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // ---------- Configuración del Spinner ----------
+        // ← Botón "Volver"
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+            // o el clásico:
+            // btnBack.setOnClickListener(v -> onBackPressed());
+        }
+
+        // Spinner de coches
         Spinner spinner = findViewById(R.id.spinnerCars);
+        if (spinner != null) {
+            String[] carList = getResources().getStringArray(R.array.lista_coches);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, carList);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+        }
 
-        // Obtiene la lista de coches definida en strings.xml
-        String[] carList = getResources().getStringArray(R.array.lista_coches);
-
-        // Crea un adaptador para mostrar los coches en el Spinner
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                carList
-        );
-
-        // Define el diseño del menú desplegable
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // Asigna el adaptador al Spinner
-        spinner.setAdapter(adapter);
+        // Botón "Cámaras"
         LinearLayout layoutCamaras = findViewById(R.id.layoutCamaras);
+        if (layoutCamaras != null) {
+            layoutCamaras.setOnClickListener(v ->
+                    startActivity(new Intent(MainActivity.this, CamarasActivity.class))
+            );
+        }
 
-        layoutCamaras.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CamarasActivity.class);
-            startActivity(intent);
-        });
-
+        // ⚙️ Botón "Ajustes"
+        ImageButton navSettings = findViewById(R.id.nav_settings);
+        if (navSettings != null) {
+            navSettings.setOnClickListener(v ->
+                    startActivity(new Intent(MainActivity.this, ConfigActivity.class))
+            );
+        }
     }
 }
