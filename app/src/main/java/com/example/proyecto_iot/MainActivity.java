@@ -1,65 +1,66 @@
 package com.example.proyecto_iot;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
+import android.view.View;
 import android.widget.ImageButton;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.graphics.Insets;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ImageButton navHome;
+    private ImageButton navCar;
+    private ImageButton navNotifications;
+    private ImageButton navSettings;
+    private ImageButton btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.intento);
-
-        // Ajuste de los márgenes del sistema (status bar / nav bar)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
-        // ← Botón "Volver"
-        ImageButton btnBack = findViewById(R.id.btnBack);
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
-            // o el clásico:
-            // btnBack.setOnClickListener(v -> onBackPressed());
+        if (savedInstanceState == null) {
+            String open = getIntent() != null ? getIntent().getStringExtra("openFragment") : null;
+            if ("intento".equals(open)) {
+                replaceFragment(new IntentoFragment(), false);
+            }
         }
 
-        // Spinner de coches
-        Spinner spinner = findViewById(R.id.spinnerCars);
-        if (spinner != null) {
-            String[] carList = getResources().getStringArray(R.array.lista_coches);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, carList);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(adapter);
-        }
+        navHome = findViewById(R.id.nav_home);
+        navCar = findViewById(R.id.nav_car);
+        navNotifications = findViewById(R.id.nav_notifications);
+        navSettings = findViewById(R.id.nav_settings);
+        btnBack = findViewById(R.id.btnBack);
+        navHome.setOnClickListener(v -> replaceFragment(new IntentoFragment(), true));
+        navCar.setOnClickListener(v -> replaceFragment(new CarFragment(), true));
+        navNotifications.setOnClickListener(v -> replaceFragment(new NotificationsFragment(), true));
+        navSettings.setOnClickListener(v -> replaceFragment(new ConfigFragment(), true));
+        btnBack.setOnClickListener(v -> handleBack());
+    }
 
-        // Botón "Cámaras"
-        LinearLayout layoutCamaras = findViewById(R.id.layoutCamaras);
-        if (layoutCamaras != null) {
-            layoutCamaras.setOnClickListener(v ->
-                    startActivity(new Intent(MainActivity.this, CamarasActivity.class))
-            );
-        }
+    private void replaceFragment(Fragment fragment, boolean addToBackstack) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_container, fragment);
+        if (addToBackstack) ft.addToBackStack(null);
+        ft.commit();
+    }
 
-        // ⚙️ Botón "Ajustes"
-        ImageButton navSettings = findViewById(R.id.nav_settings);
-        if (navSettings != null) {
-            navSettings.setOnClickListener(v ->
-                    startActivity(new Intent(MainActivity.this, ConfigActivity.class))
-            );
+    private void handleBack() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            finish();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        handleBack();
     }
 }
