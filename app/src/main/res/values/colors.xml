@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Fondos -->
+    <color name="fondo_claro">#F9F9FB</color>
+    <color name="fondo_oscuro">#1E123A</color>
+
+    <!-- Textos -->
+    <color name="texto_claro">#F9F9F9</color>
+    <color name="texto_oscuro">#2E2E2E</color>
+    <color name="texto_secundario">#2DD6E1</color>
+
+    <!-- Estados / alertas -->
+    <color name="error">#FF4E50</color>
+    <color name="bien">#63FF4E</color>
+    <color name="aviso">#F9C80E</color>
+
+    <!-- Iconos -->
+    <color name="icono_normal">#5B47A0</color>
+    <color name="icono_oscuro">#F9F9F9</color>
+    <color name="icono_seleccionado">#2DD6E1</color>
+
+    <!-- Botones -->
+    <color name="boton_claro">#F9F9FB</color>
+    <color name="boton_oscuro">#5B47A0</color>
+
+    <color name="lavender_divider">#EAE2F8</color>
 </resources>
