@@ -19,7 +19,7 @@
 
 
     <!-- REGISTRAR / MIS COCHES -->
-    <string name="mensaje_registro_coche">Es necesario que registres un coche para acceder a la aplicación</string>
+    <string name="mensaje_registro_coche">Es necesario registrar un coche para acceder a la aplicación</string>
     <string name="marca">Marca</string>
     <string name="modelo">Modelo</string>
     <string name="matricula">Matrícula</string>
@@ -40,8 +40,8 @@
     <string name="puertas_desbloqueadas">Puertas desbloqueadas</string>
     <string name="mensaje_puertas_desbloqueadas">Las puertas del coche “Speedy Azul” se han abierto correctamente desde la app</string>
     <string name="ubicacion_actualizada">Ubicación actualizada</string>
-    <string name="modo_seguro_activado">Modo seguro activado</string>
-    <string name="camara_activada">Cámara activada</string>
+    <string name="modo_seguro_activado">Modo seguro</string>
+    <string name="camara_activada">Cámara on</string>
 
     <!-- AJUSTES -->
     <string name="ajustes">Ajustes</string>
@@ -70,6 +70,24 @@
     <string name="correo_soporte">support@carsecureapp.com</string>
     <string name="terminos_privacidad">Términos y privacidad</string>
     <string name="descripcion_terminos">Consulta nuestras políticas de uso y protección de datos</string>
+    <!-- usar nombres SIN acentos/ñ para las keys -->
+    <string name="camaras">Cámaras</string>
+    <string name="senales">Señales</string>
+    <string name="bateria">Batería</string>
+
+    <string name="home">Inicio</string>
+    <string name="bloqueado">Bloqueado</string>
+    <string name="señales">Señales</string>
+    <string name="batería">Batería</string>
+    <string name="calle">C/de Legazpi, 7, 46730 Gandia,Valencia</string>
+    <string name="champon">EL CHAMPON ESTA CERRADO</string>
+    <string name="wifi">Sistema activo y vigilando</string>
+
+    <string name="volver">Volver</string>
+    <string name="camaras_en_directo">Cámaras en directo</string>
+    <string name="hacer_foto">Hacer foto</string>
+    <string name="camara_superior">Cámara superior</string>
+    <string name="camara_inferior">Cámara inferior</string>
 
     <string-array name="lista_coches">
         <item>El Champon</item>
