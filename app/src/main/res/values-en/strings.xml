@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">KöVa</string>
+
     <!-- LOGIN / REGISTRO -->
     <string name="correo">Email</string>
     <string name="contrasena">Password</string>
@@ -33,8 +34,8 @@
     <string name="puertas_desbloqueadas">Doors unlocked</string>
     <string name="mensaje_puertas_desbloqueadas">The doors of car “Speedy Azul” have been opened successfully from the app</string>
     <string name="ubicacion_actualizada">Location updated</string>
-    <string name="modo_seguro_activado">Safe mode activated</string>
-    <string name="camara_activada">Camera activated</string>
+    <string name="modo_seguro_activado">Safe mode</string>
+    <string name="camara_activada">Camera on</string>
 
     <!-- AJUSTES -->
     <string name="ajustes">Settings</string>
@@ -63,4 +64,27 @@
     <string name="correo_soporte">support@carsecureapp.com</string>
     <string name="terminos_privacidad">Terms and Privacy</string>
     <string name="descripcion_terminos">Check our usage and data protection policies</string>
+
+    <!-- usar nombres SIN acentos/ñ para las keys -->
+    <string name="camaras">Cámaras</string>
+    <string name="senales">Señales</string>
+    <string name="bateria">Batería</string>
+
+    <string name="home">Inicio</string>
+    <string name="bloqueado">Bloqueado</string>
+    <string name="señales">Señales</string>
+    <string name="batería">Batería</string>
+    <string name="calle">C/de Legazpi, 7, 46730 Gandia,Valencia</string>
+    <string name="champon">EL CHAMPON ESTA CERRADO</string>
+    <string name="wifi">Sistema activo y vigilando</string>
+    <string name="volver">Volver</string>
+    <string name="camaras_en_directo">Cámaras en directo</string>
+    <string name="hacer_foto">Hacer foto</string>
+    <string name="camara_superior">Cámara superior</string>
+    <string name="camara_inferior">Cámara inferior</string>
+    <string-array name="lista_coches">
+        <item>El Champon</item>
+        <item>Speedy Azul</item>
+        <item>Roadster Negro</item>
+    </string-array>
 </resources>
