@@ -1,5 +1,10 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">KöVa</string>
+    <!--    Facebook-->
+
+    <string name="facebook_app_id" tools:ignore="MissingTranslation">859031526463616</string>
+    <string name="fb_login_protocol_scheme" tools:ignore="MissingTranslation">fb859031526463616</string>
+    <string name="facebook_client_token" tools:ignore="MissingTranslation">506bc7ed4f8a20eaea05dc837381b64e</string>
     <!-- LOGIN / REGISTRO -->
     <string name="correo">Correo electrónico</string>
     <string name="contrasena">Contraseña</string>
@@ -10,9 +15,11 @@
     <string name="redireccion_registrarse">¿Aún no tienes cuenta? Regístrate</string>
     <string name="redireccion_entrar">¿Ya tienes cuenta? Inicia sesión</string>
     <string name="olvidado_contrasena">He olvidado mi contraseña</string>
+    <string name="default_web_client_id">523985247931-do2tpl6e497k2vnkinkd8u2hppbj7kr1.apps.googleusercontent.com</string>
+
 
     <!-- REGISTRAR / MIS COCHES -->
-    <string name="mensaje_registro_coche">Es necesario que registres un coche para acceder a la aplicación</string>
+    <string name="mensaje_registro_coche">Es necesario registrar un coche para acceder a la aplicación</string>
     <string name="marca">Marca</string>
     <string name="modelo">Modelo</string>
     <string name="matricula">Matrícula</string>
@@ -63,17 +70,43 @@
     <string name="correo_soporte">support@carsecureapp.com</string>
     <string name="terminos_privacidad">Términos y privacidad</string>
     <string name="descripcion_terminos">Consulta nuestras políticas de uso y protección de datos</string>
-
-    <string name="lista_coches">Lista de coches</string>
-
     <!-- usar nombres SIN acentos/ñ para las keys -->
     <string name="camaras">Cámaras</string>
     <string name="senales">Señales</string>
     <string name="bateria">Batería</string>
 
-
     <string name="home">Inicio</string>
     <string name="bloqueado">Bloqueado</string>
     <string name="señales">Señales</string>
     <string name="batería">Batería</string>
+    <string name="calle">C/de Legazpi, 7, 46730 Gandia,Valencia</string>
+    <string name="champon">EL CHAMPON ESTA CERRADO</string>
+    <string name="wifi">Sistema activo y vigilando</string>
+
+    <string name="volver">Volver</string>
+    <string name="camaras_en_directo">Cámaras en directo</string>
+    <string name="hacer_foto">Hacer foto</string>
+    <string name="camara_superior">Cámara superior</string>
+    <string name="camara_inferior">Cámara inferior</string>
+    <string name="toggle_notification">Activar o desactivar notificación</string>
+    <string name="nventana_rota">Ventana rota</string>
+    <string name="ncamara_activada">Cámara activada</string>
+    <string name="title_notificaciones">Notificaciones</string>
+    <string name="back">Volver</string>
+    <string name="elige_alertas">Elige qué tipo de alertas quieres recibir:</string>
+    <string name="puertas_abiertas">Puertas abiertas</string>
+    <string name="movimiento_detectado">Movimiento detectado</string>
+    <string name="sonido_o_luces">Sonido o luces de aviso</string>
+    <string name="cambios_ubicacion">Cambios de ubicación</string>
+    <string name="apertura_puertas">Apertura de puertas</string>
+
+    <string-array name="lista_coches">
+        <item>El Champon</item>
+        <item>Speedy Azul</item>
+        <item>Roadster Negro</item>
+    </string-array>
+
+
+
+
 </resources>

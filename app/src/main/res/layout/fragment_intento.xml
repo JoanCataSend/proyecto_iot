@@ -6,17 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fondo_claro"
-    tools:context=".ui.home.HomeActivity">
+    tools:context=".MainActivity">
 
-    <!-- Contenido scrollable -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:padding="24dp"
-        android:clipToPadding="false">
+        android:paddingBottom="80dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:id="@+id/content"
@@ -24,108 +24,70 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Marca / título superior -->
-            <LinearLayout
-                android:id="@+id/headerBrand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="16dp">
-
-                <TextView
-                    android:id="@+id/tvBrand"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="KöVa"
-                    android:textColor="@color/icono_normal"
-                    android:fontFamily="@font/montserrat_bold_ttf"
-                    android:textSize="26sp"/>
-            </LinearLayout>
-
-            <!-- Selector de coche (pill) -->
             <LinearLayout
                 android:id="@+id/vehicleSelector"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="16dp"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/bg_pill_soft"
-                android:layout_marginBottom="20dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
 
                 <ImageView
                     android:layout_width="22dp"
                     android:layout_height="22dp"
+                    android:contentDescription="@string/nombre_coche"
                     android:src="@drawable/ic_escudo"
-                    app:tint="@color/icono_normal"
-                    android:contentDescription="@string/nombre_coche" />
+                    app:tint="@color/icono_normal" />
 
-                <TextView
-                    android:id="@+id/tvSelectedCar"
+                <Spinner
+                    android:id="@+id/spinnerCars"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginStart="10dp"
-                    android:text="@string/nombre_coche"
-                    android:textColor="@color/icono_normal"
-                    android:textSize="18sp"
-                    android:fontFamily="@font/roboto_regular_ttf"
-                    tools:text="El Champon" />
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:popupBackground="@android:color/white" />
 
                 <ImageView
                     android:layout_width="18dp"
                     android:layout_height="18dp"
-                    android:src="@drawable/ic_flecha"
-                    app:tint="@color/icono_normal"
-                    android:contentDescription="@string/lista_coches" />
+                    android:contentDescription="@array/lista_coches"
+                    android:src="@drawable/ic_flecha_abajo"
+                    app:tint="@color/icono_normal" />
             </LinearLayout>
 
-            <!-- Imagen del coche dentro de “card” blanca -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardCarImage"
+            <ImageView
+                android:id="@+id/ivCar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                app:cardUseCompatPadding="true"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp"
-                android:foreground="?attr/selectableItemBackground">
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/nombre_coche"
+                android:padding="16dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/coche_naranja" />
 
-                <ImageView
-                    android:id="@+id/ivCar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:contentDescription="@string/nombre_coche"
-                    android:src="@drawable/coche_naranja"
-                    android:padding="16dp"/>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Estado principal (headline) -->
             <TextView
                 android:id="@+id/tvMainState"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:textColor="@color/texto_oscuro"
-                android:textSize="28sp"
+                android:layout_marginBottom="15dp"
                 android:fontFamily="@font/montserrat_bold_ttf"
-                tools:text="El Champon está cerrado"/>
+                android:gravity="center"
+                android:text="@string/champon"
+                android:textColor="@color/texto_oscuro"
+                android:textSize="25sp"
+                android:textStyle="bold"/>
 
-            <!-- Cuatro acciones redondas -->
             <LinearLayout
                 android:id="@+id/actionsRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginBottom="16dp"
                 android:gravity="center"
-                android:layout_marginBottom="20dp">
+                android:orientation="horizontal">
 
-                <!-- Reutilizo el mismo patrón 4 veces -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -134,63 +96,65 @@
                     android:orientation="vertical">
 
                     <FrameLayout
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
-                        android:background="@drawable/bg_circle_soft"
-                        android:foreground="?attr/selectableItemBackgroundBorderless"
-                        android:clipToOutline="true">
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/bg_circle_rojo"
+                        android:clipToOutline="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless">
 
                         <ImageView
                             android:id="@+id/ivLock"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:padding="18dp"
+                            android:contentDescription="@string/bloqueado"
+                            android:padding="16dp"
                             android:src="@drawable/ic_candado_cerrado"
-                            app:tint="@color/icono_normal"
-                            android:contentDescription="@string/bloqueado"/>
+                            app:tint="@color/error" />
                     </FrameLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="4dp"
                         android:text="@string/bloqueado"
                         android:textColor="@color/texto_oscuro"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/layoutCamaras"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/bloqueado"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
 
                     <FrameLayout
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
                         android:background="@drawable/bg_circle_soft"
-                        android:foreground="?attr/selectableItemBackgroundBorderless"
                         android:clipToOutline="true">
 
                         <ImageView
                             android:id="@+id/ivCameras"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:padding="18dp"
+                            android:contentDescription="@string/camara_activada"
+                            android:padding="16dp"
                             android:src="@drawable/ic_camara"
-                            app:tint="@color/icono_normal"
-                            android:contentDescription="@string/camara_activada"/>
+                            app:tint="@color/icono_normal" />
                     </FrameLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="4dp"
                         android:text="@string/camara_activada"
                         android:textColor="@color/texto_oscuro"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -201,29 +165,29 @@
                     android:orientation="vertical">
 
                     <FrameLayout
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
                         android:background="@drawable/bg_circle_soft"
-                        android:foreground="?attr/selectableItemBackgroundBorderless"
-                        android:clipToOutline="true">
+                        android:clipToOutline="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless">
 
                         <ImageView
                             android:id="@+id/ivSignals"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:padding="18dp"
+                            android:contentDescription="@string/senales"
+                            android:padding="16dp"
                             android:src="@drawable/ic_sonido"
-                            app:tint="@color/icono_normal"
-                            android:contentDescription="@string/señales"/>
+                            app:tint="@color/icono_normal" />
                     </FrameLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/señales"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/senales"
                         android:textColor="@color/texto_oscuro"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -234,33 +198,32 @@
                     android:orientation="vertical">
 
                     <FrameLayout
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
-                        android:background="@drawable/bg_circle_soft"
-                        android:foreground="?attr/selectableItemBackgroundBorderless"
-                        android:clipToOutline="true">
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/bg_circle_verde"
+                        android:clipToOutline="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless">
 
                         <ImageView
                             android:id="@+id/ivSafe"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:padding="18dp"
+                            android:contentDescription="@string/modo_seguro_activado"
+                            android:padding="16dp"
                             android:src="@drawable/ic_escudo"
-                            app:tint="@color/icono_normal"
-                            android:contentDescription="@string/modo_seguro_activado"/>
+                            app:tint="#0B6200" />
                     </FrameLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="4dp"
                         android:text="@string/modo_seguro_activado"
                         android:textColor="@color/texto_oscuro"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Dirección (pill) -->
             <LinearLayout
                 android:id="@+id/addressPill"
                 android:layout_width="match_parent"
@@ -285,10 +248,9 @@
                     android:layout_marginStart="12dp"
                     android:textColor="@color/icono_normal"
                     android:textSize="16sp"
-                    tools:text="C/ Jardines de Alejandra, Toledo"/>
+                    android:text="@string/calle"/>
             </LinearLayout>
 
-            <!-- Estado del sistema (2 bloques) -->
             <LinearLayout
                 android:id="@+id/systemState"
                 android:layout_width="match_parent"
@@ -296,7 +258,6 @@
                 android:orientation="vertical"
                 android:layout_marginBottom="100dp">
 
-                <!-- Bloque 1 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -334,14 +295,12 @@
                             android:textSize="14sp"/>
                     </LinearLayout>
 
-                    <!-- Punto verde de estado -->
                     <View
                         android:layout_width="10dp"
                         android:layout_height="10dp"
                         android:background="@drawable/bg_dot_ok"/>
                 </LinearLayout>
 
-                <!-- Bloque 2 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -379,21 +338,6 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:id="@+id/bottomBar"
-                android:layout_width="match_parent"
-                android:layout_height="78dp"
-                android:layout_gravity="bottom"
-                android:background="@android:color/transparent"
-                android:paddingHorizontal="24dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="16dp"
-                app:labelVisibilityMode="labeled"
-                app:menu="@menu/menu_bottom" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <!-- Bottom navigation (no funcional) -->
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

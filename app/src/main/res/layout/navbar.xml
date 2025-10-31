@@ -1,74 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navbar"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="52dp"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:background="@drawable/bg_rectangulo_soft"
+    android:elevation="10dp"
+    android:clipToPadding="false">
 
-    <LinearLayout
-        android:id="@+id/navbar"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal"
-        android:background="@drawable/bg_rectangulo_soft"
-        android:weightSum="4"
-        android:elevation="8dp">
+    <ImageButton
+        android:id="@+id/nav_home"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_casa"
+        app:tint="@color/fondo_oscuro" />
 
-        <!-- Home -->
-        <ImageButton
-            android:id="@+id/nav_home"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_casa"
-            android:contentDescription="@string/home"
-            app:tint="@color/fondo_oscuro"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:padding="25dp" />
+    <ImageButton
+        android:id="@+id/nav_car"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_coche"
+        app:tint="@color/fondo_oscuro"/>
 
-        <!-- Coche -->
-        <ImageButton
-            android:id="@+id/nav_car"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_coche"
-            app:tint="@color/fondo_oscuro"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:padding="25dp" />
+    <ImageButton
+        android:id="@+id/nav_notifications"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_notificacion1"
+        app:tint="@color/fondo_oscuro"/>
 
-        <!-- Notificaciones -->
-        <ImageButton
-            android:id="@+id/nav_notifications"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_notificacion1"
-            app:tint="@color/fondo_oscuro"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:padding="25dp" />
-
-        <!-- Ajustes -->
-        <ImageButton
-            android:id="@+id/nav_settings"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_config"
-            android:contentDescription="@string/ajustes"
-            app:tint="@color/fondo_oscuro"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:padding="25dp" />
-
-    </LinearLayout>
-</FrameLayout>
-
+    <ImageButton
+        android:id="@+id/nav_settings"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_config"
+        app:tint="@color/fondo_oscuro"/>
+</LinearLayout>
