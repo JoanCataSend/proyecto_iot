@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fondo_claro"
@@ -25,15 +26,16 @@
         android:id="@+id/tvTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/camaras_en_directo"
-        android:textColor="@color/icono_normal"
-        android:textSize="26sp"
-        android:textStyle="bold"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/montserrat_bold_ttf"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/camaras_en_directo"
+
+        android:textColor="@color/icono_normal"
+        android:textSize="22dp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Panel cámara 1 -->
     <FrameLayout
@@ -45,14 +47,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintDimensionRatio="16:9"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="24dp">
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/hqdefault"
+            android:layout_height="211dp"
+            android:contentDescription="@string/camara_superior"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/camara_superior" />
+            android:src="@drawable/hqdefault" />
     </FrameLayout>
 
     <!-- Panel cámara 2 -->
@@ -60,21 +62,19 @@
         android:id="@+id/panelCam2"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="24dp"
         android:contentDescription="@string/camara_inferior"
-        app:layout_constraintTop_toBottomOf="@id/panelCam1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnHacerFoto"
         app:layout_constraintDimensionRatio="16:9"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/panelCam1">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/hpdefault2"
+            android:contentDescription="@string/camara_inferior"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/camara_inferior" />
+            android:src="@drawable/hpdefault2" />
     </FrameLayout>
 
     <!-- Botón inferior -->
