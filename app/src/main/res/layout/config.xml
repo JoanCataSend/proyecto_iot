@@ -13,9 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="Ajustes"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="@color/icono_normal"
+        style="@style/Seccion"
         app:layout_constraintStart_toStartOf="@+id/profile_card"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,7 +42,6 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/ic_perfil2"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:padding="10dp"
@@ -61,25 +58,32 @@
                 android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_bold"
                 android:text="Sofía Ramírez"
-                android:textStyle="bold"
-                android:textSize="18sp" />
+                android:textColor="@color/icono_normal"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/montserrat_bold"
                 android:text="sofia.ramirez@gmail.com"
+                android:textColor="@color/icono_normal"
                 android:textSize="14sp"
-                android:textColor="#777" />
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/tv_user_type"
+                android:layout_marginTop="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Usuario estándar - 3 coches"
-                android:textSize="13sp"
-                android:textColor="#777" />
+                android:textColor="@color/icono_normal"
+                android:textSize="12dp"
+                 />
         </LinearLayout>
     </LinearLayout>
 

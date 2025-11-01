@@ -27,12 +27,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/montserrat_bold_ttf"
         android:text="@string/camaras_en_directo"
-
-        android:textColor="@color/icono_normal"
-        android:textSize="22dp"
-        android:textStyle="bold"
+        style="@style/Seccion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
