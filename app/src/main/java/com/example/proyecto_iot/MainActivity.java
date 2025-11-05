@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         EdgeToEdge.enable(this);
-        setContentView(R.layout.intento);
+        setContentView(R.layout.ubicacion);
 
         // Ajuste de los márgenes del sistema (status bar / nav bar)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
@@ -56,6 +56,13 @@ public class MainActivity extends AppCompatActivity {
 
         // ⚙️ Botón "Ajustes"
         ImageButton navSettings = findViewById(R.id.nav_settings);
+        if (navSettings != null) {
+            navSettings.setOnClickListener(v ->
+                    startActivity(new Intent(MainActivity.this, ConfigActivity.class))
+            );
+        }
+
+        ImageButton navCars = findViewById(R.id.nav_cars);
         if (navSettings != null) {
             navSettings.setOnClickListener(v ->
                     startActivity(new Intent(MainActivity.this, ConfigActivity.class))
