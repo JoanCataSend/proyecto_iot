@@ -23,13 +23,13 @@
     <!-- Título de las páginas -->
     <style name="Seccion">
         <item name="fontFamily">@font/montserrat_bold</item>
-        <item name="android:textSize">20dp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/icono_normal</item>
     </style>
 
     <style name="DescripciónActividad">
         <item name="fontFamily">@font/roboto_regular</item>
-        <item name="android:textSize">14dp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/texto_oscuro</item>
     </style>
 

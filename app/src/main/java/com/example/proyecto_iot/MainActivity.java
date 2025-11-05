@@ -2,6 +2,7 @@ package com.example.proyecto_iot;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -13,14 +14,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         EdgeToEdge.enable(this);
-        setContentView(R.layout.ubicacion);
+        setContentView(R.layout.intento);
 
         // Ajuste de los márgenes del sistema (status bar / nav bar)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
@@ -28,14 +31,6 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        // ← Botón "Volver"
-        ImageButton btnBack = findViewById(R.id.btnBack);
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
-            // o el clásico:
-            // btnBack.setOnClickListener(v -> onBackPressed());
-        }
 
         // Spinner de coches
         Spinner spinner = findViewById(R.id.spinnerCars);
@@ -54,19 +49,38 @@ public class MainActivity extends AppCompatActivity {
             );
         }
 
-        // ⚙️ Botón "Ajustes"
-        ImageButton navSettings = findViewById(R.id.nav_settings);
-        if (navSettings != null) {
-            navSettings.setOnClickListener(v ->
-                    startActivity(new Intent(MainActivity.this, ConfigActivity.class))
-            );
-        }
+        // --- Botones del navbar ---
 
-        ImageButton navCars = findViewById(R.id.nav_cars);
-        if (navSettings != null) {
-            navSettings.setOnClickListener(v ->
-                    startActivity(new Intent(MainActivity.this, ConfigActivity.class))
-            );
-        }
+            // Home
+            ImageButton navHome = findViewById(R.id.nav_home);
+            if (navHome != null) {
+                navHome.setOnClickListener(v ->
+                        startActivity(new Intent(MainActivity.this, MainActivity.class))
+                );
+            }
+
+            // Coches y ubicación
+            ImageButton navCars = findViewById(R.id.nav_cars);
+            if (navCars != null) {
+                navCars.setOnClickListener(v ->
+                        startActivity(new Intent(MainActivity.this, Ubicacion.class))
+                );
+            }
+
+            // Notificaciones
+            ImageButton navNotificaciones = findViewById(R.id.nav_notifications);
+            if (navNotificaciones != null) {
+                navNotificaciones.setOnClickListener(v ->
+                        startActivity(new Intent(MainActivity.this, ConfigActivity.class))
+                );
+            }
+
+            // Configuración
+            ImageButton navSettings = findViewById(R.id.nav_settings);
+            if (navSettings != null) {
+                navSettings.setOnClickListener(v ->
+                        startActivity(new Intent(MainActivity.this, ConfigActivity.class))
+                );
+            }
     }
 }

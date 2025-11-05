@@ -49,7 +49,7 @@ dependencies {
 
     implementation ("com.google.firebase:firebase-auth")
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
-
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
 
 
 
