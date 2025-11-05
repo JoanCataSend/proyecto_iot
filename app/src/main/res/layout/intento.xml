@@ -95,7 +95,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
-                android:fontFamily="@font/montserrat_bold_ttf"
+                android:fontFamily="@font/montserrat_bold"
                 android:gravity="center"
                 android:text="@string/champon"
                 android:textColor="@color/texto_oscuro"
@@ -233,8 +233,8 @@
                             android:layout_height="match_parent"
                             android:contentDescription="@string/modo_seguro_activado"
                             android:padding="16dp"
-                            android:src="@drawable/ic_escudo"
-                            app:tint="#0B6200" />
+                            android:src="@drawable/ic_escudo_bien"
+                            app:tint="#72C867" />
                     </FrameLayout>
 
                     <TextView
