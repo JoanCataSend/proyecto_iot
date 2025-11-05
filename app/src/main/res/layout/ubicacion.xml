@@ -66,18 +66,55 @@
     <LinearLayout
         android:id="@+id/panel_desplegable"
         android:layout_width="match_parent"
-        android:layout_height="131dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/desplegable_navbar"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:paddingTop="0dp"
+        android:layout_marginBottom="60dp"
+        android:translationY="-38dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
+
         <View
-            android:layout_width="60dp"
-            android:layout_height="4dp"
+            android:layout_width="95dp"
+            android:layout_height="3dp"
             android:layout_gravity="center"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="15dp"
             android:background="@color/boton_oscuro" />
+
+        <!-- Título del panel -->
+        <TextView
+            android:id="@+id/panel_titulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/titulo_mis_coches"
+            style="@style/Seccion"
+            android:layout_marginTop="17dp"
+            />
+
+        <!-- Descripcion del panel -->
+        <TextView
+            android:id="@+id/panel_descrip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/descripcion_mis_coches"
+            android:textColor="@color/icono_normal"
+            style="@style/DescripciónActividad"
+            android:layout_marginTop="8dp"
+            />
+
+        <!-- ListView para los coches -->
+        <ListView
+            android:id="@+id/listViewCoches"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/icono_normal"
+            android:dividerHeight="1dp"
+            android:layout_marginTop="14dp"
+            />
+
 
     </LinearLayout>
 

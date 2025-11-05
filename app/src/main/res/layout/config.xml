@@ -298,5 +298,8 @@
         layout="@layout/navbar"
         android:id="@+id/navbar_include"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
