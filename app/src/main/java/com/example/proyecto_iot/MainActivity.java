@@ -2,7 +2,6 @@ package com.example.proyecto_iot;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -14,18 +13,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends NavBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         EdgeToEdge.enable(this);
         setContentView(R.layout.intento);
 
-        // Ajuste de los márgenes del sistema (status bar / nav bar)
+        inicializarNavbar(R.id.nav_home);
+
+        // Ajuste de los márgenes del sistema
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -48,39 +45,5 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(MainActivity.this, CamarasActivity.class))
             );
         }
-
-        // --- Botones del navbar ---
-
-            // Home
-            ImageButton navHome = findViewById(R.id.nav_home);
-            if (navHome != null) {
-                navHome.setOnClickListener(v ->
-                        startActivity(new Intent(MainActivity.this, MainActivity.class))
-                );
-            }
-
-            // Coches y ubicación
-            ImageButton navCars = findViewById(R.id.nav_cars);
-            if (navCars != null) {
-                navCars.setOnClickListener(v ->
-                        startActivity(new Intent(MainActivity.this, Ubicacion.class))
-                );
-            }
-
-            // Notificaciones
-            ImageButton navNotificaciones = findViewById(R.id.nav_notifications);
-            if (navNotificaciones != null) {
-                navNotificaciones.setOnClickListener(v ->
-                        startActivity(new Intent(MainActivity.this, ConfigActivity.class))
-                );
-            }
-
-            // Configuración
-            ImageButton navSettings = findViewById(R.id.nav_settings);
-            if (navSettings != null) {
-                navSettings.setOnClickListener(v ->
-                        startActivity(new Intent(MainActivity.this, ConfigActivity.class))
-                );
-            }
     }
 }

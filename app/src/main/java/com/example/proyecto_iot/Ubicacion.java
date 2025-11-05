@@ -25,7 +25,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-public class Ubicacion extends AppCompatActivity implements OnMapReadyCallback {
+public class Ubicacion extends NavBarActivity implements OnMapReadyCallback {
 
     // Desplegable ubicación
     BottomSheetBehavior<View> bottomSheetBehavior;
@@ -38,6 +38,8 @@ public class Ubicacion extends AppCompatActivity implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.ubicacion);
+
+        inicializarNavbar(R.id.nav_cars);
 
         // Ajuste de los márgenes del sistema
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {

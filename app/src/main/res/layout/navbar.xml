@@ -16,33 +16,34 @@
         android:elevation="00dp">
 
         <!-- Home -->
-
-        <!-- Coche -->
         <ImageButton
             android:id="@+id/nav_home"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+
             android:adjustViewBounds="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/home"
-            android:padding="25dp"
+            android:padding="10dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_casa"
-            app:tint="@color/icono_normal" />
+            android:src="@drawable/ic_home_selector"
+            />
 
+        <!-- Coche -->
         <ImageButton
             android:id="@+id/nav_cars"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+
+            android:adjustViewBounds="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/titulo_ubicacion"
-            android:src="@drawable/ic_coche"
-            app:tint="@color/icono_normal"
-            android:adjustViewBounds="true"
+            android:padding="10dp"
             android:scaleType="fitCenter"
-            android:padding="25dp" />
+            android:src="@drawable/ic_coche_selector"
+            />
 
         <!-- Notificaciones -->
 
@@ -52,26 +53,27 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+
             android:adjustViewBounds="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/notificaciones_ajustes"
-            android:fillColor="#FFF9C4"
-            android:padding="25dp"
+            android:padding="10dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_notificaciones1"/>
+            android:src="@drawable/ic_notificaciones_selector"/>
 
         <ImageButton
             android:id="@+id/nav_settings"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_config"
-            android:contentDescription="@string/ajustes"
-            app:tint="@color/icono_normal"
+
             android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/ajustes"
+            android:padding="10dp"
             android:scaleType="fitCenter"
-            android:padding="25dp" />
+            android:src="@drawable/ic_config_selector"
+            />
 
     </LinearLayout>
 </FrameLayout>
