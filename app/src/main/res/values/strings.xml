@@ -95,6 +95,7 @@
         <item>Roadster Negro</item>
     </string-array>
 
+    <!-- Clave para el mapa -->
     <string name="google_maps_key">AIzaSyBorAMlTA5n5EAt8l52ThRRZTLXoCIdJ2E</string>
 
 </resources>
