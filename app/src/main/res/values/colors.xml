@@ -10,8 +10,8 @@
     <color name="texto_secundario">#2DD6E1</color>
 
     <!-- Estados / alertas -->
-    <color name="error">#FF4E50</color>
-    <color name="bien">#63FF4E</color>
+    <color name="rojo">#FF4E50</color>
+    <color name="verde">#72C867</color>
     <color name="aviso">#F9C80E</color>
 
     <!-- Iconos -->

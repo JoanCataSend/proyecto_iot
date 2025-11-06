@@ -69,5 +69,7 @@
             android:theme="@style/Theme.Proyecto_iot" />
 
         <activity android:name=".Ubicacion" />
+
+        <activity android:name=".EditarCocheActivity" />
     </application>
 </manifest>

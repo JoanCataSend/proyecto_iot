@@ -33,11 +33,9 @@
             android:fontFamily="@font/montserrat_bold"
             android:text="@string/titulo_ubicacion"
             android:textColor="@color/icono_normal"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logo" />
+            android:textSize="20sp" />
 
-        <!-- Descripcion -->
+        <!-- Descripción -->
         <TextView
             android:id="@+id/descripcion"
             style="@style/DescripciónActividad"
@@ -48,9 +46,7 @@
             android:layout_marginEnd="30dp"
             android:fontFamily="@font/roboto_regular"
             android:text="@string/descripcion_ubicacion"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/titulo"
-            app:layout_constraintTop_toBottomOf="@+id/titulo" />
+            android:textColor="@color/icono_normal"/>
 
         <!-- Mapa -->
         <androidx.fragment.app.FragmentContainerView
@@ -62,7 +58,7 @@
             android:layout_marginStart="30dp"/>
     </FrameLayout>
 
-    <!-- Desplegable hacia arriba -->
+    <!-- Panel desplegable -->
     <LinearLayout
         android:id="@+id/panel_desplegable"
         android:layout_width="match_parent"
@@ -76,7 +72,6 @@
         android:translationY="-38dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-
         <View
             android:layout_width="95dp"
             android:layout_height="3dp"
@@ -84,17 +79,14 @@
             android:layout_marginTop="15dp"
             android:background="@color/boton_oscuro" />
 
-        <!-- Título del panel -->
         <TextView
             android:id="@+id/panel_titulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/titulo_mis_coches"
             style="@style/Seccion"
-            android:layout_marginTop="17dp"
-            />
+            android:layout_marginTop="17dp"/>
 
-        <!-- Descripcion del panel -->
         <TextView
             android:id="@+id/panel_descrip"
             android:layout_width="wrap_content"
@@ -102,20 +94,17 @@
             android:text="@string/descripcion_mis_coches"
             android:textColor="@color/icono_normal"
             style="@style/DescripciónActividad"
-            android:layout_marginTop="8dp"
-            />
+            android:layout_marginTop="8dp"/>
 
-        <!-- ListView para los coches -->
+        <!-- ListView vacío, los items se llenan con adapter -->
         <ListView
             android:id="@+id/listViewCoches"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="@color/icono_normal"
-            android:dividerHeight="1dp"
+            android:divider="@null"
+            android:dividerHeight="10dp"
             android:layout_marginTop="14dp"
             />
-
-
     </LinearLayout>
 
     <!-- Nav bar -->

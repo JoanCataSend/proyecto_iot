@@ -1,20 +1,18 @@
 package com.example.proyecto_iot;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,6 +21,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+
+import java.util.ArrayList;
 
 public class Ubicacion extends NavBarActivity implements OnMapReadyCallback {
 
@@ -35,47 +35,31 @@ public class Ubicacion extends NavBarActivity implements OnMapReadyCallback {
         EdgeToEdge.enable(this);
         setContentView(R.layout.ubicacion);
 
-        // Inicializar navbar
         inicializarNavbar(R.id.nav_cars);
-
-        // Ajuste de los márgenes del sistema
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         // --- PANEL DESPLEGABLE ---
         View panel = findViewById(R.id.panel_desplegable);
         bottomSheetBehavior = BottomSheetBehavior.from(panel);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN); // empieza cerrado
-        bottomSheetBehavior.setPeekHeight(50); // altura visible del “asa”
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        bottomSheetBehavior.setPeekHeight(50);
 
-        // ListView de coches
+        // --- LISTA DE COCHES ---
         ListView listViewCoches = findViewById(R.id.listViewCoches);
-        String[] coches = getResources().getStringArray(R.array.lista_coches);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, coches);
-        listViewCoches.setAdapter(adapter);
 
-        // Clics en coches
-        listViewCoches.setOnItemClickListener((parent, view, position, id) -> {
-            String cocheSeleccionado = coches[position];
-            Toast.makeText(this, "Has pulsado: " + cocheSeleccionado, Toast.LENGTH_SHORT).show();
-        });
+        // Datos de ejemplo: nombre y ubicación
+        ArrayList<Coche> listaCoches = new ArrayList<>();
+        listaCoches.add(new Coche("Mi coche", "Calle Ejemplo 123"));
+        listaCoches.add(new Coche("Coche rojo", "Av. Valencia 45"));
+        listaCoches.add(new Coche("Coche azul", "Calle Mayor 12"));
+
+        // Adapter personalizado
+        CocheAdapter adapter = new CocheAdapter(listaCoches);
+        listViewCoches.setAdapter(adapter);
 
         // --- BOTÓN VOLVER ---
         ImageButton btnBack = findViewById(R.id.btnBack);
         if (btnBack != null) {
             btnBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
-        }
-
-        // --- BOTÓN AJUSTES ---
-        ImageButton navSettings = findViewById(R.id.nav_settings);
-        if (navSettings != null) {
-            navSettings.setOnClickListener(v ->
-                    startActivity(new Intent(Ubicacion.this, ConfigActivity.class))
-            );
         }
 
         // --- MAPA ---
@@ -93,10 +77,66 @@ public class Ubicacion extends NavBarActivity implements OnMapReadyCallback {
         LatLng coche = new LatLng(39.4699, -0.3763);
         mMap.addMarker(new MarkerOptions().position(coche).title("Mi coche"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coche, 14));
+    }
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
+    // Clase para los datos de cada coche
+    private static class Coche {
+        String nombre;
+        String ubicacion;
+
+        Coche(String nombre, String ubicacion) {
+            this.nombre = nombre;
+            this.ubicacion = ubicacion;
+        }
+    }
+
+    // Adapter para la lista de coches
+    private class CocheAdapter extends BaseAdapter {
+        private final ArrayList<Coche> coches;
+
+        CocheAdapter(ArrayList<Coche> coches) {
+            this.coches = coches;
+        }
+
+        @Override
+        public int getCount() {
+            return coches.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return coches.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(Ubicacion.this)
+                        .inflate(R.layout.item_coche, parent, false);
+            }
+
+            Coche coche = coches.get(position);
+
+            TextView nombre = convertView.findViewById(R.id.nombre_coche);
+            TextView ubicacion = convertView.findViewById(R.id.ubicacion_coche);
+            ImageButton btnEditar = convertView.findViewById(R.id.btn_editar_coche);
+
+            nombre.setText(coche.nombre);
+            ubicacion.setText(coche.ubicacion);
+
+            // Click en el lápiz
+            btnEditar.setOnClickListener(v -> {
+                Intent intent = new Intent(Ubicacion.this, EditarCocheActivity.class);
+                intent.putExtra("nombreCoche", coche.nombre);
+                startActivity(intent);
+            });
+
+            return convertView;
         }
     }
 }

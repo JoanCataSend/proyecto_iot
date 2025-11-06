@@ -25,12 +25,12 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/montserrat_bold_ttf"
-        android:text="Correo electrónico"
-        android:textColor="@color/icono_normal"
+        android:text="@string/correo"
         app:layout_constraintTop_toBottomOf="@id/textTitle"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="32dp" />
+        android:layout_marginTop="32dp"
+        style="@style/TituloLabel"
+        />
 
     <!-- Campo: correo -->
     <EditText
@@ -50,12 +50,12 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/montserrat_bold_ttf"
-        android:text="Contraseña"
-        android:textColor="@color/icono_normal"
+        android:text="@string/contrasena"
         app:layout_constraintTop_toBottomOf="@id/editTextText"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        style="@style/TituloLabel"
+        />
 
     <!-- Campo: contraseña -->
     <EditText
@@ -89,7 +89,7 @@
         android:layout_height="40dp"
         android:layout_marginTop="12dp"
         android:background="#00FFFFFF"
-        android:fontFamily="@font/montserrat_bold_ttf"
+        android:fontFamily="@font/roboto_regular"
         android:text="¿Aún no tienes cuenta? Regístrate"
         android:textColor="@color/icono_normal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -103,7 +103,7 @@
         android:layout_height="36dp"
         android:layout_marginTop="5dp"
         android:background="#00FFFFFF"
-        android:fontFamily="@font/montserrat_bold_ttf"
+        android:fontFamily="@font/roboto_regular"
         android:text="He olvidado mi contraseña"
         android:textColor="@color/icono_normal"
         app:layout_constraintEnd_toEndOf="parent"

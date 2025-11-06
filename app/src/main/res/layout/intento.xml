@@ -131,7 +131,7 @@
                             android:contentDescription="@string/bloqueado"
                             android:padding="16dp"
                             android:src="@drawable/ic_candado_cerrado"
-                            app:tint="@color/error" />
+                            app:tint="@color/rojo" />
                     </FrameLayout>
 
                     <TextView
