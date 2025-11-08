@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         navHome.setOnClickListener(v -> replaceFragment(new IntentoFragment(), true));
         navCar.setOnClickListener(v -> replaceFragment(new CarFragment(), true));
-        navNotifications.setOnClickListener(v -> replaceFragment(new NotificationsFragment(), true));
+        navNotifications.setOnClickListener(v -> replaceFragment(new NotificacionesFragment(), true));
         navSettings.setOnClickListener(v -> replaceFragment(new ConfigFragment(), true));
         btnBack.setOnClickListener(v -> handleBack());
     }
