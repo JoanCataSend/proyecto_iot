@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             );
         }
 
-        // ⚙️ Botón "Ajustes"
+        // Botón "Ajustes"
         ImageButton navSettings = findViewById(R.id.nav_settings);
         if (navSettings != null) {
             navSettings.setOnClickListener(v ->

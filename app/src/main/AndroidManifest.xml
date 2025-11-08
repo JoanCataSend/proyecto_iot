@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -7,25 +8,28 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_logo_color"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_logo_color_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto_iot">
 
-        <activity android:name=".RegistroCoche" />
-        <activity android:name=".MainActivity" />
-
-        <!-- modificado para que se abra el login siempre -->
+        <!-- SPLASH: ahora es el launcher -->
         <activity
-            android:name=".LoginActivity"
-            android:exported="true">
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Proyecto_iot.Splash">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
+        <!-- Login ya NO es launcher -->
+        <activity android:name=".LoginActivity" android:exported="true" />
+
+        <activity android:name=".RegistroCoche" />
+        <activity android:name=".MainActivity" />
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -43,21 +47,18 @@
 
         <activity android:name=".RegisterActivity" />
         <activity android:name=".ForgotPasswordActivity" />
-
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
-        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
-
         <activity
             android:name=".CamarasActivity"
             android:exported="false"
             android:label="@string/camara_activada"
             android:theme="@style/Theme.Proyecto_iot" />
-
-        <!-- ➕ NUEVO: Activity para el layout config.xml -->
         <activity
             android:name=".ConfigActivity"
             android:exported="false"
             android:label="@string/ajustes"
             android:theme="@style/Theme.Proyecto_iot" />
+
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data android:name="com.facebook.sdk.ClientToken"    android:value="@string/facebook_client_token"/>
     </application>
 </manifest>
