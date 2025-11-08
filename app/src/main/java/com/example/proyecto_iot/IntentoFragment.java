@@ -126,7 +126,7 @@ public class IntentoFragment extends Fragment {
         } else {
             flLock.setBackgroundResource(R.drawable.bg_circle_verde);
             ivLock.setImageResource(R.drawable.ic_candado_abierto);
-            ivLock.setImageTintList(ContextCompat.getColorStateList(requireContext(), R.color.bien));
+            ivLock.setImageTintList(ContextCompat.getColorStateList(requireContext(), R.color.texto_oscuro));
             tvLockState.setText(R.string.puertas_abiertas);
         }
     }
