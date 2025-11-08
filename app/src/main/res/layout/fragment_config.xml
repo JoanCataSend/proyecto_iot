@@ -168,6 +168,7 @@
                     android:background="#DDDDDD" />
 
                 <LinearLayout
+                    android:id="@+id/layout_notificaciones"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="32dp"
@@ -175,7 +176,10 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingHorizontal="6dp"
-                    android:paddingVertical="14dp">
+                    android:paddingVertical="14dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="22dp"

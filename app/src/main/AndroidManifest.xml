@@ -54,5 +54,9 @@
     <activity android:name="com.example.proyecto_iot.ConfigActivity"
         android:exported="false"
         android:label="@string/ajustes"/>
-</application>
+        <activity
+            android:name=".ConfigNotificacionesActivity"
+            android:exported="false" />
+
+    </application>
     </manifest>

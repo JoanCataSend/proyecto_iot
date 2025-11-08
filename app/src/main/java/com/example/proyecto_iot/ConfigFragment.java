@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -26,6 +27,7 @@ public class ConfigFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        // --- Logout ---
         View logout = view.findViewById(R.id.btn_logout);
         if (logout != null) {
             logout.setOnClickListener(v -> {
@@ -48,6 +50,15 @@ public class ConfigFragment extends Fragment {
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(i);
                 requireActivity().finish();
+            });
+        }
+
+        // --- Navegar a Configuración de Notificaciones ---
+        View layoutNotificaciones = view.findViewById(R.id.layout_notificaciones);
+        if (layoutNotificaciones != null) {
+            layoutNotificaciones.setOnClickListener(v -> {
+                Intent intent = new Intent(requireContext(), ConfigNotificacionesActivity.class);
+                startActivity(intent);
             });
         }
     }
