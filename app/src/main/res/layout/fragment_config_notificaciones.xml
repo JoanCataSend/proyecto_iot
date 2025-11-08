@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     app:dividerColor="@color/lavender_divider" />
 
-                <!-- Fila 1 -->
+                <!-- Fila 1: Ventana rota -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="80dp">
@@ -61,6 +61,7 @@
                         android:id="@+id/swVentanaRota"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:checked="true"
                         app:useMaterialThemeColors="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@id/tvVentanaRota"
@@ -72,7 +73,7 @@
                     android:layout_height="wrap_content"
                     app:dividerColor="@color/lavender_divider" />
 
-                <!-- Fila 2 -->
+                <!-- Fila 2: Puertas abiertas -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="80dp">
@@ -91,6 +92,7 @@
                         android:id="@+id/swPuertasAbiertas"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:checked="true"
                         app:useMaterialThemeColors="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -102,7 +104,7 @@
                     android:layout_height="wrap_content"
                     app:dividerColor="@color/lavender_divider" />
 
-                <!-- Fila 3 -->
+                <!-- Fila 3: Cámara activada -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="80dp">
@@ -121,6 +123,7 @@
                         android:id="@+id/swCamara"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:checked="true"
                         app:useMaterialThemeColors="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -132,7 +135,7 @@
                     android:layout_height="wrap_content"
                     app:dividerColor="@color/lavender_divider" />
 
-                <!-- Fila 4 -->
+                <!-- Fila 4: Movimiento detectado -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="80dp">
@@ -151,6 +154,7 @@
                         android:id="@+id/swMovimiento"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:checked="true"
                         app:useMaterialThemeColors="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -162,7 +166,7 @@
                     android:layout_height="wrap_content"
                     app:dividerColor="@color/lavender_divider" />
 
-                <!-- Fila 5 -->
+                <!-- Fila 5: Sonido o luces -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="80dp">
@@ -181,6 +185,7 @@
                         android:id="@+id/swSonido"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:checked="true"
                         app:useMaterialThemeColors="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -192,7 +197,7 @@
                     android:layout_height="wrap_content"
                     app:dividerColor="@color/lavender_divider" />
 
-                <!-- Fila 6 -->
+                <!-- Fila 6: Cambios de ubicación -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="80dp">
@@ -206,11 +211,11 @@
                         app:layout_constraintEnd_toStartOf="@+id/swUbicacion"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent" />
-
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/swUbicacion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:checked="true"
                         app:useMaterialThemeColors="true"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -221,36 +226,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:dividerColor="@color/lavender_divider" />
-
-                <!-- Fila 7 -->
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGuardarNotificaciones"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:paddingBottom="16dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/apertura_puertas"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/swApertura"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
-
-                    <com.google.android.material.materialswitch.MaterialSwitch
-                        android:id="@+id/swApertura"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:useMaterialThemeColors="true"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="Guardar cambios"
+                    android:enabled="false"
+                    android:alpha="0.5" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- Navbar inferior -->
     <include layout="@layout/navbar" />
 
 </LinearLayout>
