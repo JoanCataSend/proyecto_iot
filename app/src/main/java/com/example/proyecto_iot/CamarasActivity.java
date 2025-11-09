@@ -11,3 +11,4 @@ public class CamarasActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camaras);
     }
 }
+
