@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,9 +15,9 @@
     <!-- Título -->
     <ImageView
         android:id="@+id/imageLogo"
-        android:layout_width="113dp"
-        android:layout_height="81dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="109dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="64dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
@@ -26,7 +31,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="32dp"
         android:fontFamily="@font/montserrat_bold_ttf"
         android:text="Nombre de usuario"
         android:textColor="@color/icono_normal"
@@ -182,3 +187,4 @@
         app:layout_constraintTop_toBottomOf="@id/btnContinuar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>

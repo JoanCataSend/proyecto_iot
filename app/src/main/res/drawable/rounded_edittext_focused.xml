@@ -11,7 +11,7 @@
     <!-- Borde azul (cuando se enfoca) -->
     <stroke
         android:width="2dp"
-        android:color="#090808" />
+        android:color="#111149" />
 
     <padding
         android:left="12dp"

@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,9 +15,9 @@
     <!-- Título -->
     <ImageView
         android:id="@+id/imageLogo"
-        android:layout_width="113dp"
-        android:layout_height="81dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="103dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="74dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
@@ -31,7 +36,7 @@
         android:textColor="@color/icono_normal"
         app:layout_constraintTop_toBottomOf="@id/imageLogo"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="32dp" />
+        android:layout_marginTop="40dp" />
 
     <!-- Campo: correo -->
     <EditText
@@ -151,7 +156,7 @@
         app:layout_constraintTop_toBottomOf="@id/button3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="32dp" />
+        android:layout_marginTop="40dp" />
 
     <!-- Botón X -->
     <com.google.android.material.button.MaterialButton
@@ -169,14 +174,14 @@
         app:layout_constraintTop_toBottomOf="@id/button4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp" />
+        android:layout_marginTop="24dp" />
 
     <!-- Botón Facebook -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button6"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/montserrat_bold_ttf"
         android:text="Inicia sesión con Facebook"
         android:textColor="#FFFFFF"
@@ -190,3 +195,4 @@
         app:layout_constraintTop_toBottomOf="@id/button5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
