@@ -23,13 +23,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <LinearLayout
                 android:id="@+id/vehicleSelector"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginBottom="16dp"
-                android:background="@drawable/bg_pill_soft"
+                android:background="@drawable/bg_paraspiner"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingHorizontal="16dp">
@@ -58,27 +57,17 @@
                     app:tint="@color/icono_normal" />
             </LinearLayout>
 
+            <!-- IMAGEN DEL COCHE SIN CAJA ALREDEDOR -->
             <ImageView
                 android:id="@+id/ivCar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/nombre_coche"
-                android:padding="16dp"
+                android:padding="1dp"
+                android:layout_marginBottom="16dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/coche_naranja" />
-
-            <TextView
-                android:id="@+id/tvMainState"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:fontFamily="@font/montserrat_bold_ttf"
-                android:gravity="center"
-                android:text="@string/champon"
-                android:textColor="@color/texto_oscuro"
-                android:textSize="25sp"
-                android:textStyle="bold"/>
 
             <LinearLayout
                 android:id="@+id/actionsRow"
@@ -88,21 +77,24 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <!-- COLUMNA CANDADO -->
+                <!-- 🔹 COLUMNA CANDADO -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
 
                     <FrameLayout
                         android:id="@+id/flLock"
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:background="@drawable/bg_circle_verde"
+                        android:background="@drawable/bg_card_soft"
                         android:clipToOutline="true"
-                        android:foreground="?attr/selectableItemBackgroundBorderless">
+                        android:elevation="4dp">
 
                         <ImageView
                             android:id="@+id/ivLock"
@@ -111,7 +103,7 @@
                             android:contentDescription="@string/bloqueado"
                             android:padding="16dp"
                             android:src="@drawable/ic_candado_abierto"
-                            app:tint="@color/bien" />
+                            app:tint="@color/texto_oscuro" />
                     </FrameLayout>
 
                     <TextView
@@ -124,7 +116,7 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- COLUMNA CÁMARAS -->
+                <!-- 🔹 COLUMNA CÁMARAS -->
                 <LinearLayout
                     android:id="@+id/layoutCamaras"
                     android:layout_width="0dp"
@@ -139,8 +131,9 @@
                     <FrameLayout
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:background="@drawable/bg_circle_soft"
-                        android:clipToOutline="true">
+                        android:background="@drawable/bg_card_soft"
+                        android:clipToOutline="true"
+                        android:elevation="4dp">
 
                         <ImageView
                             android:id="@+id/ivCameras"
@@ -149,7 +142,7 @@
                             android:contentDescription="@string/camara_activada"
                             android:padding="16dp"
                             android:src="@drawable/ic_camara"
-                            app:tint="@color/icono_normal" />
+                            app:tint="@color/texto_oscuro" />
                     </FrameLayout>
 
                     <TextView
@@ -161,20 +154,23 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- COLUMNA SEÑALES -->
+                <!-- 🔹 COLUMNA SEÑALES -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
 
                     <FrameLayout
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:background="@drawable/bg_circle_soft"
+                        android:background="@drawable/bg_card_soft"
                         android:clipToOutline="true"
-                        android:foreground="?attr/selectableItemBackgroundBorderless">
+                        android:elevation="4dp">
 
                         <ImageView
                             android:id="@+id/ivSignals"
@@ -183,7 +179,7 @@
                             android:contentDescription="@string/senales"
                             android:padding="16dp"
                             android:src="@drawable/ic_sonido"
-                            app:tint="@color/icono_normal" />
+                            app:tint="@color/texto_oscuro" />
                     </FrameLayout>
 
                     <TextView
@@ -195,20 +191,23 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- COLUMNA MODO SEGURO -->
+                <!-- 🔹 COLUMNA MODO SEGURO -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless">
 
                     <FrameLayout
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:background="@drawable/bg_circle_verde"
+                        android:background="@drawable/bg_card_soft"
                         android:clipToOutline="true"
-                        android:foreground="?attr/selectableItemBackgroundBorderless">
+                        android:elevation="4dp">
 
                         <ImageView
                             android:id="@+id/ivSafe"
@@ -217,7 +216,7 @@
                             android:contentDescription="@string/modo_seguro_activado"
                             android:padding="16dp"
                             android:src="@drawable/ic_escudo"
-                            app:tint="#0B6200" />
+                            app:tint="@color/texto_oscuro" />
                     </FrameLayout>
 
                     <TextView
@@ -230,41 +229,20 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/addressPill"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="16dp"
-                android:background="@drawable/bg_pill_soft"
-                android:layout_marginBottom="20dp">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_ubicacion"
-                    app:tint="@color/icono_normal"
-                    android:contentDescription="@string/titulo_ubicacion" />
-
-                <TextView
-                    android:id="@+id/tvAddress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:textColor="@color/icono_normal"
-                    android:textSize="16sp"
-                    android:text="@string/calle"/>
-            </LinearLayout>
-
+            <!-- 🔹 SECCIÓN ESTADO DEL SISTEMA -->
             <LinearLayout
                 android:id="@+id/systemState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginBottom="100dp">
+                android:layout_marginBottom="100dp"
+                android:padding="16dp"
+                android:background="@drawable/bg_card_soft"
+                android:elevation="4dp">
 
+                <!-- CABECERA: Dirección / ubicación -->
                 <LinearLayout
+                    android:id="@+id/addressPill"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -274,9 +252,41 @@
                     <ImageView
                         android:layout_width="28dp"
                         android:layout_height="28dp"
+                        android:contentDescription="@string/titulo_ubicacion"
+                        android:src="@drawable/ic_ubicacion"
+                        app:tint="@color/icono_normal" />
+
+                    <TextView
+                        android:id="@+id/tvAddress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/calle"
+                        android:textColor="@color/texto_oscuro"
+                        android:textStyle="bold"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <!-- FILA: Estado del sistema -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="26dp">
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_marginEnd="0dp"
+                        android:background="@drawable/bg_dot_ok" />
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:src="@drawable/ic_wifi"
                         app:tint="@color/icono_normal"
-                        android:contentDescription="@string/titulo_ubicacion"/>
+                        android:contentDescription="@string/titulo_ubicacion" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -291,22 +301,18 @@
                             android:text="Sistema activo y vigilando"
                             android:textStyle="bold"
                             android:textColor="@color/texto_oscuro"
-                            android:textSize="16sp"/>
+                            android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Última conexion hace 2 minutos"
+                            android:text="Última conexión hace 2 minutos"
                             android:textColor="#7A7A7A"
-                            android:textSize="14sp"/>
+                            android:textSize="14sp" />
                     </LinearLayout>
-
-                    <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:background="@drawable/bg_dot_ok"/>
                 </LinearLayout>
 
+                <!-- FILA: Estado de batería -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -318,7 +324,7 @@
                         android:layout_height="28dp"
                         android:src="@drawable/ic_bateria"
                         app:tint="@color/icono_normal"
-                        android:contentDescription="@string/batería"/>
+                        android:contentDescription="@string/batería" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -333,14 +339,14 @@
                             android:text="Batería: 85 %"
                             android:textStyle="bold"
                             android:textColor="@color/texto_oscuro"
-                            android:textSize="16sp"/>
+                            android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Conectado vía WiFi / 5G"
                             android:textColor="#7A7A7A"
-                            android:textSize="14sp"/>
+                            android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

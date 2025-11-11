@@ -1,19 +1,15 @@
 package com.example.proyecto_iot;
 
-import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
-import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.firebase.auth.FirebaseAuth;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 public class ConfigFragment extends Fragment {
 
@@ -22,44 +18,27 @@ public class ConfigFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_config, container, false);
-    }
+        View view = inflater.inflate(R.layout.fragment_config, container, false);
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        // --- Logout ---
-        View logout = view.findViewById(R.id.btn_logout);
-        if (logout != null) {
-            logout.setOnClickListener(v -> {
-                try {
-                    GoogleSignInClient gsc = GoogleSignIn.getClient(requireContext(),
-                            new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                    .requestIdToken(getString(R.string.default_web_client_id))
-                                    .requestEmail()
-                                    .build());
-                    gsc.signOut();
-                } catch (Exception ignored) {}
-                try {
-                    LoginManager.getInstance().logOut();
-                } catch (Exception ignored) {}
-                try {
-                    FirebaseAuth.getInstance().signOut();
-                } catch (Exception ignored) {}
-
-                Intent i = new Intent(requireContext(), EntryActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(i);
-                requireActivity().finish();
-            });
+        // Header visible, sin flecha atrás
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setBackButtonVisible(false);
         }
 
-        // --- Navegar a Configuración de Notificaciones ---
-        View layoutNotificaciones = view.findViewById(R.id.layout_notificaciones);
-        if (layoutNotificaciones != null) {
-            layoutNotificaciones.setOnClickListener(v -> {
-                Intent intent = new Intent(requireContext(), ConfigNotificacionesActivity.class);
-                startActivity(intent);
-            });
-        }
+        // Navegar a ConfigNotificacionesFragment al pulsar "Notificaciones"
+        LinearLayout layoutNotificaciones = view.findViewById(R.id.layout_notificaciones);
+        layoutNotificaciones.setOnClickListener(v -> {
+            FragmentTransaction transaction = requireActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction();
+            transaction.replace(R.id.fragment_container, new ConfigNotificacionesFragment());
+            transaction.addToBackStack(null);
+            transaction.commit();
+
+            // Mostrar flecha atrás en el nuevo fragment
+            ((MainActivity) requireActivity()).setBackButtonVisible(true);
+        });
+
+        return view;
     }
 }

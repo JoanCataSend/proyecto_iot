@@ -53,17 +53,6 @@
         <activity
             android:name="com.example.proyecto_iot.RegistroCoche"
             android:exported="false" />
-        <activity
-            android:name="com.example.proyecto_iot.CamarasActivity"
-            android:exported="false"
-            android:label="@string/camara_activada" />
-        <activity
-            android:name="com.example.proyecto_iot.ConfigActivity"
-            android:exported="false"
-            android:label="@string/ajustes" />
-        <activity
-            android:name=".ConfigNotificacionesActivity"
-            android:exported="false" />
 
     </application>
 
