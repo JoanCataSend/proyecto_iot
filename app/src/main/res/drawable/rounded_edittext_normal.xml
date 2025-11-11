@@ -9,7 +9,7 @@
 
     <!-- Borde gris suave -->
     <stroke
-        android:width="2dp"
+        android:width="1dp"
         android:color="#898192" />
 
     <!-- Relleno interno -->

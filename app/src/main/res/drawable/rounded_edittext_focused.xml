@@ -10,8 +10,8 @@
 
     <!-- Borde azul (cuando se enfoca) -->
     <stroke
-        android:width="2dp"
-        android:color="#111149" />
+        android:width="1.5dp"
+        android:color="@color/icono_normal" />
 
     <padding
         android:left="12dp"
