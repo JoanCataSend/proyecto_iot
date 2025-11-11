@@ -2,9 +2,11 @@ package com.example.proyecto_iot;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,8 +16,12 @@ import com.google.firebase.auth.FirebaseAuth;
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText nombreUsuarioEditText, emailEditText, passwordEditText, repeatPasswordEditText;
+    private ImageView togglePassword, toggleRepeatPassword;
     private Button btnContinuar, btnLogin;
     private FirebaseAuth mAuth;
+
+    private boolean isPasswordVisible = false;
+    private boolean isRepeatPasswordVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +36,36 @@ public class RegisterActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.email);
         passwordEditText = findViewById(R.id.password);
         repeatPasswordEditText = findViewById(R.id.repeatPassword);
+        togglePassword = findViewById(R.id.imageViewTogglePassword);
+        toggleRepeatPassword = findViewById(R.id.imageViewToggleRepeatPassword);
         btnContinuar = findViewById(R.id.btnContinuar);
         btnLogin = findViewById(R.id.btnLogin);
+
+        // 👁️ Mostrar / Ocultar contraseña
+        togglePassword.setOnClickListener(v -> {
+            if (isPasswordVisible) {
+                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                togglePassword.setImageResource(R.drawable.ic_eye_closed);
+            } else {
+                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                togglePassword.setImageResource(R.drawable.ic_eye_open);
+            }
+            passwordEditText.setSelection(passwordEditText.getText().length());
+            isPasswordVisible = !isPasswordVisible;
+        });
+
+        // 👁️ Mostrar / Ocultar repetir contraseña
+        toggleRepeatPassword.setOnClickListener(v -> {
+            if (isRepeatPasswordVisible) {
+                repeatPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                toggleRepeatPassword.setImageResource(R.drawable.ic_eye_closed);
+            } else {
+                repeatPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                toggleRepeatPassword.setImageResource(R.drawable.ic_eye_open);
+            }
+            repeatPasswordEditText.setSelection(repeatPasswordEditText.getText().length());
+            isRepeatPasswordVisible = !isRepeatPasswordVisible;
+        });
 
         // Acción para registrarse
         btnContinuar.setOnClickListener(v -> registrarUsuario());
@@ -94,5 +128,4 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
     }
-
 }

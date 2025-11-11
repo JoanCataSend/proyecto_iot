@@ -10,7 +10,7 @@
     <!-- Borde gris suave -->
     <stroke
         android:width="2dp"
-        android:color="@color/icono_normal" />
+        android:color="#898192" />
 
     <!-- Relleno interno -->
     <padding

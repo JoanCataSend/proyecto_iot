@@ -2,9 +2,11 @@ package com.example.proyecto_iot;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -67,6 +69,23 @@ public class LoginActivity extends AppCompatActivity {
         googleButton = findViewById(R.id.button4);
         xButton = findViewById(R.id.button5);
         facebookButton = findViewById(R.id.button6);
+
+        // --- Mostrar / Ocultar contraseña ---
+        ImageView togglePasswordImage = findViewById(R.id.imageViewTogglePassword);
+        final boolean[] passwordVisible = {false};
+
+        togglePasswordImage.setOnClickListener(v -> {
+            if (passwordVisible[0]) {
+                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                togglePasswordImage.setImageResource(R.drawable.ic_eye_closed);
+                passwordVisible[0] = false;
+            } else {
+                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                togglePasswordImage.setImageResource(R.drawable.ic_eye_open);
+                passwordVisible[0] = true;
+            }
+            passwordEditText.setSelection(passwordEditText.getText().length());
+        });
 
         // --- LOGIN CON CORREO Y CONTRASEÑA ---
         loginButton.setOnClickListener(v -> loginWithEmail());
@@ -135,10 +154,8 @@ public class LoginActivity extends AppCompatActivity {
 
                         if (user != null && user.isEmailVerified()) {
                             Toast.makeText(this, "Bienvenido, " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                            // Aquí puedes abrir tu MainActivity
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
-                             //finish();
                         } else {
                             Toast.makeText(this,
                                     "Tu cuenta no está verificada. Revisa tu correo electrónico ",
@@ -152,7 +169,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
     // ---------------- GOOGLE ----------------
     private void signInWithGoogle() {
@@ -199,8 +215,6 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         Toast.makeText(this, "Inicio con Facebook exitoso: " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                        //startActivity(new Intent(this, MainActivity.class));
-                        //finish();
                     } else {
                         Toast.makeText(this, "Error en inicio con Facebook", Toast.LENGTH_SHORT).show();
                     }
