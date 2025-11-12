@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,15 +13,15 @@
     android:padding="24dp">
 
     <!-- Título -->
-    <TextView
-        android:id="@+id/textTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/montserrat_bold_ttf"
-        android:text="KöVa"
-        android:textColor="@color/icono_normal"
-        android:textSize="32sp"
+    <ImageView
+        android:id="@+id/imageLogo"
+        android:layout_width="109dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="64dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitCenter"
+        android:src="@drawable/logop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,12 +31,12 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="32dp"
         android:fontFamily="@font/montserrat_bold_ttf"
         android:text="Nombre de usuario"
         android:textColor="@color/icono_normal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textTitle" />
+        app:layout_constraintTop_toBottomOf="@id/imageLogo" />
 
     <EditText
         android:id="@+id/nombreUsuario"
@@ -81,17 +86,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/email" />
 
-    <EditText
-        android:id="@+id/password"
+    <!-- Contenedor del campo de contraseña + icono -->
+    <RelativeLayout
+        android:id="@+id/passwordContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:background="@drawable/rounded_edittext_selector"
-        android:padding="12dp"
-        android:inputType="textPassword"
         app:layout_constraintTop_toBottomOf="@id/textView5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext_selector"
+            android:paddingEnd="48dp"
+            android:padding="12dp"
+            android:inputType="textPassword" />
+
+        <ImageView
+            android:id="@+id/imageViewTogglePassword"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="Mostrar u ocultar contraseña"
+            android:src="@drawable/ic_eye_closed"
+            android:tint="@color/icono_normal" />
+    </RelativeLayout>
 
     <!-- Repetir contraseña -->
     <TextView
@@ -103,19 +127,38 @@
         android:text="Repite la contraseña"
         android:textColor="@color/icono_normal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/password" />
+        app:layout_constraintTop_toBottomOf="@id/passwordContainer" />
 
-    <EditText
-        android:id="@+id/repeatPassword"
+    <!-- Contenedor del campo repetir contraseña + icono -->
+    <RelativeLayout
+        android:id="@+id/repeatPasswordContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:background="@drawable/rounded_edittext_selector"
-        android:padding="12dp"
-        android:inputType="textPassword"
         app:layout_constraintTop_toBottomOf="@id/textView6"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <EditText
+            android:id="@+id/repeatPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext_selector"
+            android:paddingEnd="48dp"
+            android:padding="12dp"
+            android:inputType="textPassword" />
+
+        <ImageView
+            android:id="@+id/imageViewToggleRepeatPassword"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="Mostrar u ocultar contraseña"
+            android:src="@drawable/ic_eye_closed"
+            android:tint="@color/icono_normal" />
+    </RelativeLayout>
 
     <!-- Botón Continuar -->
     <Button
@@ -127,7 +170,7 @@
         android:text="Continuar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/repeatPassword" />
+        app:layout_constraintTop_toBottomOf="@id/repeatPasswordContainer" />
 
     <!-- Botón Login -->
     <Button
@@ -144,3 +187,4 @@
         app:layout_constraintTop_toBottomOf="@id/btnContinuar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>

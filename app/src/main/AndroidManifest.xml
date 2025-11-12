@@ -2,13 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permisos -->
+    <!-- 🔹 Permisos necesarios -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission
         android:name="android.permission.POST_NOTIFICATIONS"
         tools:targetApi="33" />
     <uses-permission android:name="android.permission.VIBRATE" />
-
 
     <application
         android:allowBackup="true"
@@ -20,7 +20,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto_iot">
 
-        <!-- LAUNCHER: EntryActivity decide Login/Main -->
+        <!-- 🔹 Configuración Facebook SDK -->
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token" />
+
+        <!-- 🔹 Actividad de inicio -->
         <activity
             android:name="com.example.proyecto_iot.EntryActivity"
             android:exported="true"
@@ -31,27 +40,29 @@
             </intent-filter>
         </activity>
 
-        <!-- Pantallas de autenticación -->
+        <!-- 🔹 Actividades de autenticación -->
         <activity
             android:name="com.example.proyecto_iot.LoginActivity"
             android:exported="false"
             android:theme="@style/Theme.Proyecto_iot" />
+
         <activity
             android:name="com.example.proyecto_iot.RegisterActivity"
             android:exported="false"
             android:theme="@style/Theme.Proyecto_iot" />
+
         <activity
             android:name="com.example.proyecto_iot.ForgotPasswordActivity"
             android:exported="false"
             android:theme="@style/Theme.Proyecto_iot" />
 
-        <!-- Main de la app -->
+        <!-- 🔹 Actividad principal de la app -->
         <activity
             android:name="com.example.proyecto_iot.MainActivity"
             android:exported="false"
             android:theme="@style/Theme.Proyecto_iot" />
 
-        <!-- Otras activities existentes -->
+        <!-- 🔹 Otras activities -->
         <activity
             android:name="com.example.proyecto_iot.RegistroCoche"
             android:exported="false" />
