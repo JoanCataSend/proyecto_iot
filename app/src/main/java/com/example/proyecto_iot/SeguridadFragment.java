@@ -81,8 +81,6 @@ public class SeguridadFragment extends Fragment {
             ((MainActivity) getActivity()).setBackButtonVisible(false);
         }
     }
-
-    /** Guarda los estados actuales de los CheckBox */
     private void guardarPreferencias() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("checkPuertas", checkPuertas.isChecked());
@@ -93,8 +91,6 @@ public class SeguridadFragment extends Fragment {
         editor.putBoolean("checkBloqueo", checkBloqueo.isChecked());
         editor.apply();
     }
-
-    /** Vibración corta al guardar */
     private void vibrar() {
         if (vibrator != null) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {

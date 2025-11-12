@@ -5,40 +5,33 @@
     android:layout_height="match_parent"
     android:background="@color/fondo_claro"
     android:padding="20dp"
-    tools:context=".AyudaySoporteActivity">
+    tools:context=".AyudaySoporteFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-        <!-- 🔹 Encabezado con flecha y título -->
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingBottom="16dp">
-
-            <ImageView
-                android:id="@+id/btnVolver"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_flecha"
-                android:contentDescription="@string/volver" />
-
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical">
+            <!-- Título centrado -->
             <TextView
+                android:id="@+id/titleSeguridad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_marginStart="92dp"
-                android:fontFamily="@font/montserrat_bold"
                 android:text="@string/titulo_ayuda"
                 android:textColor="@color/icono_normal"
-                android:textSize="20dp" />
-        </LinearLayout>
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_medium"
+                android:textStyle="bold" />
 
-        <!-- 🔹 Descripción -->
+        </RelativeLayout>
+
+        <!-- Descripción -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,7 +41,7 @@
             android:fontFamily="@font/roboto_regular"
             android:layout_marginBottom="24dp" />
 
-        <!-- 🔹 Preguntas frecuentes -->
+        <!-- Preguntas frecuentes -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -89,7 +82,7 @@
             android:textSize="14sp"
             android:layout_marginBottom="24dp" />
 
-        <!-- 🔹 Contacto soporte -->
+        <!--Contacto soporte -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -110,7 +103,7 @@
             android:textSize="14sp"
             android:layout_marginBottom="24dp" />
 
-        <!-- 🔹 Términos y privacidad -->
+        <!--  Términos y privacidad -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

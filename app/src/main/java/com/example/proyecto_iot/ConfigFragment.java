@@ -111,7 +111,22 @@ public class ConfigFragment extends Fragment {
                 }
             });
         }
+        LinearLayout layoutAyudaySoporte = view.findViewById(R.id.layoutAyudaySoporte);
+        if (layoutAyudaySoporte != null) {
+            layoutAyudaySoporte.setOnClickListener(v -> {
+                FragmentTransaction transaction = requireActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction();
+                transaction.replace(R.id.fragment_container, new AyudaySoporteFragment());
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+                ((MainActivity) requireActivity()).setBackButtonVisible(true);
+            });
+        }
     }
+
+
 
     // =========================
     // Helper: reemplazar fragment en el contenedor principal
