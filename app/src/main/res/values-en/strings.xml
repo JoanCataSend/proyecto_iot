@@ -41,7 +41,7 @@
     <string name="mensaje_puertas_desbloqueadas">Las puertas del coche “Speedy Azul” se han abierto correctamente desde la app</string>
     <string name="ubicacion_actualizada">Ubicación actualizada</string>
     <string name="modo_seguro_activado">Modo seguro</string>
-    <string name="camara_activada">Cámara on</string>
+    <string name="camara_activada">Cámara</string>
 
     <!-- AJUSTES -->
     <string name="ajustes">Ajustes</string>

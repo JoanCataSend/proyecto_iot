@@ -5,13 +5,20 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.view.HapticFeedbackConstants;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity {
 
     private ImageButton navHome, navCar, navNotifications, navSettings, btnBack;
     private View indicatorHome, indicatorCar, indicatorNotifications, indicatorSettings;
+
+    private final AccelerateInterpolator inInterpolator = new AccelerateInterpolator();
+    private final OvershootInterpolator outInterpolator = new OvershootInterpolator(2f);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
         // Header
         btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> handleBack());
+
+        // Animación táctil en íconos
+        attachIconTouchAnimation(navHome);
+        attachIconTouchAnimation(navCar);
+        attachIconTouchAnimation(navNotifications);
+        attachIconTouchAnimation(navSettings);
 
         // Clicks del navbar
         navHome.setOnClickListener(v -> {
@@ -67,7 +80,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** Reemplaza el fragment visible en el contenedor principal */
+    /** Animación sutil de presión y rebote en íconos */
+    private void attachIconTouchAnimation(ImageButton btn) {
+        btn.setOnTouchListener((v, event) -> {
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    v.animate().cancel();
+                    v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                    v.animate()
+                            .scaleX(0.88f).scaleY(0.88f).alpha(0.9f)
+                            .setDuration(10)
+                            .setInterpolator(inInterpolator)
+                            .start();
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    v.animate().cancel();
+                    v.animate()
+                            .scaleX(1f).scaleY(1f).alpha(1f)
+                            .setDuration(10)
+                            .setInterpolator(outInterpolator)
+                            .start();
+                    break;
+            }
+            return false;
+        });
+    }
+
     private void replaceFragment(Fragment fragment, boolean addToBackstack) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, fragment);
@@ -75,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
         ft.commit();
     }
 
-    /** Actualiza los indicadores de la barra inferior según la pestaña seleccionada */
     private void updateNavbarSelection(int selectedNavId) {
         if (indicatorHome == null) return;
 
@@ -85,14 +123,12 @@ public class MainActivity extends AppCompatActivity {
         indicatorSettings.setVisibility(selectedNavId == R.id.nav_settings ? View.VISIBLE : View.INVISIBLE);
     }
 
-    /** Muestra u oculta la flecha atrás del header (el header siempre visible) */
     public void setBackButtonVisible(boolean visible) {
         if (btnBack != null) {
             btnBack.setVisibility(visible ? View.VISIBLE : View.GONE);
         }
     }
 
-    /** Gestiona la acción del botón atrás */
     private void handleBack() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
