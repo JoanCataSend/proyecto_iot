@@ -107,9 +107,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // --- INICIO DE MÉTODO AÑADIDO --- (Este método ha sido eliminado)
+    // --- FIN DE MÉTODO AÑADIDO ---
+
+
     private void replaceFragment(Fragment fragment, boolean addToBackstack) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+        // ¡ID CORRECTO! Usamos el ID del contenedor de tu MainActivity
         ft.replace(R.id.fragment_container, fragment);
+
         if (addToBackstack) ft.addToBackStack(null);
         ft.commit();
     }

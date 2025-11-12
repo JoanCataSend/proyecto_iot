@@ -102,6 +102,7 @@
                     android:background="#DDDDDD" />
 
                 <LinearLayout
+                    android:id="@+id/cuenta_perfil"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="32dp"
@@ -135,6 +136,7 @@
                     android:background="#DDDDDD" />
 
                 <LinearLayout
+                    android:id="@+id/coches_registrados"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="32dp"
