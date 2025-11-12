@@ -20,24 +20,39 @@ public class ConfigFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_config, container, false);
 
-        // Header visible, sin flecha atrás
+        // 🔹 Mostrar header sin flecha en pantalla de configuración principal
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).setBackButtonVisible(false);
         }
 
-        // Navegar a ConfigNotificacionesFragment al pulsar "Notificaciones"
+        // 🔸 Opción: Notificaciones
         LinearLayout layoutNotificaciones = view.findViewById(R.id.layout_notificaciones);
-        layoutNotificaciones.setOnClickListener(v -> {
-            FragmentTransaction transaction = requireActivity()
-                    .getSupportFragmentManager()
-                    .beginTransaction();
-            transaction.replace(R.id.fragment_container, new ConfigNotificacionesFragment());
-            transaction.addToBackStack(null);
-            transaction.commit();
+        if (layoutNotificaciones != null) {
+            layoutNotificaciones.setOnClickListener(v -> {
+                FragmentTransaction transaction = requireActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction();
+                transaction.replace(R.id.fragment_container, new ConfigNotificacionesFragment());
+                transaction.addToBackStack(null);
+                transaction.commit();
 
-            // Mostrar flecha atrás en el nuevo fragment
-            ((MainActivity) requireActivity()).setBackButtonVisible(true);
-        });
+                ((MainActivity) requireActivity()).setBackButtonVisible(true);
+            });
+        }
+
+        LinearLayout layoutSeguridad = view.findViewById(R.id.layoutSeguridad);
+        if (layoutSeguridad != null) {
+            layoutSeguridad.setOnClickListener(v -> {
+                FragmentTransaction transaction = requireActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction();
+                transaction.replace(R.id.fragment_container, new SeguridadFragment());
+                transaction.addToBackStack(null);
+                transaction.commit();
+
+                ((MainActivity) requireActivity()).setBackButtonVisible(true);
+            });
+        }
 
         return view;
     }
