@@ -15,6 +15,7 @@
 
         <activity android:name=".RegistroCoche" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".PrimerCocheActivity" />
 
         <!-- modificado para que se abra el login siempre -->
         <activity

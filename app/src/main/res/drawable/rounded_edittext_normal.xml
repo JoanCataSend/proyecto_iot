@@ -5,7 +5,7 @@
 
 
     <!-- Bordes redondeados -->
-    <corners android:radius="16dp" />
+    <corners android:radius="8dp" />
 
     <!-- Borde gris suave -->
     <stroke

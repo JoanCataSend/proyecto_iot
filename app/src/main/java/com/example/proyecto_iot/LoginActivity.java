@@ -31,6 +31,8 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Arrays;
 
@@ -39,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText emailEditText, passwordEditText;
     private Button loginButton, registerButton, forgotButton, googleButton, facebookButton, xButton;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     // Google Sign-In
     private GoogleSignInClient mGoogleSignInClient;
@@ -57,8 +60,9 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.login);
 
-        // --- Inicializar Firebase Auth ---
+        // --- Inicializar Firebase ---
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         // --- Referencias a vistas ---
         emailEditText = findViewById(R.id.editTextText);
@@ -91,14 +95,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> loginWithEmail());
 
         // --- REGISTRO Y RECUPERACIÓN ---
-        registerButton.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
-        });
-        forgotButton.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-            startActivity(intent);
-        });
+        registerButton.setOnClickListener(v -> startActivity(new Intent(LoginActivity.this, RegisterActivity.class)));
+        forgotButton.setOnClickListener(v -> startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class)));
 
         // --- GOOGLE SIGN IN ---
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -132,9 +130,8 @@ public class LoginActivity extends AppCompatActivity {
             });
         });
 
-        // --- X (Twitter o Apple) ---
         xButton.setOnClickListener(v ->
-                Toast.makeText(this, "Inicio con X pendiente de implementación ", Toast.LENGTH_SHORT).show());
+                Toast.makeText(this, "Inicio con X pendiente de implementación", Toast.LENGTH_SHORT).show());
     }
 
     // ---------------- CORREO Y CONTRASEÑA ----------------
@@ -153,12 +150,10 @@ public class LoginActivity extends AppCompatActivity {
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         if (user != null && user.isEmailVerified()) {
-                            Toast.makeText(this, "Bienvenido, " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
+                            comprobarPrimerCoche(user.getUid());
                         } else {
                             Toast.makeText(this,
-                                    "Tu cuenta no está verificada. Revisa tu correo electrónico ",
+                                    "Tu cuenta no está verificada. Revisa tu correo electrónico.",
                                     Toast.LENGTH_LONG).show();
                             mAuth.signOut();
                         }
@@ -198,9 +193,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
-                        Toast.makeText(this, "Inicio con Google exitoso: " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(this, MainActivity.class));
-                        finish();
+                        if (user != null) comprobarPrimerCoche(user.getUid());
                     } else {
                         Toast.makeText(this, "Error al autenticar con Google", Toast.LENGTH_SHORT).show();
                     }
@@ -214,10 +207,32 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
-                        Toast.makeText(this, "Inicio con Facebook exitoso: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                        if (user != null) comprobarPrimerCoche(user.getUid());
                     } else {
                         Toast.makeText(this, "Error en inicio con Facebook", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    // ---------------- VERIFICAR SI TIENE COCHE ----------------
+    private void comprobarPrimerCoche(String userId) {
+        db.collection("Coches")
+                .whereArrayContains("Propietario", userId)
+                .get()
+                .addOnSuccessListener(query -> {
+                    Intent intent;
+                    if (query.isEmpty()) {
+                        // 🚗 Usuario nuevo sin coches → redirigir a registro de coche
+                        intent = new Intent(LoginActivity.this, PrimerCocheActivity.class);
+                    } else {
+                        // ✅ Usuario ya tiene coche → ir al menú principal
+                        intent = new Intent(LoginActivity.this, MainActivity.class);
+                    }
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Error al verificar coches: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }
