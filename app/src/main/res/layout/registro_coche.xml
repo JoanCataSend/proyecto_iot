@@ -46,7 +46,7 @@
     <EditText
         android:id="@+id/etMarca"
         android:layout_width="310dp"
-        android:layout_height="34dp"
+        android:layout_height="48dp"
         android:layout_marginTop="7dp"
         android:ems="10"
         android:inputType="text"
@@ -75,7 +75,7 @@
     <EditText
         android:id="@+id/etModelo"
         android:layout_width="310dp"
-        android:layout_height="34dp"
+        android:layout_height="48dp"
         android:layout_marginTop="7dp"
         android:ems="10"
         android:inputType="text"
@@ -102,7 +102,7 @@
     <EditText
         android:id="@+id/etMatricula"
         android:layout_width="310dp"
-        android:layout_height="34dp"
+        android:layout_height="48dp"
         android:layout_marginTop="7dp"
         android:inputType="textCapCharacters"
         android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
@@ -130,7 +130,7 @@
     <EditText
         android:id="@+id/etNombreCoche"
         android:layout_width="310dp"
-        android:layout_height="34dp"
+        android:layout_height="48dp"
         android:layout_marginTop="7dp"
         android:ems="10"
         android:inputType="text"
