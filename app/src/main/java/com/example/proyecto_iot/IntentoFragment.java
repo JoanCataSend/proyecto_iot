@@ -101,7 +101,7 @@ public class IntentoFragment extends Fragment {
             spinnerCars.setAdapter(adapter);
 
             spinnerCars.setPopupBackgroundDrawable(
-                    ContextCompat.getDrawable(context, R.drawable.bg_spinner_dropdown)
+                    ContextCompat.getDrawable(context, R.drawable.bg_card_soft)
             );
 
             int savedPosition = prefs.getInt(PREF_KEY_SELECTED_CAR, 0);

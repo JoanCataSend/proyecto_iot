@@ -26,9 +26,9 @@
             <LinearLayout
                 android:id="@+id/vehicleSelector"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="50dp"
                 android:layout_marginBottom="16dp"
-                android:background="@drawable/bg_paraspiner"
+                android:background="@drawable/bg_card_soft"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingHorizontal="16dp">
@@ -37,7 +37,7 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:contentDescription="@string/nombre_coche"
-                    android:src="@drawable/ic_escudo"
+                    android:src="@drawable/ic_coche"
                     app:tint="@color/icono_normal" />
 
                 <Spinner
@@ -229,7 +229,47 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/addressPill"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:background="@drawable/bg_spinner_dropdown"
+                android:layout_marginBottom="20dp">
+
+                <!-- ICONO IZQUIERDA -->
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_ubicacion"
+                    android:contentDescription="@string/titulo_ubicacion"
+                    app:tint="@color/icono_normal" />
+
+                <!-- TEXTO CENTRADO RELATIVAMENTE -->
+                <TextView
+                    android:id="@+id/tvAddress"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/calle"
+                    android:textColor="@color/texto_oscuro"
+                    android:textStyle="bold"
+                    android:textSize="15dp" />
+
+                <!-- FLECHA DERECHA -->
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_flecha_derecha"
+                    android:contentDescription="@string/titulo_ubicacion"
+                    app:tint="@color/icono_normal" />
+
+            </LinearLayout>
             <!-- 🔹 SECCIÓN ESTADO DEL SISTEMA -->
+
             <LinearLayout
                 android:id="@+id/systemState"
                 android:layout_width="match_parent"
@@ -240,32 +280,21 @@
                 android:background="@drawable/bg_card_soft"
                 android:elevation="4dp">
 
-                <!-- CABECERA: Dirección / ubicación -->
-                <LinearLayout
-                    android:id="@+id/addressPill"
-                    android:layout_width="match_parent"
+                <!-- 🔹 TÍTULO + SEPARADOR -->
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="20dp">
+                    android:text="Más información del sistema:"
+                    android:textStyle="bold"
+                    android:textColor="@color/texto_oscuro"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="12dp" />
 
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:contentDescription="@string/titulo_ubicacion"
-                        android:src="@drawable/ic_ubicacion"
-                        app:tint="@color/icono_normal" />
-
-                    <TextView
-                        android:id="@+id/tvAddress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="@string/calle"
-                        android:textColor="@color/texto_oscuro"
-                        android:textStyle="bold"
-                        android:textSize="16sp" />
-                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#D3D3D3"
+                    android:layout_marginBottom="20dp" />
 
                 <!-- FILA: Estado del sistema -->
                 <LinearLayout
@@ -322,7 +351,7 @@
                     <ImageView
                         android:layout_width="28dp"
                         android:layout_height="28dp"
-                        android:src="@drawable/ic_bateria"
+                        android:src="@drawable/ic_tiempo"
                         app:tint="@color/icono_normal"
                         android:contentDescription="@string/batería" />
 
@@ -336,7 +365,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Batería: 85 %"
+                            android:text="Tiempo: Soleado"
                             android:textStyle="bold"
                             android:textColor="@color/texto_oscuro"
                             android:textSize="16sp" />
@@ -344,11 +373,12 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Conectado vía WiFi / 5G"
+                            android:text="Puedes conducir con seguridad"
                             android:textColor="#7A7A7A"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
