@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -36,6 +35,9 @@ public class Ubicacion extends NavBarActivity implements OnMapReadyCallback {
     private BottomSheetBehavior<View> bottomSheetBehavior;
     private GoogleMap mMap;
     private ArrayList<Coche> listaCoches = new ArrayList<>();
+    private FirebaseFirestore db;
+    private FirebaseAuth auth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,29 +61,30 @@ public class Ubicacion extends NavBarActivity implements OnMapReadyCallback {
         listViewCoches.setAdapter(adapter);
 
         // BBDD
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        db.collection("Usuarios").document(uid).collection("Coches")
+
+        db.collection("Coches")
+                .whereArrayContains("Propietario", uid) //
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     listaCoches.clear();
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
                         listaCoches.add(new Coche(
                                 doc.getId(),
-                                doc.getString("nombre"),
-                                doc.getString("marca"),
-                                doc.getString("modelo"),
-                                doc.getString("matricula"),
-                                doc.getDouble("ubicacionLat") != null ? doc.getDouble("ubicacionLat") : 0,
-                                doc.getDouble("ubicacionLng") != null ? doc.getDouble("ubicacionLng") : 0,
-                                doc.getString("direccion")
+                                doc.getString("Nombre"),
+                                doc.getString("Marca"),
+                                doc.getString("Modelo"),
+                                doc.getString("Matrícula"),
+                                0, // No tienes lat y lng en tu BBDD, así que 0
+                                0,
+                                "" // No tienes dirección, así que vacío
                         ));
                     }
                     adapter.notifyDataSetChanged();
-
-                    // añadir marcadores si el mapa ya está listo
-                    if (mMap != null) actualizarMarcadores();
+                    actualizarMarcadores();
                 });
+
 
         // --- BOTÓN VOLVER ---
         ImageButton btnBack = findViewById(R.id.btnBack);
