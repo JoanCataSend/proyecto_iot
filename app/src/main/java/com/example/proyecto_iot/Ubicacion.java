@@ -198,6 +198,7 @@ public class Ubicacion extends NavBarActivity implements OnMapReadyCallback {
         }
     }
 
+
     // Permisos
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
