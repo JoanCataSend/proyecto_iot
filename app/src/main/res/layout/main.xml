@@ -16,7 +16,8 @@
         android:clipToPadding="false"
         android:fillViewport="true"
         android:foregroundGravity="center"
-        android:padding="24dp"
+        android:paddingRight="30dp"
+        android:paddingLeft="30dp"
         app:layout_anchorGravity="center"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -25,25 +26,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="64dp">
+            android:paddingBottom="0dp">
 
-            <LinearLayout
-                android:id="@+id/headerBrand"
+                <!-- Logo -->
+            <TextView
+                android:id="@+id/logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="400dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/img" />
-
-            </LinearLayout>
+                android:layout_marginTop="48dp"
+                android:fontFamily="@font/montserrat_bold_ttf"
+                android:text="KöVa"
+                android:textColor="@color/icono_normal"
+                android:textSize="32sp"
+                android:layout_marginBottom="32dp"
+                android:layout_gravity="center" />
 
             <LinearLayout
                 android:id="@+id/vehicleSelector"
@@ -59,7 +55,7 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:contentDescription="@string/nombre_coche"
-                    android:src="@drawable/ic_escudo"
+                    android:src="@drawable/ic_coche"
                     app:tint="@color/icono_normal" />
 
                 <Spinner
@@ -94,8 +90,8 @@
                 android:id="@+id/tvMainState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:fontFamily="@font/montserrat_bold_ttf"
+                android:layout_marginBottom="30dp"
+                android:fontFamily="@font/montserrat_bold"
                 android:gravity="center"
                 android:text="@string/champon"
                 android:textColor="@color/texto_oscuro"
@@ -106,7 +102,7 @@
                 android:id="@+id/actionsRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="21dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -131,7 +127,7 @@
                             android:contentDescription="@string/bloqueado"
                             android:padding="16dp"
                             android:src="@drawable/ic_candado_cerrado"
-                            app:tint="@color/error" />
+                            app:tint="@color/rojo" />
                     </FrameLayout>
 
                     <TextView
@@ -233,8 +229,8 @@
                             android:layout_height="match_parent"
                             android:contentDescription="@string/modo_seguro_activado"
                             android:padding="16dp"
-                            android:src="@drawable/ic_escudo"
-                            app:tint="#0B6200" />
+                            android:src="@drawable/ic_escudo_bien"
+                             />
                     </FrameLayout>
 
                     <TextView
@@ -269,7 +265,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:textColor="@color/icono_normal"
+                    android:textColor="@color/texto_oscuro"
                     android:textSize="16sp"
                     android:text="@string/calle"/>
             </LinearLayout>
@@ -317,7 +313,8 @@
                             android:layout_height="wrap_content"
                             android:text="Última conexion hace 2 minutos"
                             android:textColor="#7A7A7A"
-                            android:textSize="14sp"/>
+                            android:textStyle="italic"
+                            android:textSize="12sp"/>
                     </LinearLayout>
 
                     <!-- Punto verde de estado -->
@@ -351,7 +348,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Batería: 85 %"
+                            android:text="Batería: 85%"
                             android:textStyle="bold"
                             android:textColor="@color/texto_oscuro"
                             android:textSize="16sp"/>
@@ -361,7 +358,7 @@
                             android:layout_height="wrap_content"
                             android:text="Conectado vía WiFi / 5G"
                             android:textColor="#7A7A7A"
-                            android:textSize="14sp"/>
+                            android:textSize="12sp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

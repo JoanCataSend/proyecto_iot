@@ -5,37 +5,27 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends NavBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         EdgeToEdge.enable(this);
-        setContentView(R.layout.intento);
+        setContentView(R.layout.main);
 
-        // Ajuste de los márgenes del sistema (status bar / nav bar)
+        inicializarNavbar(R.id.nav_home);
+
+        // Ajuste de los márgenes del sistema
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        // ← Botón "Volver"
-        ImageButton btnBack = findViewById(R.id.btnBack);
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
-            // o el clásico:
-            // btnBack.setOnClickListener(v -> onBackPressed());
-        }
 
         // Spinner de coches
         Spinner spinner = findViewById(R.id.spinnerCars);
@@ -51,14 +41,6 @@ public class MainActivity extends AppCompatActivity {
         if (layoutCamaras != null) {
             layoutCamaras.setOnClickListener(v ->
                     startActivity(new Intent(MainActivity.this, CamarasActivity.class))
-            );
-        }
-
-        // ⚙️ Botón "Ajustes"
-        ImageButton navSettings = findViewById(R.id.nav_settings);
-        if (navSettings != null) {
-            navSettings.setOnClickListener(v ->
-                    startActivity(new Intent(MainActivity.this, ConfigActivity.class))
             );
         }
     }

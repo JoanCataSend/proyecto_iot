@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -48,6 +50,12 @@
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
 
+        <!-- Mapa -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+
         <activity
             android:name=".CamarasActivity"
             android:exported="false"
@@ -60,5 +68,9 @@
             android:exported="false"
             android:label="@string/ajustes"
             android:theme="@style/Theme.Proyecto_iot" />
+
+        <activity android:name=".Ubicacion" />
+
+        <activity android:name=".EditarCocheActivity" />
     </application>
 </manifest>

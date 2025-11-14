@@ -31,7 +31,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_bold_ttf"
-        android:text="Correo electrónico"
+        android:text="@string/correo"
+        style="@style/TituloLabel"
         android:textColor="@color/icono_normal"
         app:layout_constraintTop_toBottomOf="@id/imageLogo"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,12 +56,12 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/montserrat_bold_ttf"
-        android:text="Contraseña"
-        android:textColor="@color/icono_normal"
+        android:text="@string/contrasena"
         app:layout_constraintTop_toBottomOf="@id/editTextText"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        style="@style/TituloLabel"
+        />
 
     <!-- Contenedor del campo de contraseña + icono -->
     <RelativeLayout
@@ -116,7 +117,7 @@
         android:layout_height="40dp"
         android:layout_marginTop="12dp"
         android:background="#00FFFFFF"
-        android:fontFamily="@font/montserrat_bold_ttf"
+        android:fontFamily="@font/roboto_regular"
         android:text="¿Aún no tienes cuenta? Regístrate"
         android:textColor="@color/icono_normal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -130,7 +131,7 @@
         android:layout_height="36dp"
         android:layout_marginTop="5dp"
         android:background="#00FFFFFF"
-        android:fontFamily="@font/montserrat_bold_ttf"
+        android:fontFamily="@font/roboto_regular"
         android:text="He olvidado mi contraseña"
         android:textColor="@color/icono_normal"
         app:layout_constraintEnd_toEndOf="parent"

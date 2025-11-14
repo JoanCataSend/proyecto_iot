@@ -1,0 +1,52 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:background="@drawable/bg_listview_coches"
+    android:gravity="center_vertical"
+    android:layout_marginBottom="20dp">
+
+    <ImageView
+        android:id="@+id/icono_coche"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_coche"
+        app:tint="@color/icono_normal"
+        android:layout_marginEnd="12dp" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/nombre_coche"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre del coche"
+            android:textColor="@color/texto_oscuro"
+            android:fontFamily="@font/roboto_regular"
+            android:textSize="14sp"
+            />
+
+        <TextView
+            android:id="@+id/ubicacion_coche"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Calle Ejemplo 123"
+            android:textColor="@color/boton_oscuro"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btn_editar_coche"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/ic_editar_coche"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Editar coche"
+        app:tint="@color/icono_normal"/>
+</LinearLayout>

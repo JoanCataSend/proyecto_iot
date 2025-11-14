@@ -49,8 +49,7 @@ dependencies {
     implementation("com.facebook.android:facebook-login:latest.release")
     implementation ("com.google.firebase:firebase-auth")
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
 
-
-
-
-}
+    implementation("com.google.firebase:firebase-firestore:24.7.1")
+    }
