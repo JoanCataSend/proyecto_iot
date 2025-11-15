@@ -11,14 +11,17 @@
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
             android:id="@+id/content_root"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <LinearLayout
                 android:id="@+id/profile_card"
                 android:layout_width="match_parent"
@@ -26,7 +29,7 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="32dp"
-                android:background="@drawable/bg_pill_soft"
+                android:background="@drawable/bg_card_soft"
                 android:clipToOutline="true"
                 android:elevation="2dp"
                 android:gravity="center_vertical"
@@ -124,7 +127,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Cuenta y perfil"
-                        android:textColor="@color/icono_normal"
+                        android:textColor="@color/texto_oscuro"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -150,7 +153,7 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:layout_marginEnd="12dp"
-                        android:src="@drawable/ic_coche"
+                        android:src="@drawable/ic_coche_fino"
                         app:tint="@color/icono_normal" />
 
                     <TextView
@@ -158,7 +161,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Coches registrados"
-                        android:textColor="@color/icono_normal"
+                        android:textColor="@color/texto_oscuro"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -175,19 +178,19 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingHorizontal="6dp"
-                    android:paddingVertical="14dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground">
+                    android:paddingVertical="14dp">
 
                     <ImageView
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:layout_marginEnd="12dp"
-                        android:src="@drawable/ic_notificacion1"
+                        android:src="@drawable/ic_notificacion1_fina"
                         app:tint="@color/icono_normal" />
 
                     <TextView
@@ -195,7 +198,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Notificaciones"
-                        android:textColor="@color/icono_normal"
+                        android:textColor="@color/texto_oscuro"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -229,7 +232,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Seguridad"
-                        android:textColor="@color/icono_normal"
+                        android:textColor="@color/texto_oscuro"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -262,7 +265,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Apariencia"
-                        android:textColor="@color/icono_normal"
+                        android:textColor="@color/texto_oscuro"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -288,7 +291,7 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:layout_marginEnd="12dp"
-                        android:src="@drawable/ic_config"
+                        android:src="@drawable/ic_config2"
                         app:tint="@color/icono_normal" />
 
                     <TextView
@@ -296,7 +299,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Ayuda y soporte"
-                        android:textColor="@color/icono_normal"
+                        android:textColor="@color/texto_oscuro"
                         android:textSize="16sp" />
                 </LinearLayout>
             </LinearLayout>

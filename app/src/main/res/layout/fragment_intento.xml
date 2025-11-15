@@ -23,6 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <!-- SELECTOR VEHÍCULO -->
             <LinearLayout
                 android:id="@+id/vehicleSelector"
                 android:layout_width="match_parent"
@@ -37,7 +39,7 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:contentDescription="@string/nombre_coche"
-                    android:src="@drawable/ic_coche"
+                    android:src="@drawable/ic_coche_fino"
                     app:tint="@color/icono_normal" />
 
                 <Spinner
@@ -50,10 +52,11 @@
                     android:popupBackground="@android:color/white" />
 
                 <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:contentDescription="@array/lista_coches"
+                    android:id="@+id/ivArrow"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
                     android:src="@drawable/ic_flecha_abajo"
+                    android:contentDescription="@string/titulo_ubicacion"
                     app:tint="@color/icono_normal" />
             </LinearLayout>
 
@@ -297,18 +300,18 @@
                     android:layout_marginBottom="20dp" />
 
                 <!-- FILA: Estado del sistema -->
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/bg_dot_ok" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
                     android:layout_marginBottom="26dp">
-
-                    <View
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_marginEnd="0dp"
-                        android:background="@drawable/bg_dot_ok" />
 
                     <ImageView
                         android:layout_width="28dp"

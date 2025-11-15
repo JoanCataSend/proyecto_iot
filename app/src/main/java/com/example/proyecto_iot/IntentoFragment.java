@@ -4,8 +4,10 @@ import android.animation.ValueAnimator;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,7 +43,7 @@ public class IntentoFragment extends Fragment {
     private static final int NOTIFICATION_ID_PUERTAS = 1001;
     private static final int NOTIFICATION_ID_SENALES = 1002;
     private static final String PREFS_NAME = "notificaciones_prefs";
-    private static final String PREF_KEY_LOCKED = "lock_state_locked";
+    private static final String PREF_KEY_LOCKED = "lock_state_locked";        // base
     private static final String PREF_KEY_SELECTED_CAR = "vehiculo_seleccionado";
 
     private boolean isLocked = true;
@@ -49,6 +51,13 @@ public class IntentoFragment extends Fragment {
     // UI
     private Spinner spinnerCars;
     private ImageView ivCar;
+
+    private FrameLayout flLock;
+    private ImageView ivLock;
+    private TextView tvLockState;
+
+    // Índice del coche actual en el spinner
+    private int currentCarIndex = 0;
 
     // Señales: animación y vibración
     private ValueAnimator signalsBlinkAnimator;
@@ -75,13 +84,18 @@ public class IntentoFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        spinnerCars     = view.findViewById(R.id.spinnerCars);
-        ivCar           = view.findViewById(R.id.ivCar);
-        LinearLayout vehicleSelector = view.findViewById(R.id.vehicleSelector);
-        LinearLayout layoutCamaras   = view.findViewById(R.id.layoutCamaras);
-
         Context context = requireContext();
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+
+        spinnerCars        = view.findViewById(R.id.spinnerCars);
+        ivCar              = view.findViewById(R.id.ivCar);
+        LinearLayout vehicleSelector = view.findViewById(R.id.vehicleSelector);
+        LinearLayout layoutCamaras   = view.findViewById(R.id.layoutCamaras);
+        LinearLayout addressPill     = view.findViewById(R.id.addressPill);
+
+        flLock      = view.findViewById(R.id.flLock);
+        ivLock      = view.findViewById(R.id.ivLock);
+        tvLockState = view.findViewById(R.id.tvLockState);
 
         // Abrir el spinner tocando toda la tarjeta
         if (vehicleSelector != null) {
@@ -90,8 +104,10 @@ public class IntentoFragment extends Fragment {
             });
         }
 
-        // Spinner con estilo propio
+        // =================== SPINNER DE COCHES ===================
         if (spinnerCars != null) {
+
+            // --- IMPLEMENTACIÓN ACTUAL: lee de resources (lista_coches) ---
             ArrayAdapter<CharSequence> adapter = new ArrayAdapter<>(
                     context,
                     R.layout.spinner_coches,
@@ -104,22 +120,93 @@ public class IntentoFragment extends Fragment {
                     ContextCompat.getDrawable(context, R.drawable.bg_card_soft)
             );
 
+            // Hacer que el dropdown tenga el mismo ancho que el spinner
+            spinnerCars.post(() -> {
+                spinnerCars.setDropDownWidth(spinnerCars.getWidth());
+            });
+
             int savedPosition = prefs.getInt(PREF_KEY_SELECTED_CAR, 0);
+            currentCarIndex = savedPosition;
             spinnerCars.setSelection(savedPosition);
 
             spinnerCars.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+                    currentCarIndex = position;
                     updateCarImage(position);
+
+                    // Guardar el coche seleccionado
                     prefs.edit().putInt(PREF_KEY_SELECTED_CAR, position).apply();
+
+                    // Cargar el estado de bloqueo específico de este coche
+                    boolean carLocked = prefs.getBoolean(getLockPrefKeyForIndex(currentCarIndex), true);
+                    isLocked = carLocked;
+                    if (flLock != null && ivLock != null && tvLockState != null) {
+                        updateLockUi(flLock, ivLock, tvLockState);
+                    }
                 }
-                @Override public void onNothingSelected(AdapterView<?> parent) { }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) { }
             });
 
+            // Cargar imagen y estado del coche guardado
             updateCarImage(savedPosition);
         }
 
-        // ➜ Navegar a CameraFragment al tocar la tarjeta de cámaras
+        // ========== FUTURA IMPLEMENTACIÓN FIREBASE PARA EL SPINNER (COMENTADA) ==========
+        /*
+        // Ejemplo de cómo poblar el spinner con Firebase:
+        //
+        // import com.google.firebase.auth.FirebaseAuth;
+        // import com.google.firebase.database.DataSnapshot;
+        // import com.google.firebase.database.DatabaseError;
+        // import com.google.firebase.database.DatabaseReference;
+        // import com.google.firebase.database.FirebaseDatabase;
+        // import com.google.firebase.database.ValueEventListener;
+        //
+        // FirebaseAuth auth = FirebaseAuth.getInstance();
+        // String uid = auth.getCurrentUser().getUid();
+        //
+        // DatabaseReference carsRef = FirebaseDatabase.getInstance()
+        //        .getReference("usuarios")
+        //        .child(uid)
+        //        .child("coches");
+        //
+        // carsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        //     @Override
+        //     public void onDataChange(@NonNull DataSnapshot snapshot) {
+        //         List<String> nombresCoches = new ArrayList<>();
+        //         // Opcional: lista de IDs si quieres lógica por ID real
+        //         List<String> idsCoches = new ArrayList<>();
+        //
+        //         for (DataSnapshot carSnap : snapshot.getChildren()) {
+        //             String nombre = carSnap.child("nombre").getValue(String.class);
+        //             if (nombre != null) {
+        //                 nombresCoches.add(nombre);
+        //                 idsCoches.add(carSnap.getKey());
+        //             }
+        //         }
+        //
+        //         ArrayAdapter<String> adapterFirebase = new ArrayAdapter<>(
+        //                 requireContext(),
+        //                 R.layout.spinner_coches,
+        //                 nombresCoches
+        //         );
+        //         adapterFirebase.setDropDownViewResource(R.layout.spinner_coches);
+        //         spinnerCars.setAdapter(adapterFirebase);
+        //
+        //         // Aquí podrías guardar en SharedPreferences la relación posición–idCoche
+        //         // para que el estado de bloqueo sea 100% por coche real.
+        //     }
+        //
+        //     @Override
+        //     public void onCancelled(@NonNull DatabaseError error) { }
+        // });
+        */
+        // =========================================================================
+
+        // Navegar a CameraFragment al tocar la tarjeta de cámaras
         if (layoutCamaras != null) {
             layoutCamaras.setOnClickListener(v -> {
                 requireActivity()
@@ -131,13 +218,24 @@ public class IntentoFragment extends Fragment {
             });
         }
 
-        // === BLOQUE CANDADO ===
-        FrameLayout flLock = view.findViewById(R.id.flLock);
-        ImageView ivLock   = view.findViewById(R.id.ivLock);
-        TextView tvLockState = view.findViewById(R.id.tvLockState);
+        // =========== CLICK EN addressPill PARA ABRIR GOOGLE MAPS ===========
+        if (addressPill != null) {
+            addressPill.setOnClickListener(v -> {
+                double lat = 38.99614697675971;
+                double lon = -0.16569078767633452;
+                String uri = "geo:" + lat + "," + lon + "?q=" + lat + "," + lon;
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                intent.setPackage("com.google.android.apps.maps");
+                startActivity(intent);
+            });
+        }
 
+        // === BLOQUE CANDADO ===
         if (flLock != null && ivLock != null && tvLockState != null) {
-            isLocked = prefs.getBoolean(PREF_KEY_LOCKED, true);
+
+            // Estado de bloqueo del coche actualmente seleccionado
+            boolean savedLocked = prefs.getBoolean(getLockPrefKeyForIndex(currentCarIndex), true);
+            isLocked = savedLocked;
             updateLockUi(flLock, ivLock, tvLockState);
 
             View.OnClickListener lockClickListener =
@@ -171,7 +269,12 @@ public class IntentoFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        stopSignalsEffects(); // Limpieza segura
+        stopSignalsEffects();
+    }
+
+    /** Devuelve la clave de SharedPreferences para el estado de bloqueo de un coche concreto */
+    private String getLockPrefKeyForIndex(int index) {
+        return PREF_KEY_LOCKED + "_" + index;
     }
 
     /** Cambia la imagen del coche según la posición del spinner */
@@ -189,14 +292,15 @@ public class IntentoFragment extends Fragment {
         if (resId != 0) ivCar.setImageResource(resId);
     }
 
-    /** Maneja el click sobre el candado */
+    /** Maneja el click sobre el candado (por coche) */
     private void handleLockClick(Context context, SharedPreferences prefs,
                                  FrameLayout flLock, ImageView ivLock, TextView tvLockState) {
 
         boolean puertasAbiertasEnabled = prefs.getBoolean("swPuertasAbiertas", true);
 
+        // Alternar estado del coche actual
         isLocked = !isLocked;
-        prefs.edit().putBoolean(PREF_KEY_LOCKED, isLocked).apply();
+        prefs.edit().putBoolean(getLockPrefKeyForIndex(currentCarIndex), isLocked).apply();
 
         String titulo, mensaje;
         if (isLocked) {
@@ -228,12 +332,10 @@ public class IntentoFragment extends Fragment {
     private void handleSignalsClick(Context context, SharedPreferences prefs, ImageView ivSignals) {
         boolean sonidoEnabled = prefs.getBoolean("swSonido", true);
 
-        // Siempre activa efecto y vibración
         ivSignals.setImageTintList(ContextCompat.getColorStateList(context, R.color.aviso));
         startColorBlinkAnimation(ivSignals, context);
         startVibration(context);
 
-        // Solo notifica si está habilitado
         if (sonidoEnabled) {
             String titulo = "Alertas activadas";
             String mensaje = "Se han activado las alertas luminosas y sonoras.";
@@ -250,7 +352,6 @@ public class IntentoFragment extends Fragment {
             NotificacionRepository.getInstance().addNotificacion(new Notificacion(titulo, mensaje, fecha, R.drawable.ic_sonido));
         }
 
-        // Detener todo y restaurar tras 10 s
         if (signalsStopHandler == null) signalsStopHandler = new Handler(Looper.getMainLooper());
         if (signalsStopRunnable != null) signalsStopHandler.removeCallbacks(signalsStopRunnable);
 
@@ -267,7 +368,6 @@ public class IntentoFragment extends Fragment {
 
     /** Parpadeo (amarillo ↔ gris oscuro) */
     private void startColorBlinkAnimation(ImageView target, Context context) {
-        stopBlinkAnimation();
         int color1 = ContextCompat.getColor(context, R.color.aviso);
         int color2 = ContextCompat.getColor(context, R.color.texto_oscuro);
 
@@ -338,7 +438,11 @@ public class IntentoFragment extends Fragment {
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Context context = requireContext();
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Alertas del vehículo", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Alertas del vehículo",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
             channel.setDescription("Notificaciones relacionadas con el estado del coche");
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             if (nm != null) nm.createNotificationChannel(channel);
