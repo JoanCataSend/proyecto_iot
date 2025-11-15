@@ -26,12 +26,12 @@
         android:fontFamily="@font/roboto_regular"
         android:text="@string/mensaje_registro_coche"
         android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="@+id/etMarca"
+        app:layout_constraintStart_toStartOf="@+id/etMarcaEditar"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <!-- Título: Marca -->
     <TextView
-        android:id="@+id/txtMarcaE"
+        android:id="@+id/txtNombre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -39,12 +39,12 @@
         android:text="@string/marca"
         android:textColor="@color/icono_normal"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/etMarca"
+        app:layout_constraintStart_toStartOf="@+id/etMarcaEditar"
         app:layout_constraintTop_toBottomOf="@+id/txtExplicativo" />
 
     <!-- Input de texto: Marca -->
     <EditText
-        android:id="@+id/etMarca"
+        android:id="@+id/etMarcaEditar"
         android:layout_width="310dp"
         android:layout_height="34dp"
         android:layout_marginTop="7dp"
@@ -53,7 +53,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtMarcaE"
+        app:layout_constraintTop_toBottomOf="@+id/txtNombre"
         style="@style/EditText" />
 
     <!-- Input de texto: Modelo -->
@@ -67,7 +67,7 @@
         android:textColor="@color/icono_normal"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@+id/etModelo"
-        app:layout_constraintTop_toBottomOf="@+id/etMarca"
+        app:layout_constraintTop_toBottomOf="@+id/etMarcaEditar"
         />
 
     <!-- Input de texto: Modelo -->

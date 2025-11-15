@@ -20,8 +20,7 @@ public class EditarCocheActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private String cocheId; // el id del coche k se va a editar
 
-    // Campos
-    private EditText etMarca, etModelo, etMatricula, etNombre;
+    private EditText etMarca, etModelo, etMatricula, etNombre; // Campos
 
     // Botones
     private Button btnGuardarCambios, btnEliminarCoche;
@@ -37,10 +36,10 @@ public class EditarCocheActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         // --- ENLAZAR VISTAS ---
-        etNombre = findViewById(R.id.etNombreE);
-        etMarca = findViewById(R.id.etMarca);
-        etModelo = findViewById(R.id.etModeloE);
-        etMatricula = findViewById(R.id.etMatriculaE);
+        etNombre = findViewById(R.id.etNombreCocheEditar);
+        etMarca = findViewById(R.id.etMarcaEditar);
+        etModelo = findViewById(R.id.etModeloEditar);
+        etMatricula = findViewById(R.id.etMatriculaEditar);
 
         // --- BOTONES ---
         btnGuardarCambios = findViewById(R.id.btnGuardarCambios);
@@ -49,62 +48,69 @@ public class EditarCocheActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> finish());
 
         // --- RECIBIR DATOS DEL COCHE ---
-        Intent intent = getIntent();
-        if (intent != null) {
-            cocheId = intent.getStringExtra("cocheId"); // Así sabemos qué coche editar/eliminar
-            etNombre.setText(intent.getStringExtra("nombreCoche"));
-            etMarca.setText(intent.getStringExtra("marcaCoche"));
-            etModelo.setText(intent.getStringExtra("modeloCoche"));
-            etMatricula.setText(intent.getStringExtra("matriculaCoche"));
+        cocheId = getIntent().getStringExtra("cocheId");
+        String marca = getIntent().getStringExtra("marcaCoche");
+        String modelo = getIntent().getStringExtra("modeloCoche");
+        String matricula = getIntent().getStringExtra("matriculaCoche");
+        String nombre = getIntent().getStringExtra("nombreCoche");
+
+        // Ponerlos en pantalla
+        etMarca.setText(marca);
+        etModelo.setText(modelo);
+        etMatricula.setText(matricula);
+        etNombre.setText(nombre);
+
+        // Volver atrás
+        btnBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+
+        // Guardar cambios
+        btnGuardarCambios.setOnClickListener(v -> guardarCambios());
+
+        // Eliminar coche
+        btnEliminarCoche.setOnClickListener(v -> eliminarCoche());
+    }
+
+    private void guardarCambios() {
+        String marca = etMarca.getText().toString().trim();
+        String modelo = etModelo.getText().toString().trim();
+        String matricula = etMatricula.getText().toString().trim();
+        String nombre = etNombre.getText().toString().trim();
+
+        if (marca.isEmpty() || modelo.isEmpty() || matricula.isEmpty() || nombre.isEmpty()) {
+            Toast.makeText(this, "Debes rellenar todos los campos", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        // --- GUARDAR CAMBIOS ---
-        btnGuardarCambios.setOnClickListener(v -> {
-            String nombre = etNombre.getText().toString();
-            String marca = etMarca.getText().toString();
-            String modelo = etModelo.getText().toString();
-            String matricula = etMatricula.getText().toString();
+        db.collection("Coches").document(cocheId)
+                .update(
+                        "Marca", marca,
+                        "Modelo", modelo,
+                        "Matrícula", matricula,
+                        "Nombre", nombre
+                )
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Cambios guardados", Toast.LENGTH_SHORT).show();
 
-            // Toast para que rellenes los campos
-            if(nombre.isEmpty() || marca.isEmpty() || modelo.isEmpty() || matricula.isEmpty()) {
-                Toast.makeText(this, "Rellena todos los campos", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                    // Devolver resultado OK a la actividad anterior
+                    setResult(RESULT_OK);
 
-            String uid = auth.getCurrentUser().getUid();
-            DocumentReference cocheRef = db.collection("Usuarios")
-                    .document(uid)
-                    .collection("Coches")
-                    .document(cocheId);
+                    // Cerrar esta pantalla y volver
+                    finish();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Error al guardar los cambios", Toast.LENGTH_SHORT).show()
+                );
+    }
 
-            cocheRef.update(
-                    "nombre", nombre,
-                    "marca", marca,
-                    "modelo", modelo,
-                    "matricula", matricula
-            ).addOnSuccessListener(aVoid -> {
-                Toast.makeText(this, "Datos guardados", Toast.LENGTH_SHORT).show();
-                finish(); // cerrar actividad
-            }).addOnFailureListener(e -> {
-                Toast.makeText(this, "Error al actualizar: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            });
-        });
-
-        // --- ELIMINAR COCHE ---
-        btnEliminarCoche.setOnClickListener(v -> {
-            String uid = auth.getCurrentUser().getUid();
-            db.collection("Usuarios")
-                    .document(uid)
-                    .collection("Coches")
-                    .document(cocheId)
-                    .delete()
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(this, "Coche eliminado", Toast.LENGTH_SHORT).show();
-                        finish();
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Error al eliminar: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
-        });
+    private void eliminarCoche() {
+        db.collection("Coches").document(cocheId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Coche eliminado con éxito", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Error al borrar el coche", Toast.LENGTH_SHORT).show()
+                );
     }
 }

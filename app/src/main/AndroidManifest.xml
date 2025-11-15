@@ -71,5 +71,8 @@
         <activity android:name=".Ubicacion" />
 
         <activity android:name=".EditarCocheActivity" />
+
+        <activity android:name=".AnadirCoche" />
+
     </application>
 </manifest>
