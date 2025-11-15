@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto_iot">
 
-        <!-- 🔹 Configuración Facebook SDK -->
+        <!-- 🔹 FACEBOOK SDK -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -29,9 +29,24 @@
             android:name="com.facebook.sdk.ClientToken"
             android:value="@string/facebook_client_token" />
 
-        <!-- 🔹 Actividad de inicio -->
         <activity
-            android:name="com.example.proyecto_iot.EntryActivity"
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+
+        <!-- 🔹 ACTIVIDAD DE INICIO (Álvaro) -->
+        <activity
+            android:name="com.example.proyecto_iot.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.Proyecto_iot">
             <intent-filter>
@@ -40,12 +55,7 @@
             </intent-filter>
         </activity>
 
-        <!-- 🔹 Actividades de autenticación -->
-        <activity
-            android:name="com.example.proyecto_iot.LoginActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Proyecto_iot" />
-
+        <!-- 🔹 Activities de autenticación -->
         <activity
             android:name="com.example.proyecto_iot.RegisterActivity"
             android:exported="false"
@@ -56,16 +66,17 @@
             android:exported="false"
             android:theme="@style/Theme.Proyecto_iot" />
 
-        <!-- 🔹 Actividad principal de la app -->
+        <!-- 🔹 Activity principal -->
         <activity
             android:name="com.example.proyecto_iot.MainActivity"
             android:exported="false"
             android:theme="@style/Theme.Proyecto_iot" />
 
-        <!-- 🔹 Otras activities -->
-        <activity
-            android:name="com.example.proyecto_iot.RegistroCoche"
-            android:exported="false" />
+        <!-- 🔹 Activities de ambos códigos -->
+        <activity android:name="com.example.proyecto_iot.RegistroCoche" android:exported="false"/>
+        <activity android:name="com.example.proyecto_iot.PrimerCocheActivity" android:exported="false"/>
+
+        <!-- Nueva activity añadida en Álvaro -->
 
     </application>
 

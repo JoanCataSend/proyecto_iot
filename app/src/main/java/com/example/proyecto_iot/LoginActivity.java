@@ -11,8 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.AccessToken;
@@ -34,16 +32,25 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
 
+    // UI
     private EditText emailEditText, passwordEditText;
     private Button loginButton, registerButton, forgotButton, googleButton, facebookButton, xButton;
+
+    // Firebase
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+
+    // Google
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
+
+    // Facebook
     private CallbackManager mCallbackManager;
     private boolean facebookConfigured = false;
 
@@ -52,10 +59,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        // Firebase
+        // Firebase auth y Firestore
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        // Referencias de vistas
+        // Referencias UI
         emailEditText = findViewById(R.id.editTextText);
         passwordEditText = findViewById(R.id.editTextTextPassword);
         loginButton = findViewById(R.id.button);
@@ -67,28 +75,26 @@ public class LoginActivity extends AppCompatActivity {
 
         // Mostrar / ocultar contraseña
         ImageView togglePasswordImage = findViewById(R.id.imageViewTogglePassword);
-        if (togglePasswordImage != null) {
-            final boolean[] passwordVisible = {false};
-            togglePasswordImage.setOnClickListener(v -> {
-                if (passwordVisible[0]) {
-                    passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    togglePasswordImage.setImageResource(R.drawable.ic_eye_closed);
-                    passwordVisible[0] = false;
-                } else {
-                    passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                    togglePasswordImage.setImageResource(R.drawable.ic_eye_open);
-                    passwordVisible[0] = true;
-                }
-                passwordEditText.setSelection(passwordEditText.getText().length());
-            });
-        }
+        final boolean[] passwordVisible = {false};
+        togglePasswordImage.setOnClickListener(v -> {
+            if (passwordVisible[0]) {
+                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                togglePasswordImage.setImageResource(R.drawable.ic_eye_closed);
+                passwordVisible[0] = false;
+            } else {
+                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                togglePasswordImage.setImageResource(R.drawable.ic_eye_open);
+                passwordVisible[0] = true;
+            }
+            passwordEditText.setSelection(passwordEditText.getText().length());
+        });
 
-        // Botones principales
-        loginButton.setOnClickListener(v -> doEmailPasswordLogin());
+        // Botones
+        loginButton.setOnClickListener(v -> loginWithEmail());
         registerButton.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
         forgotButton.setOnClickListener(v -> startActivity(new Intent(this, ForgotPasswordActivity.class)));
 
-        // Google Sign-In
+        // --- GOOGLE SIGN IN ---
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -96,14 +102,16 @@ public class LoginActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         googleButton.setOnClickListener(v -> signInWithGoogle());
 
-        // Facebook Sign-In con configuración automática
+        // --- FACEBOOK (configuración Joan + lógica Álvaro) ---
         String fbAppId = getFacebookAppId();
         facebookConfigured = fbAppId != null && !fbAppId.isEmpty();
+
         if (facebookConfigured) {
             FacebookSdk.setApplicationId(fbAppId);
             FacebookSdk.sdkInitialize(getApplicationContext());
             AppEventsLogger.activateApp(getApplication());
             mCallbackManager = CallbackManager.Factory.create();
+
             facebookButton.setVisibility(View.VISIBLE);
             facebookButton.setOnClickListener(v -> {
                 LoginManager.getInstance().logInWithReadPermissions(
@@ -125,17 +133,18 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
             });
+
         } else {
             facebookButton.setVisibility(View.GONE);
         }
 
-        // Botón X (pendiente de implementación)
+        // Botón X
         xButton.setOnClickListener(v ->
                 Toast.makeText(this, "Inicio con X pendiente de implementación", Toast.LENGTH_SHORT).show());
     }
 
-    // --- Login con email y contraseña ---
-    private void doEmailPasswordLogin() {
+    // ---------------- LOGIN EMAIL ----------------
+    private void loginWithEmail() {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
@@ -149,14 +158,9 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null && user.isEmailVerified()) {
-                            Toast.makeText(this, "Bienvenido, " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("openFragment", "intento");
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            finish();
+                            comprobarPrimerCoche(user.getUid());
                         } else {
-                            Toast.makeText(this, "Tu cuenta no está verificada. Revisa tu correo electrónico", Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, "Tu cuenta no está verificada. Revisa tu correo.", Toast.LENGTH_LONG).show();
                             mAuth.signOut();
                         }
                     } else {
@@ -165,7 +169,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    // --- Login con Google ---
+    // ---------------- GOOGLE ----------------
     private void signInWithGoogle() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -185,7 +189,7 @@ public class LoginActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
-                Toast.makeText(this, "Error en inicio con Google: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Error Google: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -196,51 +200,60 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
-                        Toast.makeText(this, "Inicio con Google exitoso: " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(this, MainActivity.class);
-                        i.putExtra("openFragment", "intento");
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(i);
-                        finish();
+                        if (user != null) comprobarPrimerCoche(user.getUid());
                     } else {
                         Toast.makeText(this, "Error al autenticar con Google", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    // --- Login con Facebook ---
+    // ---------------- FACEBOOK ----------------
     private void handleFacebookAccessToken(AccessToken token) {
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
-                        Toast.makeText(this, "Inicio con Facebook exitoso: " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(this, MainActivity.class);
-                        i.putExtra("openFragment", "intento");
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(i);
-                        finish();
+                        if (user != null) comprobarPrimerCoche(user.getUid());
                     } else {
-                        Toast.makeText(this, "Error en inicio con Facebook", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Error Facebook", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    // --- Obtener Facebook App ID desde el manifest ---
+    // ---------------- PRIMER COCHE (Álvaro) ----------------
+    private void comprobarPrimerCoche(String userId) {
+        db.collection("Coches")
+                .whereArrayContains("Propietario", userId)
+                .get()
+                .addOnSuccessListener(query -> {
+                    Intent intent;
+                    if (query.isEmpty()) {
+                        // Usuario nuevo → configurar coche
+                        intent = new Intent(LoginActivity.this, PrimerCocheActivity.class);
+                    } else {
+                        // Usuario con coche → menú principal
+                        intent = new Intent(LoginActivity.this, MainActivity.class);
+                    }
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Error al verificar coches: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    // --- Obtener Facebook App ID desde el manifest (Joan) ---
     private String getFacebookAppId() {
         try {
             ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
             if (ai.metaData == null) return null;
             String id = ai.metaData.getString("com.facebook.sdk.ApplicationId");
-            if (id == null && ai.metaData.containsKey("com.facebook.sdk.ApplicationId")) {
-                Object o = ai.metaData.get("com.facebook.sdk.ApplicationId");
-                if (o != null) id = String.valueOf(o);
-            }
             if (id != null && id.startsWith("fb")) id = id.substring(2);
             return id;
         } catch (Exception e) {
             return null;
         }
+
     }
 }

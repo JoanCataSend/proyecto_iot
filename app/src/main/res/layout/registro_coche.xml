@@ -8,14 +8,14 @@
     <!-- Logo -->
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="110dp"
+        android:layout_height="66dp"
         android:layout_marginTop="100dp"
         android:contentDescription="Logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_launcher_background" />
+        app:srcCompat="@drawable/logop" />
 
     <!-- Texto explicativo -->
     <TextView
@@ -54,7 +54,8 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtMarca"
-        style="@style/EditText" />
+        android:background="@drawable/rounded_edittext_selector"
+        />
 
     <!-- Input de texto: Modelo -->
     <TextView
@@ -82,7 +83,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtModelo"
-        style="@style/EditText"/>
+        android:background="@drawable/rounded_edittext_selector"/>
 
     <!-- Título: Matrícula -->
     <TextView
@@ -103,13 +104,14 @@
         android:layout_width="310dp"
         android:layout_height="34dp"
         android:layout_marginTop="7dp"
+        android:inputType="textCapCharacters"
+        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
         android:ems="10"
-        android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtMatricula"
-        style="@style/EditText"/>
+        android:background="@drawable/rounded_edittext_selector"/>
 
     <!-- Título: Nombre del coche -->
     <TextView
@@ -136,7 +138,7 @@
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtNombreCoche"
-        style="@style/EditText"/>
+        android:background="@drawable/rounded_edittext_selector"/>
 
     <!-- Botón para registrar vehículo -->
     <Button

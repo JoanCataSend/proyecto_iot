@@ -6,7 +6,7 @@
 <!--    <solid android:color="#FFFFFF" />-->
 
     <!-- Bordes redondeados -->
-    <corners android:radius="16dp" />
+    <corners android:radius="8dp" />
 
     <!-- Borde azul (cuando se enfoca) -->
     <stroke
