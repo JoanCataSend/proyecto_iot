@@ -1,16 +1,26 @@
 package com.example.proyecto_iot;
 
+import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+import android.widget.LinearLayout;
 
 public class ConfigActivity extends NavBarActivity {
+
+    LinearLayout opcionCuenta;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.config); // usa tu layout config.xml
+        setContentView(R.layout.config);
         inicializarNavbar(R.id.nav_settings);
 
-        // (opcional) si quieres mostrar el botón de volver arriba
+        opcionCuenta = findViewById(R.id.cuentayperfil);
+
+        opcionCuenta.setOnClickListener(v -> {
+            Intent intent = new Intent(ConfigActivity.this, CuentaYPerfil.class);
+            startActivity(intent);
+        });
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(getString(R.string.ajustes));

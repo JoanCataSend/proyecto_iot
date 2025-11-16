@@ -61,7 +61,7 @@
             android:label="@string/camara_activada"
             android:theme="@style/Theme.Proyecto_iot" />
 
-        <!-- ➕ NUEVO: Activity para el layout config.xml -->
+        <!-- Activity para el layout config.xml -->
         <activity
             android:name=".ConfigActivity"
             android:exported="false"
@@ -73,6 +73,8 @@
         <activity android:name=".EditarCocheActivity" />
 
         <activity android:name=".AnadirCoche" />
+
+        <activity android:name=".CuentaYPerfil" />
 
     </application>
 </manifest>
