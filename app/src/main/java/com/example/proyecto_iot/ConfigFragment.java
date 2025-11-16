@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,11 +15,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ConfigFragment extends Fragment {
 
@@ -26,9 +30,10 @@ public class ConfigFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_config, container, false);
 
-        // 🔹 Pantalla principal de Configuración: header sin flecha atrás
+        // Pantalla principal de Configuración: header sin flecha
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).setBackButtonVisible(false);
         }
@@ -36,12 +41,13 @@ public class ConfigFragment extends Fragment {
         return view;
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // =========================
-        // CERRAR SESIÓN (Google / Facebook / Firebase)
+        // CERRAR SESIÓN
         // =========================
         View logout = view.findViewById(R.id.btn_logout);
         if (logout != null) {
@@ -57,13 +63,8 @@ public class ConfigFragment extends Fragment {
                     gsc.signOut();
                 } catch (Exception ignored) {}
 
-                try {
-                    LoginManager.getInstance().logOut();
-                } catch (Exception ignored) {}
-
-                try {
-                    FirebaseAuth.getInstance().signOut();
-                } catch (Exception ignored) {}
+                try { LoginManager.getInstance().logOut(); } catch (Exception ignored) {}
+                try { FirebaseAuth.getInstance().signOut(); } catch (Exception ignored) {}
 
                 Intent i = new Intent(requireContext(), EntryActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -72,45 +73,46 @@ public class ConfigFragment extends Fragment {
             });
         }
 
+
         // =========================
-        // NAVEGACIÓN: Notificaciones
+        // NAVEGACIÓN: NOTIFICACIONES
         // =========================
         LinearLayout layoutNotificaciones = view.findViewById(R.id.layout_notificaciones);
         if (layoutNotificaciones != null) {
             layoutNotificaciones.setOnClickListener(v -> {
                 replaceFragment(new ConfigNotificacionesFragment());
-                if (getActivity() instanceof MainActivity) {
-                    ((MainActivity) getActivity()).setBackButtonVisible(true);
-                }
+                ((MainActivity) requireActivity()).setBackButtonVisible(true);
             });
         }
 
+
         // =========================
-        // NAVEGACIÓN: Seguridad
+        // NAVEGACIÓN: SEGURIDAD
         // =========================
         LinearLayout layoutSeguridad = view.findViewById(R.id.layoutSeguridad);
         if (layoutSeguridad != null) {
             layoutSeguridad.setOnClickListener(v -> {
                 replaceFragment(new SeguridadFragment());
-                if (getActivity() instanceof MainActivity) {
-                    ((MainActivity) getActivity()).setBackButtonVisible(true);
-                }
+                ((MainActivity) requireActivity()).setBackButtonVisible(true);
             });
         }
 
+
         // =========================
-        // NAVEGACIÓN: Coches registrados
-        //   * Requiere que la fila tenga id @+id/coches_registrados en fragment_config.xml
+        // NAVEGACIÓN: COCHES REGISTRADOS
         // =========================
         LinearLayout botonCoches = view.findViewById(R.id.coches_registrados);
         if (botonCoches != null) {
             botonCoches.setOnClickListener(v -> {
                 replaceFragment(new CochesRegistradosFragment());
-                if (getActivity() instanceof MainActivity) {
-                    ((MainActivity) getActivity()).setBackButtonVisible(true);
-                }
+                ((MainActivity) requireActivity()).setBackButtonVisible(true);
             });
         }
+
+
+        // =========================
+        // NAVEGACIÓN: AYUDA Y SOPORTE
+        // =========================
         LinearLayout layoutAyudaySoporte = view.findViewById(R.id.layoutAyudaySoporte);
         if (layoutAyudaySoporte != null) {
             layoutAyudaySoporte.setOnClickListener(v -> {
@@ -124,12 +126,47 @@ public class ConfigFragment extends Fragment {
                 ((MainActivity) requireActivity()).setBackButtonVisible(true);
             });
         }
+
+
+        // =========================
+        // CARGAR DATOS DEL USUARIO (Firestore)
+        // =========================
+
+        TextView tvName = view.findViewById(R.id.tv_name);
+        TextView tvEmail = view.findViewById(R.id.tv_email);
+        ImageView profileImage = view.findViewById(R.id.profile_image);
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("Usuarios").document(uid).get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+
+                        String nombre = doc.getString("Usuario");
+                        String correo = doc.getString("Correo");
+                        String imagenUrl = doc.getString("Imagen");
+
+                        tvName.setText(nombre);
+                        tvEmail.setText(correo);
+
+                        if (imagenUrl != null && !imagenUrl.isEmpty()) {
+                            Glide.with(this)
+                                    .load(imagenUrl)
+                                    .placeholder(R.drawable.ic_perfil2)
+                                    .into(profileImage);
+                        }
+
+                    } else {
+                        tvName.setText("Usuario desconocido");
+                    }
+                })
+                .addOnFailureListener(e -> tvName.setText("Error al cargar"));
     }
 
 
-
     // =========================
-    // Helper: reemplazar fragment en el contenedor principal
+    // Helper: Reemplazar fragment
     // =========================
     private void replaceFragment(@NonNull Fragment target) {
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
