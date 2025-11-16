@@ -56,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
         navCar.setOnClickListener(v -> {
             updateNavbarSelection(R.id.nav_car);
-            replaceFragment(new CarFragment(), true);
+            // Aquí abrimos el fragmento de ubicación con el mapa
+            replaceFragment(new UbicacionFragment(), true);
             setBackButtonVisible(false);
         });
 
@@ -107,14 +108,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // --- INICIO DE MÉTODO AÑADIDO --- (Este método ha sido eliminado)
-    // --- FIN DE MÉTODO AÑADIDO ---
-
-
     private void replaceFragment(Fragment fragment, boolean addToBackstack) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-        // ¡ID CORRECTO! Usamos el ID del contenedor de tu MainActivity
+        // Contenedor correcto de tu MainActivity
         ft.replace(R.id.fragment_container, fragment);
 
         if (addToBackstack) ft.addToBackStack(null);

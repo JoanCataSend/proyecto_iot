@@ -38,19 +38,15 @@ import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
 
-    // UI
     private EditText emailEditText, passwordEditText;
     private Button loginButton, registerButton, forgotButton, googleButton, facebookButton, xButton;
 
-    // Firebase
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    // Google
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
 
-    // Facebook
     private CallbackManager mCallbackManager;
     private boolean facebookConfigured = false;
 
@@ -59,11 +55,22 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        // Firebase auth y Firestore
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Referencias UI
+        // --- AUTOLOGIN CONTROLADO ---
+        boolean logged = getSharedPreferences("APP", MODE_PRIVATE)
+                .getBoolean("logged", false);
+
+        if (logged) {
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser != null) {
+                comprobarPrimerCoche(currentUser.getUid());
+                return;
+            }
+        }
+
+        // UI
         emailEditText = findViewById(R.id.editTextText);
         passwordEditText = findViewById(R.id.editTextTextPassword);
         loginButton = findViewById(R.id.button);
@@ -102,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         googleButton.setOnClickListener(v -> signInWithGoogle());
 
-        // --- FACEBOOK (configuración Joan + lógica Álvaro) ---
+        // -------- FACEBOOK LOGIN --------
         String fbAppId = getFacebookAppId();
         facebookConfigured = fbAppId != null && !fbAppId.isEmpty();
 
@@ -138,12 +145,13 @@ public class LoginActivity extends AppCompatActivity {
             facebookButton.setVisibility(View.GONE);
         }
 
-        // Botón X
         xButton.setOnClickListener(v ->
                 Toast.makeText(this, "Inicio con X pendiente de implementación", Toast.LENGTH_SHORT).show());
     }
 
-    // ---------------- LOGIN EMAIL ----------------
+    //-------------------------------------
+    // LOGIN EMAIL/PASSWORD
+    //-------------------------------------
     private void loginWithEmail() {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
@@ -158,9 +166,16 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null && user.isEmailVerified()) {
+
+                            // Guardamos que el usuario ha iniciado sesión
+                            getSharedPreferences("APP", MODE_PRIVATE)
+                                    .edit()
+                                    .putBoolean("logged", true)
+                                    .apply();
+
                             comprobarPrimerCoche(user.getUid());
                         } else {
-                            Toast.makeText(this, "Tu cuenta no está verificada. Revisa tu correo.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, "Email no verificado", Toast.LENGTH_LONG).show();
                             mAuth.signOut();
                         }
                     } else {
@@ -169,7 +184,9 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    // ---------------- GOOGLE ----------------
+    //-------------------------------------
+    // GOOGLE SIGN IN
+    //-------------------------------------
     private void signInWithGoogle() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -179,9 +196,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (facebookConfigured && mCallbackManager != null) {
+        if (facebookConfigured && mCallbackManager != null)
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
-        }
 
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -199,6 +215,13 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+
+                        // Marcamos la sesión como iniciada
+                        getSharedPreferences("APP", MODE_PRIVATE)
+                                .edit()
+                                .putBoolean("logged", true)
+                                .apply();
+
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) comprobarPrimerCoche(user.getUid());
                     } else {
@@ -207,12 +230,20 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    // ---------------- FACEBOOK ----------------
+    //-------------------------------------
+    // FACEBOOK SIGN IN
+    //-------------------------------------
     private void handleFacebookAccessToken(AccessToken token) {
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+
+                        getSharedPreferences("APP", MODE_PRIVATE)
+                                .edit()
+                                .putBoolean("logged", true)
+                                .apply();
+
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) comprobarPrimerCoche(user.getUid());
                     } else {
@@ -221,7 +252,9 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    // ---------------- PRIMER COCHE (Álvaro) ----------------
+    //-------------------------------------
+    // COMPROBAR SI TIENE COCHE
+    //-------------------------------------
     private void comprobarPrimerCoche(String userId) {
         db.collection("Coches")
                 .whereArrayContains("Propietario", userId)
@@ -229,10 +262,8 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnSuccessListener(query -> {
                     Intent intent;
                     if (query.isEmpty()) {
-                        // Usuario nuevo → configurar coche
                         intent = new Intent(LoginActivity.this, PrimerCocheActivity.class);
                     } else {
-                        // Usuario con coche → menú principal
                         intent = new Intent(LoginActivity.this, MainActivity.class);
                     }
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -243,7 +274,9 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(this, "Error al verificar coches: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // --- Obtener Facebook App ID desde el manifest (Joan) ---
+    //-------------------------------------
+    // FACEBOOK META-DATA
+    //-------------------------------------
     private String getFacebookAppId() {
         try {
             ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
@@ -254,6 +287,5 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             return null;
         }
-
     }
 }
