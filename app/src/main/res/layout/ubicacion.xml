@@ -96,6 +96,32 @@
             android:divider="@null"
             android:dividerHeight="10dp"
             android:layout_marginTop="14dp" />
+        <!-- Botón para añadir nuevo coche -->
+        <LinearLayout
+            android:id="@+id/btnAnadirCoche"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="#335B47A0"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_mas"
+                app:tint="@color/boton_oscuro"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Añadir nuevo coche"
+                android:textColor="@color/boton_oscuro"
+                android:textSize="15sp"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/montserrat_bold"/>
+        </LinearLayout>
 
     </LinearLayout>
 

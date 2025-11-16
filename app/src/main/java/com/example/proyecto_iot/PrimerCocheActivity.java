@@ -27,7 +27,7 @@ public class PrimerCocheActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registro_coche);
 
-        etMarca = findViewById(R.id.etMarca);
+        etMarca = findViewById(R.id.etMarcaEditar);
         etModelo = findViewById(R.id.etModelo);
         etMatricula = findViewById(R.id.etMatricula);
         etNombreCoche = findViewById(R.id.etNombreCoche);

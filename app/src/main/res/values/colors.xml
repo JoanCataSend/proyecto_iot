@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Fondos -->
-    <color name="fondo_claro">#F4F4F7</color>
+    <color name="fondo_claro">#F9F9FB</color>
     <color name="fondo_oscuro">#1E123A</color>
 
     <!-- Textos -->
@@ -10,9 +10,9 @@
     <color name="texto_secundario">#2DD6E1</color>
 
     <!-- Estados / alertas -->
-    <color name="error">#FF3537</color>
-    <color name="bien">#FF63FF4E</color>
-    <color name="aviso">#FFF9C80E</color>
+    <color name="error">#FF4E50</color>
+    <color name="bien">#72C867</color>
+    <color name="aviso">#F9C80E</color>
 
     <!-- Iconos -->
     <color name="icono_normal">#FF5B47A0</color>
@@ -21,7 +21,7 @@
 
     <!-- Botones -->
     <color name="boton_claro">#F9F9FB</color>
-    <color name="boton_oscuro">#FF5B47A0</color>
+    <color name="boton_oscuro">#5B47A0</color>
 
     <color name="lavender_divider">#FFEAE2F8</color>
     <color name="verdeoscuro">#0FA600</color>
@@ -34,4 +34,5 @@
 
     <color name="nav_ripple_color">#22000000</color> <!-- gris suave y elegante -->
 
+    <color name="morado_claro">#DEDAEC</color>
 </resources>

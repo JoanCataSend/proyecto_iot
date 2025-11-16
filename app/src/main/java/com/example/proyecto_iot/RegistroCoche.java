@@ -22,7 +22,7 @@ public class RegistroCoche extends AppCompatActivity {
         setContentView(R.layout.registro_coche);
 
         // Referenciar los elementos del layout
-        etMarca = findViewById(R.id.etMarca);
+        etMarca = findViewById(R.id.etMarcaEditar);
         etModelo = findViewById(R.id.etModelo);
         etMatricula = findViewById(R.id.etMatricula);
         etNombreCoche = findViewById(R.id.etNombreCoche);

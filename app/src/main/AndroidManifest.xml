@@ -2,14 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- 🔹 Permisos necesarios -->
+    <!-- 🔹 Permisos generales -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- 🔹 Permisos de notificaciones (Android 13+) -->
     <uses-permission
         android:name="android.permission.POST_NOTIFICATIONS"
         tools:targetApi="33" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <!-- Permisos de ubicación para Google Maps -->
+
+    <!-- 🔹 Permisos de ubicación (Google Maps / GPS) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -23,7 +26,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto_iot">
 
-        <!-- 🔹 FACEBOOK SDK -->
+        <!-- 🔹 Facebook SDK -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -32,15 +35,17 @@
             android:name="com.facebook.sdk.ClientToken"
             android:value="@string/facebook_client_token" />
 
-        <!-- 🔹 Google Maps API Key -->
+        <!-- 🔹 Google Maps API -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <!-- 🔹 Actividades de Facebook -->
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
+
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
@@ -52,9 +57,9 @@
             </intent-filter>
         </activity>
 
-        <!-- 🔹 ACTIVIDAD DE INICIO (Álvaro) -->
+        <!-- 🔹 ACTIVIDAD DE INICIO (Siempre LoginActivity) -->
         <activity
-            android:name="com.example.proyecto_iot.LoginActivity"
+            android:name=".LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.Proyecto_iot">
             <intent-filter>
@@ -63,28 +68,47 @@
             </intent-filter>
         </activity>
 
-        <!-- 🔹 Activities de autenticación -->
-        <activity
-            android:name="com.example.proyecto_iot.RegisterActivity"
+        <!-- 🔹 Actividades de autenticación -->
+        <activity android:name=".RegisterActivity"
             android:exported="false"
             android:theme="@style/Theme.Proyecto_iot" />
 
-        <activity
-            android:name="com.example.proyecto_iot.ForgotPasswordActivity"
+        <activity android:name=".ForgotPasswordActivity"
             android:exported="false"
             android:theme="@style/Theme.Proyecto_iot" />
 
         <!-- 🔹 Activity principal -->
         <activity
-            android:name="com.example.proyecto_iot.MainActivity"
+            android:name=".MainActivity"
             android:exported="false"
             android:theme="@style/Theme.Proyecto_iot" />
 
-        <!-- 🔹 Activities de ambos códigos -->
-        <activity android:name="com.example.proyecto_iot.RegistroCoche" android:exported="false"/>
-        <activity android:name="com.example.proyecto_iot.PrimerCocheActivity" android:exported="false"/>
+        <!-- 🔹 Activities del sistema de coches -->
+        <activity android:name=".RegistroCoche" android:exported="false" />
+        <activity android:name=".PrimerCocheActivity" android:exported="false" />
+        <activity android:name=".EditarCocheActivity" android:exported="false" />
+        <activity android:name=".AnadirCoche" android:exported="false" />
 
-        <!-- Nueva activity añadida en Álvaro -->
+        <!-- 🔹 Configuración -->
+        <activity android:name=".ConfigActivity"
+            android:exported="false"
+            android:label="@string/ajustes"
+            android:theme="@style/Theme.Proyecto_iot" />
+
+        <!-- 🔹 Perfil y cuenta -->
+        <activity android:name=".CuentaYPerfil"
+            android:exported="false" />
+
+        <!-- 🔹 Otras actividades del proyecto -->
+        <activity
+            android:name=".CamarasActivity"
+            android:exported="false"
+            android:label="@string/camara_activada"
+            android:theme="@style/Theme.Proyecto_iot" />
+
+        <activity
+            android:name=".Ubicacion"
+            android:exported="false" />
 
     </application>
 
