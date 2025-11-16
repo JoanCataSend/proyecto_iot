@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +56,14 @@ public class Ubicacion extends NavBarActivity implements OnMapReadyCallback {
 
         // --- LISTA DE COCHES ---
         ListView listViewCoches = findViewById(R.id.listViewCoches);
+
+        // Boton para añadir coche
+        LinearLayout btnAnadir = findViewById(R.id.btnAnadirCoche);
+
+        btnAnadir.setOnClickListener(v -> {
+            Intent intent = new Intent(Ubicacion.this, AnadirCoche.class);
+            startActivityForResult(intent, 100);
+        });
 
         // Adapter personalizado
         CocheAdapter adapter = new CocheAdapter(listaCoches);
@@ -183,6 +192,7 @@ public class Ubicacion extends NavBarActivity implements OnMapReadyCallback {
             TextView ubicacion = convertView.findViewById(R.id.ubicacion_coche);
             ImageButton btnEditar = convertView.findViewById(R.id.btn_editar_coche);
 
+
             nombre.setText(coche.nombre);
             ubicacion.setText(coche.direccion);
 
@@ -194,7 +204,7 @@ public class Ubicacion extends NavBarActivity implements OnMapReadyCallback {
                 intent.putExtra("marcaCoche", coche.marca);
                 intent.putExtra("modeloCoche", coche.modelo);
                 intent.putExtra("matriculaCoche", coche.matricula);
-                startActivity(intent);
+                startActivityForResult(intent,99);
             });
 
             return convertView;
@@ -224,4 +234,39 @@ public class Ubicacion extends NavBarActivity implements OnMapReadyCallback {
             }
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if ((requestCode == 99 || requestCode == 100) && resultCode == RESULT_OK) {
+            recargarCoches();
+        }
+    }
+
+    private void recargarCoches() {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        db.collection("Coches")
+                .whereArrayContains("Propietario", uid)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    listaCoches.clear();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        listaCoches.add(new Coche(
+                                doc.getId(),
+                                doc.getString("Nombre"),
+                                doc.getString("Marca"),
+                                doc.getString("Modelo"),
+                                doc.getString("Matrícula"),
+                                0,
+                                0,
+                                ""
+                        ));
+                    }
+                    ((BaseAdapter) ((ListView) findViewById(R.id.listViewCoches)).getAdapter()).notifyDataSetChanged();
+                    actualizarMarcadores();
+                });
+    }
+
 }

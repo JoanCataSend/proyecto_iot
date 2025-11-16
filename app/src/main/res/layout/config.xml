@@ -117,11 +117,15 @@
 
         <!-- Opción 1 -->
         <LinearLayout
+            android:id="@+id/cuentayperfil"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingVertical="14dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
             android:paddingHorizontal="6dp"
             android:layout_marginLeft="32dp"
             android:layout_marginRight="32dp"
@@ -299,6 +303,7 @@
         android:id="@+id/navbar_include"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
 
 
