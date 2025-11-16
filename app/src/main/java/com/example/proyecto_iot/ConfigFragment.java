@@ -10,13 +10,17 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout; // <-- Importación necesaria
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ConfigFragment extends Fragment {
 
@@ -84,5 +88,43 @@ public class ConfigFragment extends Fragment {
                 transaction.commit();
             });
         }
+
+        TextView tvName = view.findViewById(R.id.tv_name);
+        TextView tvEmail = view.findViewById(R.id.tv_email);
+        ImageView profileImage = view.findViewById(R.id.profile_image);
+
+// UID del usuario logueado
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+// Referencia a Firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("Usuarios").document(uid).get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+
+                        String nombre = doc.getString("Usuario");
+                        String correo = doc.getString("Correo");
+                        String imagenUrl = doc.getString("Imagen");
+
+                        tvName.setText(nombre);
+                        tvEmail.setText(correo);
+
+                        // cargar imagen si la tienes en Firebase Storage:
+                        if (imagenUrl != null && !imagenUrl.isEmpty()) {
+                            // Usa Glide (la mejor opción)
+                            Glide.with(this)
+                                    .load(imagenUrl)
+                                    .placeholder(R.drawable.ic_perfil2)
+                                    .into(profileImage);
+                        }
+
+                    } else {
+                        tvName.setText("Usuario desconocido");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    tvName.setText("Error al cargar");
+                });
     }
 }
