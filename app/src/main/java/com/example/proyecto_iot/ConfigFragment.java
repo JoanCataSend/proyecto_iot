@@ -52,25 +52,32 @@ public class ConfigFragment extends Fragment {
         View logout = view.findViewById(R.id.btn_logout);
         if (logout != null) {
             logout.setOnClickListener(v -> {
-                try {
-                    GoogleSignInClient gsc = GoogleSignIn.getClient(
-                            requireContext(),
-                            new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                    .requestIdToken(getString(R.string.default_web_client_id))
-                                    .requestEmail()
-                                    .build()
-                    );
-                    gsc.signOut();
-                } catch (Exception ignored) {}
 
-                try { LoginManager.getInstance().logOut(); } catch (Exception ignored) {}
-                try { FirebaseAuth.getInstance().signOut(); } catch (Exception ignored) {}
+                // --- Cerrar sesión Google ---
+                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.default_web_client_id))
+                        .requestEmail()
+                        .build();
 
-                Intent i = new Intent(requireContext(), EntryActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(i);
-                requireActivity().finish();
+                GoogleSignInClient gsc = GoogleSignIn.getClient(requireContext(), gso);
+
+                gsc.signOut().addOnCompleteListener(task -> {
+
+                    // --- Cerrar sesión Facebook ---
+                    try { LoginManager.getInstance().logOut(); } catch (Exception ignored) {}
+
+                    // --- Cerrar sesión Firebase ---
+                    try { FirebaseAuth.getInstance().signOut(); } catch (Exception ignored) {}
+
+                    // --- Volver a la pantalla de entrada ---
+                    Intent i = new Intent(requireContext(), EntryActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(i);
+                    requireActivity().finish();
+
+                });
             });
+
         }
 
 
@@ -97,6 +104,16 @@ public class ConfigFragment extends Fragment {
             });
         }
 
+        // =========================
+        // NAVEGACIÓN: CUENTA Y PERFIL
+        // =========================
+        LinearLayout cuenta_perfil = view.findViewById(R.id.cuenta_perfil);
+        if (cuenta_perfil != null) {
+            cuenta_perfil.setOnClickListener(v -> {
+                replaceFragment(new CuentaYPerfilFragment());
+                ((MainActivity) requireActivity()).setBackButtonVisible(true);
+            });
+        }
 
         // =========================
         // NAVEGACIÓN: COCHES REGISTRADOS

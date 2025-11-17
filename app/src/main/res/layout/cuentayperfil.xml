@@ -1,38 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <!-- Logo -->
-    <TextView
-        android:id="@+id/logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="48dp"
-        android:fontFamily="@font/montserrat_bold_ttf"
-        android:text="KöVa"
-        android:textColor="@color/icono_normal"
-        android:textSize="32sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Botón de volver -->
-    <ImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="115dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/volver"
-        android:padding="0dp"
-        android:src="@drawable/ic_flecha_atras"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/icono_normal" />
+    android:layout_height="match_parent">
 
     <!-- Título -->
     <TextView
@@ -40,131 +12,124 @@
         style="@style/Seccion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:fontFamily="@font/montserrat_bold"
         android:text="@string/cuenta_perfil"
         android:textColor="@color/icono_normal"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Imagen perfil -->
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:src="@drawable/foto_perfil_default"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titulo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titulo" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Botón editar foto -->
     <ImageButton
         android:id="@+id/btnEditarFoto"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="216dp"
-        android:layout_marginTop="184dp"
+        android:layout_marginTop="0dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/volver"
-        android:padding="0dp"
         android:src="@drawable/ic_editar_foto"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/icono_normal" />
+        app:layout_constraintTop_toTopOf="@id/imageView2"
+        app:layout_constraintEnd_toEndOf="@id/imageView2"/>
+
+    <!-- Nombre -->
 
     <TextView
         android:id="@+id/txtNombre"
         style="@style/TituloLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
-        android:fontFamily="@font/roboto_regular"
+        android:layout_marginTop="12dp"
         android:text="@string/nombre_usuario"
         app:layout_constraintStart_toStartOf="@+id/etModeloEditar"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
-    <TextView
-        android:id="@+id/txtCorreo"
-        style="@style/TituloLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:fontFamily="@font/roboto_regular"
-        android:text="@string/correo"
-        app:layout_constraintStart_toStartOf="@+id/etCorreo"
-        app:layout_constraintTop_toBottomOf="@+id/etModeloEditar" />
-
-    <TextView
-        android:id="@+id/txtContrasena"
-        style="@style/TituloLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:fontFamily="@font/roboto_regular"
-        android:text="@string/contrasena"
-        app:layout_constraintStart_toStartOf="@+id/etContrasena"
-        app:layout_constraintTop_toBottomOf="@+id/etCorreo" />
+        app:layout_constraintTop_toBottomOf="@id/imageView2" />
 
     <EditText
         android:id="@+id/etModeloEditar"
         style="@style/EditText"
         android:layout_width="310dp"
         android:layout_height="34dp"
-        android:layout_marginTop="7dp"
-        android:ems="10"
+        android:layout_marginTop="8dp"
         android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtNombre"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtNombre" />
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Correo -->
+    <TextView
+        android:id="@+id/txtCorreo"
+        style="@style/TituloLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/correo"
+        app:layout_constraintStart_toStartOf="@+id/etCorreo"
+        app:layout_constraintTop_toBottomOf="@id/etModeloEditar" />
 
     <EditText
         android:id="@+id/etCorreo"
         style="@style/EditText"
         android:layout_width="310dp"
         android:layout_height="34dp"
-        android:layout_marginTop="7dp"
-        android:ems="10"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:inputType="textEmailAddress"
+        app:layout_constraintTop_toBottomOf="@id/txtCorreo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtCorreo" />
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Contraseña -->
+    <TextView
+        android:id="@+id/txtContrasena"
+        style="@style/TituloLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/contrasena"
+        app:layout_constraintStart_toStartOf="@+id/etContrasena"
+        app:layout_constraintTop_toBottomOf="@id/etCorreo" />
 
     <EditText
         android:id="@+id/etContrasena"
         style="@style/EditText"
         android:layout_width="310dp"
         android:layout_height="34dp"
-        android:layout_marginTop="7dp"
-        android:ems="10"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:inputType="textPassword"
+        app:layout_constraintTop_toBottomOf="@id/txtContrasena"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtContrasena" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Botones -->
     <Button
         android:id="@+id/btnCerrarSesion"
         android:layout_width="310dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="16dp"
+        android:text="Cerrar sesión"
         android:backgroundTint="@color/morado_claro"
-        android:text="Cerrar sesion"
-
         android:textColor="@color/boton_oscuro"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etContrasena"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etContrasena" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
         android:id="@+id/btnGuardar"
         android:layout_width="310dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:backgroundTint="@color/boton_oscuro"
+        android:layout_marginTop="16dp"
         android:text="Guardar cambios"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        android:backgroundTint="@color/boton_oscuro"
+        app:layout_constraintTop_toBottomOf="@id/btnCerrarSesion"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCerrarSesion" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -118,7 +118,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     .addOnCompleteListener(verificationTask -> {
                                         if (verificationTask.isSuccessful()) {
                                             Toast.makeText(this,
-                                                    "Registro exitoso 🎉. Verifica tu correo antes de iniciar sesión.",
+                                                    "Registro exitoso. Verifica tu correo antes de iniciar sesión.",
                                                     Toast.LENGTH_LONG).show();
                                             mAuth.signOut();
                                             startActivity(new Intent(this, LoginActivity.class));
