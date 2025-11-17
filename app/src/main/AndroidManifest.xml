@@ -105,11 +105,6 @@
         <activity android:name=".EditarCocheActivity" android:exported="false"/>
         <activity android:name=".AnadirCoche" android:exported="false"/>
 
-        <!-- 🔹 Perfil -->
-        <activity
-            android:name=".CuentaYPerfil"
-            android:exported="false"/>
-
 
     </application>
 
