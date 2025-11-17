@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.proyecto_iot">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -14,7 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto_iot">
 
-        <!-- SPLASH: ahora es el launcher -->
         <activity
             android:name=".SplashActivity"
             android:exported="true"
@@ -25,17 +26,21 @@
             </intent-filter>
         </activity>
 
-        <!-- Login ya NO es launcher -->
         <activity android:name=".LoginActivity" android:exported="true" />
-
         <activity android:name=".RegistroCoche" />
         <activity android:name=".MainActivity" />
-        <activity
-            android:name="com.facebook.FacebookActivity"
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".RegisterWizardActivity"/>
+        <activity android:name=".OnboardingIntroActivity"/>
+        <activity android:name=".PrimerCocheActivity"/>
+        <activity android:name=".HomeDemoActivity"/>
+        <activity android:name=".ForgotPasswordActivity"/>
+
+        <!-- Facebook -->
+        <activity android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
-        <activity
-            android:name="com.facebook.CustomTabActivity"
+        <activity android:name="com.facebook.CustomTabActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -45,20 +50,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".ForgotPasswordActivity" />
-        <activity
-            android:name=".CamarasActivity"
-            android:exported="false"
-            android:label="@string/camara_activada"
-            android:theme="@style/Theme.Proyecto_iot" />
-        <activity
-            android:name=".ConfigActivity"
-            android:exported="false"
-            android:label="@string/ajustes"
-            android:theme="@style/Theme.Proyecto_iot" />
-
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <meta-data android:name="com.facebook.sdk.ClientToken"    android:value="@string/facebook_client_token"/>
+
     </application>
+
 </manifest>
