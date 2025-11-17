@@ -25,9 +25,9 @@ public class PrimerCocheActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.registro_coche);
+        setContentView(R.layout.activity_registro_coche_moderno);
 
-        etMarca = findViewById(R.id.etMarcaEditar);
+        etMarca = findViewById(R.id.etMarca);
         etModelo = findViewById(R.id.etModelo);
         etMatricula = findViewById(R.id.etMatricula);
         etNombreCoche = findViewById(R.id.etNombreCoche);

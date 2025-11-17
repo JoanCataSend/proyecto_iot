@@ -1,16 +1,12 @@
 package com.example.proyecto_iot;
 
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.text.InputType;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.AccessToken;
@@ -43,32 +39,18 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-
     private GoogleSignInClient mGoogleSignInClient;
-    private static final int RC_SIGN_IN = 9001;
-
     private CallbackManager mCallbackManager;
-    private boolean facebookConfigured = false;
+    private static final int RC_SIGN_IN = 9001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.login);
 
-        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-
-        // --- AUTOLOGIN CONTROLADO ---
-        boolean logged = getSharedPreferences("APP", MODE_PRIVATE)
-                .getBoolean("logged", false);
-
-        if (logged) {
-            FirebaseUser currentUser = mAuth.getCurrentUser();
-            if (currentUser != null) {
-                comprobarPrimerCoche(currentUser.getUid());
-                return;
-            }
-        }
+        mAuth = FirebaseAuth.getInstance();
 
         // UI
         emailEditText = findViewById(R.id.editTextText);
@@ -77,81 +59,61 @@ public class LoginActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.button2);
         forgotButton = findViewById(R.id.button3);
         googleButton = findViewById(R.id.button4);
-        xButton = findViewById(R.id.button5);
         facebookButton = findViewById(R.id.button6);
+        xButton = findViewById(R.id.button5);
 
-        // Mostrar / ocultar contraseña
-        ImageView togglePasswordImage = findViewById(R.id.imageViewTogglePassword);
-        final boolean[] passwordVisible = {false};
-        togglePasswordImage.setOnClickListener(v -> {
-            if (passwordVisible[0]) {
-                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                togglePasswordImage.setImageResource(R.drawable.ic_eye_closed);
-                passwordVisible[0] = false;
-            } else {
-                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                togglePasswordImage.setImageResource(R.drawable.ic_eye_open);
-                passwordVisible[0] = true;
-            }
-            passwordEditText.setSelection(passwordEditText.getText().length());
-        });
-
-        // Botones
         loginButton.setOnClickListener(v -> loginWithEmail());
-        registerButton.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
-        forgotButton.setOnClickListener(v -> startActivity(new Intent(this, ForgotPasswordActivity.class)));
 
-        // --- GOOGLE SIGN IN ---
+        registerButton.setOnClickListener(v ->
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class)));
+
+        forgotButton.setOnClickListener(v ->
+                startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class)));
+
+        // GOOGLE LOGIN
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
+
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         googleButton.setOnClickListener(v -> signInWithGoogle());
 
-        // -------- FACEBOOK LOGIN --------
-        String fbAppId = getFacebookAppId();
-        facebookConfigured = fbAppId != null && !fbAppId.isEmpty();
+        // FACEBOOK LOGIN
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(getApplication());
+        mCallbackManager = CallbackManager.Factory.create();
 
-        if (facebookConfigured) {
-            FacebookSdk.setApplicationId(fbAppId);
-            FacebookSdk.sdkInitialize(getApplicationContext());
-            AppEventsLogger.activateApp(getApplication());
-            mCallbackManager = CallbackManager.Factory.create();
+        facebookButton.setOnClickListener(v -> {
+            LoginManager.getInstance().logInWithReadPermissions(
+                    LoginActivity.this, Arrays.asList("email", "public_profile"));
 
-            facebookButton.setVisibility(View.VISIBLE);
-            facebookButton.setOnClickListener(v -> {
-                LoginManager.getInstance().logInWithReadPermissions(
-                        LoginActivity.this, Arrays.asList("email", "public_profile"));
-                LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        handleFacebookAccessToken(loginResult.getAccessToken());
-                    }
+            LoginManager.getInstance().registerCallback(mCallbackManager,
+                    new FacebookCallback<LoginResult>() {
+                        @Override
+                        public void onSuccess(LoginResult loginResult) {
+                            handleFacebookAccessToken(loginResult.getAccessToken());
+                        }
 
-                    @Override
-                    public void onCancel() {
-                        Toast.makeText(LoginActivity.this, "Inicio con Facebook cancelado", Toast.LENGTH_SHORT).show();
-                    }
+                        @Override
+                        public void onCancel() {
+                            Toast.makeText(LoginActivity.this,
+                                    "Inicio con Facebook cancelado", Toast.LENGTH_SHORT).show();
+                        }
 
-                    @Override
-                    public void onError(FacebookException error) {
-                        Toast.makeText(LoginActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
-            });
-
-        } else {
-            facebookButton.setVisibility(View.GONE);
-        }
+                        @Override
+                        public void onError(FacebookException error) {
+                            Toast.makeText(LoginActivity.this,
+                                    "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+        });
 
         xButton.setOnClickListener(v ->
                 Toast.makeText(this, "Inicio con X pendiente de implementación", Toast.LENGTH_SHORT).show());
     }
 
-    //-------------------------------------
-    // LOGIN EMAIL/PASSWORD
-    //-------------------------------------
+    // EMAIL LOGIN
     private void loginWithEmail() {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
@@ -164,128 +126,116 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+
                         FirebaseUser user = mAuth.getCurrentUser();
+
                         if (user != null && user.isEmailVerified()) {
-
-                            // Guardamos que el usuario ha iniciado sesión
-                            getSharedPreferences("APP", MODE_PRIVATE)
-                                    .edit()
-                                    .putBoolean("logged", true)
-                                    .apply();
-
-                            comprobarPrimerCoche(user.getUid());
+                            navigateAfterLogin(user);
                         } else {
-                            Toast.makeText(this, "Email no verificado", Toast.LENGTH_LONG).show();
+                            Toast.makeText(this,
+                                    "Debes verificar tu email antes de continuar.",
+                                    Toast.LENGTH_LONG).show();
                             mAuth.signOut();
                         }
+
                     } else {
-                        Toast.makeText(this, "Error: " + task.getException().getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(this,
+                                "Error: " + task.getException().getLocalizedMessage(),
+                                Toast.LENGTH_LONG).show();
                     }
                 });
     }
 
-    //-------------------------------------
-    // GOOGLE SIGN IN
-    //-------------------------------------
+    // GOOGLE LOGIN
     private void signInWithGoogle() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (facebookConfigured && mCallbackManager != null)
-            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            Task<GoogleSignInAccount> task =
+                    GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
-                GoogleSignInAccount account = task.getResult(ApiException.class);
+                GoogleSignInAccount account =
+                        task.getResult(ApiException.class);
+
                 firebaseAuthWithGoogle(account.getIdToken());
+
             } catch (ApiException e) {
-                Toast.makeText(this, "Error Google: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this,
+                        "Error en inicio con Google: " + e.getMessage(),
+                        Toast.LENGTH_LONG).show();
             }
         }
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        AuthCredential credential =
+                GoogleAuthProvider.getCredential(idToken, null);
+
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-
-                        // Marcamos la sesión como iniciada
-                        getSharedPreferences("APP", MODE_PRIVATE)
-                                .edit()
-                                .putBoolean("logged", true)
-                                .apply();
-
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        if (user != null) comprobarPrimerCoche(user.getUid());
+                        navigateAfterLogin(mAuth.getCurrentUser());
                     } else {
-                        Toast.makeText(this, "Error al autenticar con Google", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this,
+                                "Error al autenticar con Google",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    //-------------------------------------
-    // FACEBOOK SIGN IN
-    //-------------------------------------
+    // FACEBOOK LOGIN
     private void handleFacebookAccessToken(AccessToken token) {
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        AuthCredential credential =
+                FacebookAuthProvider.getCredential(token.getToken());
+
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-
-                        getSharedPreferences("APP", MODE_PRIVATE)
-                                .edit()
-                                .putBoolean("logged", true)
-                                .apply();
-
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        if (user != null) comprobarPrimerCoche(user.getUid());
+                        navigateAfterLogin(mAuth.getCurrentUser());
                     } else {
-                        Toast.makeText(this, "Error Facebook", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this,
+                                "Error en inicio con Facebook",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    //-------------------------------------
-    // COMPROBAR SI TIENE COCHE
-    //-------------------------------------
-    private void comprobarPrimerCoche(String userId) {
+    // LÓGICA PRINCIPAL → Decide dónde ir después del login
+    private void navigateAfterLogin(FirebaseUser user) {
+
         db.collection("Coches")
-                .whereArrayContains("Propietario", userId)
+                .whereArrayContains("Propietario", user.getUid())
+                .limit(1)
                 .get()
                 .addOnSuccessListener(query -> {
-                    Intent intent;
+
+                    Intent next;
+
                     if (query.isEmpty()) {
-                        intent = new Intent(LoginActivity.this, PrimerCocheActivity.class);
+                        // No tiene coche registrado → registrar el primero
+                        next = new Intent(this, PrimerCocheActivity.class);
                     } else {
-                        intent = new Intent(LoginActivity.this, MainActivity.class);
+                        // Ya tiene coche → ir al home
+                        next = new Intent(this, MainActivity.class);
                     }
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+
+                    startActivity(next);
                     finish();
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Error al verificar coches: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-    }
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this,
+                            "Error comprobando los coches.",
+                            Toast.LENGTH_LONG).show();
 
-    //-------------------------------------
-    // FACEBOOK META-DATA
-    //-------------------------------------
-    private String getFacebookAppId() {
-        try {
-            ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-            if (ai.metaData == null) return null;
-            String id = ai.metaData.getString("com.facebook.sdk.ApplicationId");
-            if (id != null && id.startsWith("fb")) id = id.substring(2);
-            return id;
-        } catch (Exception e) {
-            return null;
-        }
+                    // Por seguridad, lo mandamos al registro del coche
+                    startActivity(new Intent(this, PrimerCocheActivity.class));
+                    finish();
+                });
     }
 }
