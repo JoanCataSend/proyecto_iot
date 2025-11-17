@@ -110,6 +110,7 @@
             android:name=".CuentaYPerfil"
             android:exported="false"/>
 
+
     </application>
 
 </manifest>
