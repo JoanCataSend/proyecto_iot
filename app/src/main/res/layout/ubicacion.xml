@@ -47,7 +47,8 @@
             android:layout_marginStart="30dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="30dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:layout_marginBottom="40dp"/>
 
     </LinearLayout>
 
@@ -62,7 +63,7 @@
         android:paddingRight="30dp"
         android:paddingBottom="0dp"
         android:maxHeight="420dp"
-        android:translationY="38dp"
+        android:translationY="5dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View

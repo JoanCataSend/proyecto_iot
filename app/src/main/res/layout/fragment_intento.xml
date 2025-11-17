@@ -23,6 +23,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selecciona el coche:"
+                android:textColor="#505050"
+                android:textSize="16sp"
+                android:layout_marginBottom="7dp" />
 
             <!-- SELECTOR VEHÍCULO -->
             <LinearLayout
@@ -70,7 +77,7 @@
                 android:padding="1dp"
                 android:layout_marginBottom="16dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/coche_naranja" />
+                android:src="@drawable/coche_mat" />
 
             <LinearLayout
                 android:id="@+id/actionsRow"
@@ -259,7 +266,7 @@
                     android:layout_marginStart="12dp"
                     android:text="@string/calle"
                     android:textColor="@color/texto_oscuro"
-                    android:textStyle="bold"
+
                     android:textSize="15dp" />
 
                 <!-- FLECHA DERECHA -->
@@ -288,7 +295,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Más información del sistema:"
-                    android:textStyle="bold"
                     android:textColor="@color/texto_oscuro"
                     android:textSize="16sp"
                     android:layout_marginBottom="12dp" />
