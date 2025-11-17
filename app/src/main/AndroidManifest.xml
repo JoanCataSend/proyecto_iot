@@ -1,114 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.proyecto_iot">
 
     <!-- 🔹 Permisos generales -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
-    <!-- 🔹 Permisos de notificaciones (Android 13+) -->
+    <!-- 🔹 Permiso de notificaciones (Android 13+) -->
     <uses-permission
         android:name="android.permission.POST_NOTIFICATIONS"
-        tools:targetApi="33" />
+        tools:targetApi="33"/>
 
-    <!-- 🔹 Permisos de ubicación (Google Maps / GPS) -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- 🔹 Permisos de ubicación -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_logo_color"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_logo_color_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto_iot">
 
-        <!-- 🔹 Facebook SDK -->
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
-
-        <meta-data
-            android:name="com.facebook.sdk.ClientToken"
-            android:value="@string/facebook_client_token" />
+        <!-- 🔹 Splash -->
+        <activity
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Proyecto_iot.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
 
         <!-- 🔹 Google Maps API -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="@string/google_maps_key"/>
 
-        <!-- 🔹 Actividades de Facebook -->
+        <!-- 🔹 Facebook SDK -->
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token"/>
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"/>
 
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="@string/fb_login_protocol_scheme" />
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="@string/fb_login_protocol_scheme"/>
             </intent-filter>
         </activity>
 
-        <!-- 🔹 ACTIVIDAD DE INICIO (Siempre LoginActivity) -->
+        <!-- 🔹 Actividad de inicio REAL (Login) -->
         <activity
             android:name=".LoginActivity"
             android:exported="true"
-            android:theme="@style/Theme.Proyecto_iot">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.Proyecto_iot"/>
 
         <!-- 🔹 Actividades de autenticación -->
-        <activity android:name=".RegisterActivity"
+        <activity
+            android:name=".RegisterActivity"
             android:exported="false"
-            android:theme="@style/Theme.Proyecto_iot" />
+            android:theme="@style/Theme.Proyecto_iot"/>
 
-        <activity android:name=".ForgotPasswordActivity"
+        <activity
+            android:name=".ForgotPasswordActivity"
             android:exported="false"
-            android:theme="@style/Theme.Proyecto_iot" />
+            android:theme="@style/Theme.Proyecto_iot"/>
+
+        <activity
+            android:name=".RegisterWizardActivity"/>
+
+        <activity
+            android:name=".OnboardingIntroActivity"/>
+
+        <activity
+            android:name=".HomeDemoActivity"/>
 
         <!-- 🔹 Activity principal -->
         <activity
             android:name=".MainActivity"
             android:exported="false"
-            android:theme="@style/Theme.Proyecto_iot" />
+            android:theme="@style/Theme.Proyecto_iot"/>
 
-        <!-- 🔹 Activities del sistema de coches -->
-        <activity android:name=".RegistroCoche" android:exported="false" />
-        <activity android:name=".PrimerCocheActivity" android:exported="false" />
-        <activity android:name=".EditarCocheActivity" android:exported="false" />
-        <activity android:name=".AnadirCoche" android:exported="false" />
+        <!-- 🔹 Sistema de coches -->
+        <activity android:name=".RegistroCoche" android:exported="false"/>
+        <activity android:name=".PrimerCocheActivity" android:exported="false"/>
+        <activity android:name=".EditarCocheActivity" android:exported="false"/>
+        <activity android:name=".AnadirCoche" android:exported="false"/>
 
-        <!-- 🔹 Configuración -->
-        <activity android:name=".ConfigActivity"
-            android:exported="false"
-            android:label="@string/ajustes"
-            android:theme="@style/Theme.Proyecto_iot" />
-
-        <!-- 🔹 Perfil y cuenta -->
-        <activity android:name=".CuentaYPerfil"
-            android:exported="false" />
-
-        <!-- 🔹 Otras actividades del proyecto -->
+        <!-- 🔹 Perfil -->
         <activity
-            android:name=".CamarasActivity"
-            android:exported="false"
-            android:label="@string/camara_activada"
-            android:theme="@style/Theme.Proyecto_iot" />
-
-        <activity
-            android:name=".Ubicacion"
-            android:exported="false" />
+            android:name=".CuentaYPerfil"
+            android:exported="false"/>
 
     </application>
 
