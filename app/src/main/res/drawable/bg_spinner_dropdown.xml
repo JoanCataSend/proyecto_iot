@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- BORDE -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="25dp" />
+            <stroke
+                android:width="0.5dp"
+                android:color="#33000000" /> <!-- Color del borde -->
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+
+    <!-- FONDO -->
+    <item
+        android:left="1dp"
+        android:top="1dp"
+        android:right="1dp"
+        android:bottom="1dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="25dp" />
+            <solid android:color="#EFE4FB" /> <!-- Tu color de fondo -->
+        </shape>
+    </item>
+
+</layer-list>

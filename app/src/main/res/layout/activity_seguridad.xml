@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/fondo_claro"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    tools:context=".SeguridadFragment">
+
+    <!-- Barra superior: usamos RelativeLayout para centrar el título -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_vertical">
+        <!-- Título centrado -->
+        <TextView
+            android:id="@+id/titleSeguridad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Seguridad"
+            android:textColor="@color/icono_normal"
+            android:textSize="20sp"
+            android:fontFamily="@font/roboto_medium"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <!-- Descripción -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Configura las funciones de protección de tu coche y de tu cuenta"
+        android:textColor="@color/texto_oscuro"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        android:textSize="14sp"
+        android:fontFamily="@font/roboto_regular" />
+
+    <!-- Contenedor de opciones -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:divider="@color/lavender_divider"
+            android:showDividers="middle">
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dividerColor="@color/lavender_divider" />
+
+            <!-- Opción: Sensor de puertas -->
+            <CheckBox
+                android:id="@+id/checkPuertas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sensor de puertas\nAbre y cierra las puertas de forma remota"
+                android:textColor="@color/texto_oscuro"
+                android:buttonTint="@color/boton_oscuro"
+                android:padding="12dp"
+                android:checked="true" />
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dividerColor="@color/lavender_divider" />
+            <!-- Opción: Sensor de ventanas -->
+            <CheckBox
+                android:id="@+id/checkVentanas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sensor de ventanas\nDetecta la rotura de cristales"
+                android:textColor="@color/texto_oscuro"
+                android:buttonTint="@color/boton_oscuro"
+                android:padding="12dp"
+                android:checked="true" />
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dividerColor="@color/lavender_divider" />
+            <!-- Opción: Sensor de movimiento -->
+            <CheckBox
+                android:id="@+id/checkMovimiento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sensor de movimiento\nDetecta si hay movimiento dentro del coche"
+                android:textColor="@color/texto_oscuro"
+                android:buttonTint="@color/boton_oscuro"
+                android:padding="12dp"
+                android:checked="true" />
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dividerColor="@color/lavender_divider" />
+            <!-- Opción: Alarma sonora -->
+            <CheckBox
+                android:id="@+id/checkAlarma"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Alarma sonora\nActiva el sonido de la bocina"
+                android:textColor="@color/texto_oscuro"
+                android:buttonTint="@color/boton_oscuro"
+                android:padding="12dp"
+                android:checked="true" />
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dividerColor="@color/lavender_divider" />
+            <!-- Opción: Luces de aviso -->
+            <CheckBox
+                android:id="@+id/checkLuces"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Luces de aviso\nActiva el parpadeo de los faros"
+                android:textColor="@color/texto_oscuro"
+                android:buttonTint="@color/boton_oscuro"
+                android:padding="12dp"
+                android:checked="true" />
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dividerColor="@color/lavender_divider" />
+            <!-- Opción: Bloqueo remoto -->
+            <CheckBox
+                android:id="@+id/checkBloqueo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bloqueo remoto\nBloquea las puertas de forma remota"
+                android:textColor="@color/texto_oscuro"
+                android:buttonTint="@color/boton_oscuro"
+                android:padding="12dp"
+                android:checked="true" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Botón Guardar usando tu drawable existente -->
+    <Button
+        android:id="@+id/btnGuardar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Guardar cambios"
+        android:textColor="@color/texto_claro"
+        android:background="@drawable/boton_principal_selector"
+        android:textSize="14sp"
+        android:fontFamily="@font/roboto_regular"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp" />
+
+</LinearLayout>

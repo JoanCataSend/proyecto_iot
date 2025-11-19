@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/titulo"
+        style="@style/Seccion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:fontFamily="@font/montserrat_bold"
+        android:text="Editar coche"
+        android:textColor="@color/icono_normal"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+    <!-- Descripcion -->
+    <TextView
+        android:id="@+id/descripcion"
+        style="@style/DescripciónActividad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="Edita los datos de tu coche"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titulo" />
+
+    <TextView
+        android:id="@+id/txtMarcaE"
+        style="@style/TituloLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/marca"
+        app:layout_constraintStart_toStartOf="@+id/etMarca"
+        app:layout_constraintTop_toBottomOf="@+id/descripcion" />
+
+    <TextView
+        android:id="@+id/txtModeloE"
+        style="@style/TituloLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/modelo"
+        app:layout_constraintStart_toStartOf="@+id/etModeloE"
+        app:layout_constraintTop_toBottomOf="@+id/etMarca" />
+
+    <TextView
+        android:id="@+id/txtMatriculaE"
+        style="@style/TituloLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/matricula"
+        app:layout_constraintStart_toStartOf="@+id/etMatriculaE"
+        app:layout_constraintTop_toBottomOf="@+id/etModeloE" />
+
+    <TextView
+        android:id="@+id/txtNombreE"
+        style="@style/TituloLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/nombre_coche"
+        app:layout_constraintStart_toStartOf="@+id/etNombreE"
+        app:layout_constraintTop_toBottomOf="@+id/etMatriculaE" />
+
+    <EditText
+        android:id="@+id/etMarca"
+        android:layout_width="310dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="7dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtMarcaE"
+        style="@style/EditText" />
+
+    <EditText
+        android:id="@+id/etModeloE"
+        style="@style/EditText"
+        android:layout_width="310dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="7dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtModeloE" />
+
+    <EditText
+        android:id="@+id/etMatriculaE"
+        style="@style/EditText"
+        android:layout_width="310dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="7dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtMatriculaE" />
+
+    <EditText
+        android:id="@+id/etNombreE"
+        style="@style/EditText"
+        android:layout_width="310dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="7dp"
+        android:ems="10"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtNombreE" />
+
+    <!-- Botón para Guardar cambios -->
+    <Button
+        android:id="@+id/btnGuardarCambios"
+        style="@style/BotonPrincipal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:text="Guardar cambios"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etNombreE" />
+
+    <!-- Botón para Eliminar coche -->
+    <Button
+        android:id="@+id/btnEliminarCoche"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/error"
+        android:text="Eliminar coche"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnGuardarCambios" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

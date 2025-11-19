@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Proyecto_iot.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/fondo_claro</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_logo_color</item>
+        <!-- Si quieres que el sistema mantenga este tema hasta que pintes tu layout -->
+        <item name="postSplashScreenTheme">@style/Theme.Proyecto_iot</item>
+    </style>
+
+</resources>
+

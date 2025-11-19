@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fondo_claro"
+    android:padding="20dp"
+    tools:context=".AyudaySoporteFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical">
+            <!-- Título centrado -->
+            <TextView
+                android:id="@+id/titleSeguridad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/titulo_ayuda"
+                android:textColor="@color/icono_normal"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_medium"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <!-- Descripción -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/descripcion_ayuda"
+            android:textColor="@color/texto_oscuro"
+            android:textSize="14sp"
+            android:fontFamily="@font/roboto_regular"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Preguntas frecuentes -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/preguntas_frecuentes"
+            android:textStyle="bold"
+            android:textColor="@color/texto_oscuro"
+            android:textSize="15sp"
+            android:fontFamily="@font/montserrat_bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:textColorLink="@color/icono_normal"
+            android:text="@string/como_añadir_coche"
+            android:fontFamily="@font/roboto_regular"
+            android:textSize="14sp"
+            android:layout_marginBottom="6dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:textColorLink="@color/icono_normal"
+            android:text="@string/como_activar_sensores"
+            android:fontFamily="@font/roboto_regular"
+            android:textSize="14sp"
+            android:layout_marginBottom="6dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:textColorLink="@color/icono_normal"
+            android:text="@string/que_hacer_si_pierdo_coche"
+            android:fontFamily="@font/roboto_regular"
+            android:textSize="14sp"
+            android:layout_marginBottom="24dp" />
+
+        <!--Contacto soporte -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/contactar_soporte"
+            android:textStyle="bold"
+            android:textColor="@color/texto_oscuro"
+            android:textSize="15sp"
+            android:fontFamily="@font/montserrat_bold"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="email"
+            android:textColorLink="@color/icono_normal"
+            android:text="@string/correo_soporte"
+            android:fontFamily="@font/roboto_regular"
+            android:textSize="14sp"
+            android:layout_marginBottom="24dp" />
+
+        <!--  Términos y privacidad -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/terminos_privacidad"
+            android:textStyle="bold"
+            android:textColor="@color/texto_oscuro"
+            android:textSize="15sp"
+            android:fontFamily="@font/montserrat_bold"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:textColorLink="@color/icono_normal"
+            android:text="@string/descripcion_terminos"
+            android:fontFamily="@font/roboto_regular"
+            android:textSize="14sp"
+            android:layout_marginBottom="40dp" />
+
+    </LinearLayout>
+
+</ScrollView>

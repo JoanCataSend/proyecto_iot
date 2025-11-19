@@ -41,7 +41,7 @@
     <string name="mensaje_puertas_desbloqueadas">Las puertas del coche “Speedy Azul” se han abierto correctamente desde la app</string>
     <string name="ubicacion_actualizada">Ubicación actualizada</string>
     <string name="modo_seguro_activado">Modo seguro</string>
-    <string name="camara_activada">Cámara on</string>
+    <string name="camara_activada">Cámara</string>
 
     <!-- AJUSTES -->
     <string name="ajustes">Ajustes</string>
@@ -76,7 +76,7 @@
     <string name="bateria">Batería</string>
 
     <string name="home">Inicio</string>
-    <string name="bloqueado">Bloqueado</string>
+    <string name="bloqueado">Bloquear</string>
     <string name="señales">Señales</string>
     <string name="batería">Batería</string>
     <string name="calle">C/de Legazpi, 7, 46730 Gandia,Valencia</string>
@@ -89,21 +89,25 @@
     <string name="camara_superior">Cámara superior</string>
     <string name="camara_inferior">Cámara inferior</string>
     <string name="toggle_notification">Activar o desactivar notificación</string>
-    <string name="nventana_rota">Ventana rota</string>
+    <string name="nventana_rota">Ventana rota detectada</string>
     <string name="ncamara_activada">Cámara activada</string>
     <string name="title_notificaciones">Notificaciones</string>
     <string name="back">Volver</string>
     <string name="elige_alertas">Elige qué tipo de alertas quieres recibir:</string>
-    <string name="puertas_abiertas">Puertas abiertas</string>
+    <string name="puertas_abiertas">Desbloquear</string>
     <string name="movimiento_detectado">Movimiento detectado</string>
     <string name="sonido_o_luces">Sonido o luces de aviso</string>
     <string name="cambios_ubicacion">Cambios de ubicación</string>
     <string name="apertura_puertas">Apertura de puertas</string>
+    <string name="puertas">Abrir</string>
+
+    <string name="guardar_cambios">Guardar</string>
+    <string name="apertura_vehiculo">Apertura vehiculo</string>
+
 
     <string-array name="lista_coches">
         <item>El Champon</item>
         <item>Speedy Azul</item>
-        <item>Roadster Negro</item>
     </string-array>
 
 

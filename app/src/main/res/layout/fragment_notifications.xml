@@ -3,24 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="8dp">
-
-
-    <TextView
-        android:id="@+id/titulo_pantalla"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"
-        android:text="Notificaciones"
-        android:textColor="@color/fondo_oscuro"
-        android:textSize="22sp"
-        />
+    android:paddingTop="8dp"
+    android:background="@color/fondo_claro">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_notificaciones"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="8dp"/>
+        android:paddingBottom="8dp" />
 </LinearLayout>

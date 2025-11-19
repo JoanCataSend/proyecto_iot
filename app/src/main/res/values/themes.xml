@@ -6,7 +6,7 @@
         <!-- Colores -->
         <item name="colorPrimary">@color/icono_normal</item>
         <item name="colorOnPrimary">@color/texto_claro</item>
-        <item name="colorSecondary">@color/texto_secundario</item>
+        <item name="colorSecondary">@color/texto_oscuro</item>
 
         <!-- Fondo y barra de estado -->
         <item name="android:colorBackground">@color/fondo_claro</item>

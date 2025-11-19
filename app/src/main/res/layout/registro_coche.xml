@@ -8,14 +8,14 @@
     <!-- Logo -->
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="110dp"
+        android:layout_height="66dp"
         android:layout_marginTop="100dp"
         android:contentDescription="Logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_launcher_background" />
+        app:srcCompat="@drawable/logop" />
 
     <!-- Texto explicativo -->
     <TextView
@@ -26,12 +26,12 @@
         android:fontFamily="@font/roboto_regular"
         android:text="@string/mensaje_registro_coche"
         android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="@+id/etMarca"
+        app:layout_constraintStart_toStartOf="@+id/etMarcaEditar"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <!-- Título: Marca -->
     <TextView
-        android:id="@+id/txtMarca"
+        android:id="@+id/txtMarcaE"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -39,22 +39,24 @@
         android:text="@string/marca"
         android:textColor="@color/icono_normal"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/etMarca"
+        app:layout_constraintStart_toStartOf="@+id/etMarcaEditar"
         app:layout_constraintTop_toBottomOf="@+id/txtExplicativo" />
 
     <!-- Input de texto: Marca -->
     <EditText
-        android:id="@+id/etMarca"
+        android:id="@+id/etMarcaEditar"
         android:layout_width="310dp"
-        android:layout_height="34dp"
+        android:layout_height="48dp"
         android:layout_marginTop="7dp"
         android:ems="10"
         android:inputType="text"
+        style="@style/EditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtMarca"
-        style="@style/EditText" />
+        app:layout_constraintTop_toBottomOf="@+id/txtMarcaE"
+        android:background="@drawable/rounded_edittext_selector"
+        />
 
     <!-- Input de texto: Modelo -->
     <TextView
@@ -67,22 +69,23 @@
         android:textColor="@color/icono_normal"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@+id/etModelo"
-        app:layout_constraintTop_toBottomOf="@+id/etMarca"
+        app:layout_constraintTop_toBottomOf="@+id/etMarcaEditar"
         />
 
     <!-- Input de texto: Modelo -->
     <EditText
         android:id="@+id/etModelo"
         android:layout_width="310dp"
-        android:layout_height="34dp"
+        android:layout_height="48dp"
         android:layout_marginTop="7dp"
         android:ems="10"
         android:inputType="text"
+        style="@style/EditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtModelo"
-        style="@style/EditText"/>
+        android:background="@drawable/rounded_edittext_selector"/>
 
     <!-- Título: Matrícula -->
     <TextView
@@ -101,15 +104,17 @@
     <EditText
         android:id="@+id/etMatricula"
         android:layout_width="310dp"
-        android:layout_height="34dp"
+        android:layout_height="48dp"
         android:layout_marginTop="7dp"
+        android:inputType="textCapCharacters"
+        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 "
         android:ems="10"
-        android:inputType="text"
+        style="@style/EditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtMatricula"
-        style="@style/EditText"/>
+        android:background="@drawable/rounded_edittext_selector"/>
 
     <!-- Título: Nombre del coche -->
     <TextView
@@ -128,15 +133,16 @@
     <EditText
         android:id="@+id/etNombreCoche"
         android:layout_width="310dp"
-        android:layout_height="34dp"
+        android:layout_height="48dp"
         android:layout_marginTop="7dp"
         android:ems="10"
         android:inputType="text"
+        style="@style/EditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtNombreCoche"
-        style="@style/EditText"/>
+        android:background="@drawable/rounded_edittext_selector"/>
 
     <!-- Botón para registrar vehículo -->
     <Button

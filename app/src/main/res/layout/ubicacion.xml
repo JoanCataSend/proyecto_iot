@@ -1,0 +1,129 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:textAlignment="center">
+
+    <!-- Contenido principal ahora en LinearLayout (weight sí funciona) -->
+    <LinearLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/titulo"
+            style="@style/Seccion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="@string/titulo_ubicacion"
+            android:textColor="@color/icono_normal"
+            android:textSize="20sp" />
+
+        <!-- Descripción -->
+        <TextView
+            android:id="@+id/descripcion"
+            style="@style/DescripciónActividad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/roboto_regular"
+            android:text="@string/descripcion_ubicacion"
+            android:textColor="@color/icono_normal" />
+
+        <!-- Mapa con weight (ocupa todo el espacio libre disponible) -->
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="570dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="30dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="40dp"/>
+
+    </LinearLayout>
+
+    <!-- Panel desplegable con altura controlada -->
+    <LinearLayout
+        android:id="@+id/panel_desplegable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/desplegable_navbar"
+        android:orientation="vertical"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:paddingBottom="0dp"
+        android:maxHeight="420dp"
+        android:translationY="5dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <View
+            android:layout_width="95dp"
+            android:layout_height="3dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:background="@color/boton_oscuro" />
+
+        <TextView
+            android:id="@+id/panel_titulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/titulo_mis_coches"
+            style="@style/Seccion"
+            android:layout_marginTop="17dp" />
+
+        <TextView
+            android:id="@+id/panel_descrip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/descripcion_mis_coches"
+            android:textColor="@color/icono_normal"
+            style="@style/DescripciónActividad"
+            android:layout_marginTop="8dp" />
+
+        <ListView
+            android:id="@+id/listViewCoches"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:dividerHeight="10dp"
+            android:layout_marginTop="14dp" />
+        <!-- Botón para añadir nuevo coche -->
+        <LinearLayout
+            android:id="@+id/btnAnadirCoche"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="#335B47A0"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_mas"
+                app:tint="@color/boton_oscuro"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Añadir nuevo coche"
+                android:textColor="@color/boton_oscuro"
+                android:textSize="15sp"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/montserrat_bold"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
