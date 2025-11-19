@@ -1,6 +1,7 @@
 package com.example.proyecto_iot;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +63,14 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
         bottomSheetBehavior = BottomSheetBehavior.from(panel);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         bottomSheetBehavior.setPeekHeight(120);
+
+        // Boton añadir coche
+        LinearLayout btnAnadirCoche = view.findViewById(R.id.btnAnadirCoche);
+        btnAnadirCoche.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), AnadirCoche.class);
+            startActivity(intent);
+        });
+
 
         // Limitar altura máxima del panel
         DisplayMetrics dm = new DisplayMetrics();
