@@ -74,7 +74,7 @@
                         android:id="@+id/tv_user_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Usuario estándar - 3 coches"
+                        android:text="Usuario estándar - 0 coches"
                         android:textColor="#777777"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -243,32 +243,6 @@
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
                     android:background="#DDDDDD" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginEnd="32dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="6dp"
-                    android:paddingVertical="14dp">
-
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:layout_marginEnd="12dp"
-                        android:src="@drawable/ic_editar"
-                        app:tint="@color/icono_normal" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Apariencia"
-                        android:textColor="@color/texto_oscuro"
-                        android:textSize="16sp" />
-                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
