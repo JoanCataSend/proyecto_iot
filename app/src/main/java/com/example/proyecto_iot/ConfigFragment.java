@@ -176,6 +176,7 @@ public class ConfigFragment extends Fragment {
 
                     } else {
                         tvName.setText("Usuario desconocido");
+                        tvEmail.setText("Email desconocido");
                     }
                 })
                 .addOnFailureListener(e -> tvName.setText("Error al cargar"));
