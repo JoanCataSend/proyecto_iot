@@ -2,9 +2,11 @@ package com.example.proyecto_iot;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +37,9 @@ import java.util.Arrays;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
+    private ImageView togglePasswordImage;   // 👁️ NUEVO
+    private boolean passwordVisible = false; // 👁️ NUEVO
+
     private Button loginButton, registerButton, forgotButton, googleButton, facebookButton, xButton;
 
     private FirebaseAuth mAuth;
@@ -55,12 +60,18 @@ public class LoginActivity extends AppCompatActivity {
         // UI
         emailEditText = findViewById(R.id.editTextText);
         passwordEditText = findViewById(R.id.editTextTextPassword);
+
+        togglePasswordImage = findViewById(R.id.imageViewTogglePassword); // 👁️ NUEVO
+
         loginButton = findViewById(R.id.button);
         registerButton = findViewById(R.id.button2);
         forgotButton = findViewById(R.id.button3);
         googleButton = findViewById(R.id.button4);
         facebookButton = findViewById(R.id.button6);
         xButton = findViewById(R.id.button5);
+
+        // 👁️ NUEVO — TOGGLE DEL OJO
+        togglePasswordImage.setOnClickListener(v -> togglePasswordVisibility());
 
         loginButton.setOnClickListener(v -> loginWithEmail());
 
@@ -111,6 +122,25 @@ public class LoginActivity extends AppCompatActivity {
 
         xButton.setOnClickListener(v ->
                 Toast.makeText(this, "Inicio con X pendiente de implementación", Toast.LENGTH_SHORT).show());
+    }
+
+    // 👁️ NUEVO — MÉTODO DEL TOGGLE
+    private void togglePasswordVisibility() {
+
+        if (!passwordVisible) {
+            // Mostrar contraseña
+            passwordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            togglePasswordImage.setImageResource(R.drawable.ic_eye_open); // Debes tener este icono
+        } else {
+            // Ocultar contraseña
+            passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            togglePasswordImage.setImageResource(R.drawable.ic_eye_closed);
+        }
+
+        passwordVisible = !passwordVisible;
+
+        // Mantener cursor al final
+        passwordEditText.setSelection(passwordEditText.getText().length());
     }
 
     // EMAIL LOGIN
@@ -218,10 +248,8 @@ public class LoginActivity extends AppCompatActivity {
                     Intent next;
 
                     if (query.isEmpty()) {
-                        // No tiene coche registrado → registrar el primero
                         next = new Intent(this, PrimerCocheActivity.class);
                     } else {
-                        // Ya tiene coche → ir al home
                         next = new Intent(this, MainActivity.class);
                     }
 
@@ -233,7 +261,6 @@ public class LoginActivity extends AppCompatActivity {
                             "Error comprobando los coches.",
                             Toast.LENGTH_LONG).show();
 
-                    // Por seguridad, lo mandamos al registro del coche
                     startActivity(new Intent(this, PrimerCocheActivity.class));
                     finish();
                 });
