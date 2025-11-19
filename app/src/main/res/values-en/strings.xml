@@ -103,6 +103,7 @@
 
     <string name="guardar_cambios">Guardar</string>
     <string name="apertura_vehiculo">Apertura vehiculo</string>
+    <string name="cambiar_contrasena">Cambiar contraseña</string>
 
 
     <string-array name="lista_coches">
