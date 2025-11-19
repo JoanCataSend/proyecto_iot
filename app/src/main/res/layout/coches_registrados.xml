@@ -20,12 +20,12 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_cochesR"
         android:layout_width="match_parent"
-        android:layout_height="256dp"
+        android:layout_height="wrap_content"
         android:clipToPadding="false"
         android:paddingBottom="8dp" />
 
     <Button
-        android:id="@+id/button8"
+        android:id="@+id/btnAnadirCoche"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="64dp"

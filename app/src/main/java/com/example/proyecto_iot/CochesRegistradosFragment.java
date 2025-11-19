@@ -1,5 +1,6 @@
 package com.example.proyecto_iot;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -16,6 +17,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +30,11 @@ public class CochesRegistradosFragment extends Fragment {
     private RecyclerView recyclerView;
     private CocheAdapter adapter;
     private List<Coche> listaCoches;
+
+    // BBDD
+    private FirebaseAuth auth;
+    private FirebaseFirestore db;
+
 
     @Nullable
     @Override
@@ -41,15 +52,47 @@ public class CochesRegistradosFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_cochesR);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // Inicializar bbdd
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
         // 🧱 Datos de ejemplo
         listaCoches = new ArrayList<>();
-        listaCoches.add(new Coche("El Champon"));
-        listaCoches.add(new Coche("La Panterita"));
-        listaCoches.add(new Coche("Speedy Azul"));
-        listaCoches.add(new Coche("El Desfase"));
-
         adapter = new CocheAdapter(listaCoches);
         recyclerView.setAdapter(adapter);
+
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+
+            db.collection("Coches")
+                    .whereArrayContains("Propietario", uid)
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        listaCoches.clear(); // ya seguro que existe
+                        for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                            String nombre = doc.getString("Nombre");
+                            listaCoches.add(new Coche(nombre));
+                        }
+                        adapter.notifyDataSetChanged();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(requireContext(),
+                                "Error al cargar coches: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    });
+        }
+        adapter = new CocheAdapter(listaCoches);
+        recyclerView.setAdapter(adapter);
+
+        // Boton añadir coche
+        View btnAnadirCoche = view.findViewById(R.id.btnAnadirCoche);
+        btnAnadirCoche.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), AnadirCoche.class);
+            startActivity(intent);
+        });
+
+
     }
 
     // --- Clase interna del Adapter ---
