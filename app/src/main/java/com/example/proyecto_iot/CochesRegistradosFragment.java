@@ -71,8 +71,9 @@ public class CochesRegistradosFragment extends Fragment {
                     .addOnSuccessListener(querySnapshot -> {
                         listaCoches.clear(); // ya seguro que existe
                         for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                            String id = doc.getId();
                             String nombre = doc.getString("Nombre");
-                            listaCoches.add(new Coche(nombre));
+                            listaCoches.add(new Coche(id, nombre));
                         }
                         adapter.notifyDataSetChanged();
                     })
@@ -124,20 +125,12 @@ public class CochesRegistradosFragment extends Fragment {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getItemId() == R.id.opcion_eliminar) {
-
-                            // --- INICIO DE LA CORRECCIÓN ---
-
-                            // 1. Obtenemos la posición ACTUAL en el momento del clic.
                             int currentPosition = holder.getAdapterPosition();
-
-                            // 2. Comprobamos que la posición es válida (no ha sido eliminada justo ahora)
                             if (currentPosition != RecyclerView.NO_POSITION) {
                                 Toast.makeText(requireContext(), "Eliminando " + coches.get(currentPosition).getNombre(), Toast.LENGTH_SHORT).show();
-                                // 3. Usamos la posición actual y válida
                                 eliminarCoche(currentPosition);
                                 return true;
                             }
-                            // --- FIN DE LA CORRECCIÓN ---
                         }
                         return false;
                     }
@@ -152,14 +145,22 @@ public class CochesRegistradosFragment extends Fragment {
         }
 
         public void eliminarCoche(int position) {
-            coches.remove(position);
-            notifyItemRemoved(position);
+            Coche coche = coches.get(position);
 
-            // --- MEJORA OPCIONAL PERO RECOMENDADA ---
-            // Notifica al adapter que las posiciones de los items *debajo* del eliminado
-            // han cambiado, para evitar errores de consistencia.
-            notifyItemRangeChanged(position, coches.size() - position);
+            db.collection("Coches")
+                    .document(coche.getId())
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(requireContext(), "Coche eliminado", Toast.LENGTH_SHORT).show();
+                        coches.remove(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position, coches.size() - position);
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(requireContext(), "Error al eliminar: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                    );
         }
+
 
         // --- ViewHolder ---
         public class CocheViewHolder extends RecyclerView.ViewHolder {
@@ -176,8 +177,16 @@ public class CochesRegistradosFragment extends Fragment {
 
     // --- Modelo simple ---
     private static class Coche {
+        private final String id; // ID del documento
         private final String nombre;
-        public Coche(String nombre) { this.nombre = nombre; }
+
+        public Coche(String id, String nombre) {
+            this.id = id;
+            this.nombre = nombre;
+        }
+
+        public String getId() { return id; }
         public String getNombre() { return nombre; }
     }
+
 }
