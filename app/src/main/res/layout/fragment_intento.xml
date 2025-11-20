@@ -8,6 +8,14 @@
     android:background="@color/fondo_claro"
     tools:context=".MainActivity">
 
+    <!-- 🟦 CONTENEDOR PARA MOSTRAR FRAGMENTS (CÁMARAS, ETC) -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <!-- 🟧 CONTENIDO PRINCIPAL SCROLLEABLE -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
@@ -46,7 +54,7 @@
                 <ImageView
                     android:layout_width="22dp"
                     android:layout_height="22dp"
-                    android:contentDescription="Coche"
+                    android:contentDescription="@string/nombre_coche"
                     android:src="@drawable/ic_coche_fino"
                     app:tint="@color/icono_normal" />
 
@@ -64,10 +72,9 @@
                     android:layout_width="15dp"
                     android:layout_height="15dp"
                     android:src="@drawable/ic_flecha_abajo"
-                    android:contentDescription="flecha"
+                    android:contentDescription="@string/titulo_ubicacion"
                     app:tint="@color/icono_normal" />
             </LinearLayout>
-
 
             <!-- IMAGEN DEL COCHE -->
             <ImageView
@@ -75,12 +82,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:contentDescription="Vehículo actual"
+                android:contentDescription="@string/nombre_coche"
                 android:padding="1dp"
                 android:layout_marginBottom="16dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/coche_mat" />
 
+            <!-- ACCIONES (LOCK, CAMARAS, SEÑALES, SEGURO) -->
             <LinearLayout
                 android:id="@+id/actionsRow"
                 android:layout_width="match_parent"
@@ -89,8 +97,9 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <!-- 🔹 COLUMNA CANDADO -->
+                <!-- CANDADO -->
                 <LinearLayout
+                    android:id="@+id/layoutLock"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -112,7 +121,7 @@
                             android:id="@+id/ivLock"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="Candado"
+                            android:contentDescription="@string/bloqueado"
                             android:padding="16dp"
                             android:src="@drawable/ic_candado_abierto"
                             app:tint="@color/texto_oscuro" />
@@ -123,12 +132,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Bloqueado"
+                        android:text="@string/bloqueado"
                         android:textColor="@color/texto_oscuro"
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- 🔹 COLUMNA CÁMARAS -->
+                <!-- CÁMARAS -->
                 <LinearLayout
                     android:id="@+id/layoutCamaras"
                     android:layout_width="0dp"
@@ -151,7 +160,7 @@
                             android:id="@+id/ivCameras"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="Cámara"
+                            android:contentDescription="@string/camara_activada"
                             android:padding="16dp"
                             android:src="@drawable/ic_camara"
                             app:tint="@color/texto_oscuro" />
@@ -161,12 +170,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Cámara"
+                        android:text="@string/camara_activada"
                         android:textColor="@color/texto_oscuro"
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- 🔹 COLUMNA SEÑALES -->
+                <!-- SEÑALES -->
                 <LinearLayout
                     android:id="@+id/layoutSignals"
                     android:layout_width="0dp"
@@ -179,6 +188,7 @@
                     android:foreground="?attr/selectableItemBackgroundBorderless">
 
                     <FrameLayout
+                        android:id="@+id/flSignals"
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:background="@drawable/bg_card_soft"
@@ -189,7 +199,7 @@
                             android:id="@+id/ivSignals"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="Señales"
+                            android:contentDescription="@string/senales"
                             android:padding="16dp"
                             android:src="@drawable/ic_sonido"
                             app:tint="@color/texto_oscuro" />
@@ -199,12 +209,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Señales"
+                        android:text="@string/senales"
                         android:textColor="@color/texto_oscuro"
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- 🔹 COLUMNA MODO SEGURO -->
+                <!-- MODO SEGURO -->
                 <LinearLayout
                     android:id="@+id/layoutSafeMode"
                     android:layout_width="0dp"
@@ -227,7 +237,7 @@
                             android:id="@+id/ivSafe"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="Modo seguro"
+                            android:contentDescription="@string/modo_seguro_activado"
                             android:padding="16dp"
                             android:src="@drawable/ic_escudo"
                             app:tint="@color/texto_oscuro" />
@@ -237,13 +247,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Modo seguro"
+                        android:text="@string/modo_seguro_activado"
                         android:textColor="@color/texto_oscuro"
                         android:textSize="14sp" />
                 </LinearLayout>
 
             </LinearLayout>
-
 
             <!-- UBICACIÓN -->
             <LinearLayout
@@ -260,7 +269,7 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:src="@drawable/ic_ubicacion"
-                    android:contentDescription="Ubicación"
+                    android:contentDescription="@string/titulo_ubicacion"
                     app:tint="@color/icono_normal" />
 
                 <TextView
@@ -269,7 +278,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="12dp"
-                    android:text="Av. Gran Vía 24"
+                    android:text="@string/calle"
                     android:textColor="@color/texto_oscuro"
                     android:textSize="15sp" />
 
@@ -277,11 +286,11 @@
                     android:layout_width="15dp"
                     android:layout_height="15dp"
                     android:src="@drawable/ic_flecha_derecha"
-                    android:contentDescription="Ir"
+                    android:contentDescription="@string/titulo_ubicacion"
                     app:tint="@color/icono_normal" />
             </LinearLayout>
 
-            <!-- SECCIÓN ESTADO -->
+            <!-- INFORMACIÓN SISTEMA -->
             <LinearLayout
                 android:id="@+id/systemState"
                 android:layout_width="match_parent"
@@ -323,7 +332,7 @@
                         android:layout_height="28dp"
                         android:src="@drawable/ic_wifi"
                         app:tint="@color/icono_normal"
-                        android:contentDescription="Wifi" />
+                        android:contentDescription="@string/titulo_ubicacion" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -347,6 +356,7 @@
                             android:textColor="#7A7A7A"
                             android:textSize="14sp" />
                     </LinearLayout>
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -386,7 +396,6 @@
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
-
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
