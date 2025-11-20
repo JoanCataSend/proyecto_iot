@@ -1,5 +1,6 @@
 package com.example.proyecto_iot;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -16,6 +17,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +30,11 @@ public class CochesRegistradosFragment extends Fragment {
     private RecyclerView recyclerView;
     private CocheAdapter adapter;
     private List<Coche> listaCoches;
+
+    // BBDD
+    private FirebaseAuth auth;
+    private FirebaseFirestore db;
+
 
     @Nullable
     @Override
@@ -41,15 +52,48 @@ public class CochesRegistradosFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_cochesR);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // Inicializar bbdd
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
         // 🧱 Datos de ejemplo
         listaCoches = new ArrayList<>();
-        listaCoches.add(new Coche("El Champon"));
-        listaCoches.add(new Coche("La Panterita"));
-        listaCoches.add(new Coche("Speedy Azul"));
-        listaCoches.add(new Coche("El Desfase"));
-
         adapter = new CocheAdapter(listaCoches);
         recyclerView.setAdapter(adapter);
+
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+
+            db.collection("Coches")
+                    .whereArrayContains("Propietario", uid)
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        listaCoches.clear(); // ya seguro que existe
+                        for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                            String id = doc.getId();
+                            String nombre = doc.getString("Nombre");
+                            listaCoches.add(new Coche(id, nombre));
+                        }
+                        adapter.notifyDataSetChanged();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(requireContext(),
+                                "Error al cargar coches: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    });
+        }
+        adapter = new CocheAdapter(listaCoches);
+        recyclerView.setAdapter(adapter);
+
+        // Boton añadir coche
+        View btnAnadirCoche = view.findViewById(R.id.btnAnadirCoche);
+        btnAnadirCoche.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), AnadirCoche.class);
+            startActivity(intent);
+        });
+
+
     }
 
     // --- Clase interna del Adapter ---
@@ -81,20 +125,12 @@ public class CochesRegistradosFragment extends Fragment {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getItemId() == R.id.opcion_eliminar) {
-
-                            // --- INICIO DE LA CORRECCIÓN ---
-
-                            // 1. Obtenemos la posición ACTUAL en el momento del clic.
                             int currentPosition = holder.getAdapterPosition();
-
-                            // 2. Comprobamos que la posición es válida (no ha sido eliminada justo ahora)
                             if (currentPosition != RecyclerView.NO_POSITION) {
                                 Toast.makeText(requireContext(), "Eliminando " + coches.get(currentPosition).getNombre(), Toast.LENGTH_SHORT).show();
-                                // 3. Usamos la posición actual y válida
                                 eliminarCoche(currentPosition);
                                 return true;
                             }
-                            // --- FIN DE LA CORRECCIÓN ---
                         }
                         return false;
                     }
@@ -109,14 +145,22 @@ public class CochesRegistradosFragment extends Fragment {
         }
 
         public void eliminarCoche(int position) {
-            coches.remove(position);
-            notifyItemRemoved(position);
+            Coche coche = coches.get(position);
 
-            // --- MEJORA OPCIONAL PERO RECOMENDADA ---
-            // Notifica al adapter que las posiciones de los items *debajo* del eliminado
-            // han cambiado, para evitar errores de consistencia.
-            notifyItemRangeChanged(position, coches.size() - position);
+            db.collection("Coches")
+                    .document(coche.getId())
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(requireContext(), "Coche eliminado", Toast.LENGTH_SHORT).show();
+                        coches.remove(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position, coches.size() - position);
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(requireContext(), "Error al eliminar: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                    );
         }
+
 
         // --- ViewHolder ---
         public class CocheViewHolder extends RecyclerView.ViewHolder {
@@ -133,8 +177,16 @@ public class CochesRegistradosFragment extends Fragment {
 
     // --- Modelo simple ---
     private static class Coche {
+        private final String id; // ID del documento
         private final String nombre;
-        public Coche(String nombre) { this.nombre = nombre; }
+
+        public Coche(String id, String nombre) {
+            this.id = id;
+            this.nombre = nombre;
+        }
+
+        public String getId() { return id; }
         public String getNombre() { return nombre; }
     }
+
 }

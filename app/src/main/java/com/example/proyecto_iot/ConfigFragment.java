@@ -2,6 +2,7 @@ package com.example.proyecto_iot;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ConfigFragment extends Fragment {
@@ -174,8 +176,28 @@ public class ConfigFragment extends Fragment {
                                     .into(profileImage);
                         }
 
+                        // Numero de coches
+                        TextView tvUserType = view.findViewById(R.id.tv_user_type);
+
+                        DocumentReference userRef = FirebaseFirestore.getInstance()
+                                .collection("Usuarios")
+                                .document(uid);
+
+                        db.collection("Coches")
+                                .whereArrayContains("Propietario", uid)
+                                .get()
+                                .addOnSuccessListener(querySnapshot -> {
+                                    int numeroCoches = querySnapshot.size();
+                                    tvUserType.setText("Usuario estándar - " + numeroCoches + " coche" + (numeroCoches != 1 ? "s" : ""));
+                                })
+                                .addOnFailureListener(e -> {
+                                    tvUserType.setText("Usuario estándar - 0 coches");
+                                });
+
+
                     } else {
                         tvName.setText("Usuario desconocido");
+                        tvEmail.setText("Email desconocido");
                     }
                 })
                 .addOnFailureListener(e -> tvName.setText("Error al cargar"));

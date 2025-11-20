@@ -3,17 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.proyecto_iot">
 
-    <!-- 🔹 Permisos generales -->
+    <!-- Permisos generales -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
 
-    <!-- 🔹 Permiso de notificaciones (Android 13+) -->
+    <!-- Permisos de almacenamiento-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <!-- Permiso de notificaciones  -->
     <uses-permission
         android:name="android.permission.POST_NOTIFICATIONS"
         tools:targetApi="33"/>
 
-    <!-- 🔹 Permisos de ubicación -->
+    <!-- Permisos de ubicación -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
@@ -28,7 +32,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto_iot">
 
-        <!-- 🔹 Splash -->
+        <!-- Splash -->
         <activity
             android:name=".SplashActivity"
             android:exported="true"
@@ -39,12 +43,12 @@
             </intent-filter>
         </activity>
 
-        <!-- 🔹 Google Maps API -->
+        <!-- Google Maps API -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key"/>
 
-        <!-- 🔹 Facebook SDK -->
+        <!-- Facebook SDK -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
@@ -68,13 +72,13 @@
             </intent-filter>
         </activity>
 
-        <!-- 🔹 Actividad de inicio REAL (Login) -->
+        <!-- Actividad de inicio REAL (Login) -->
         <activity
             android:name=".LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.Proyecto_iot"/>
 
-        <!-- 🔹 Actividades de autenticación -->
+        <!-- Actividades de autenticación -->
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
@@ -94,18 +98,17 @@
         <activity
             android:name=".HomeDemoActivity"/>
 
-        <!-- 🔹 Activity principal -->
+        <!-- Activity principal -->
         <activity
             android:name=".MainActivity"
             android:exported="false"
             android:theme="@style/Theme.Proyecto_iot"/>
 
-        <!-- 🔹 Sistema de coches -->
+        <!-- Sistema de coches -->
         <activity android:name=".RegistroCoche" android:exported="false"/>
         <activity android:name=".PrimerCocheActivity" android:exported="false"/>
         <activity android:name=".EditarCocheActivity" android:exported="false"/>
         <activity android:name=".AnadirCoche" android:exported="false"/>
-
 
     </application>
 
