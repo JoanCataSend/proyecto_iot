@@ -314,12 +314,45 @@ public class IntentoFragment extends Fragment {
 
                     if (hayImpacto && !ultimoImpacto) {
                         ultimoImpacto = true;
-                        manejarImpacto();
+
+                        verificarImpactoReciente(carId);
                     } else if (!hayImpacto) {
                         ultimoImpacto = false;
                     }
+
                 });
     }
+
+    private void verificarImpactoReciente(String carId) {
+
+        firestore.collection("Coches")
+                .document(carId)
+                .collection("eventos")
+                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(snap -> {
+
+                    if (snap.isEmpty()) return;
+
+                    QueryDocumentSnapshot doc = (QueryDocumentSnapshot) snap.getDocuments().get(0);
+
+                    String tipo = doc.getString("tipo");
+                    Long ts = doc.getLong("timestamp");
+
+                    if (tipo == null || ts == null) return;
+
+                    long ahora = System.currentTimeMillis();
+
+                    // Impacto reciente = ocurrío hace menos de 10 segundos
+                    if (tipo.equals("impacto") && (ahora - ts) < 10_000) {
+                        manejarImpacto();
+                    } else {
+                        Log.d("INTENTO", "Impacto antiguo, NO abrir cámara");
+                    }
+                });
+    }
+
 
     private void guardarLockEnPrefs(boolean locked) {
         Context ctx = requireContext();
