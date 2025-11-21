@@ -42,8 +42,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class IntentoFragment extends Fragment {
 
@@ -613,11 +615,32 @@ public class IntentoFragment extends Fragment {
         if (currentCarIndex < 0 || currentCarIndex >= carIds.size()) return;
 
         String carId = carIds.get(currentCarIndex);
+
+        // 1) Crear evento para el M5Stack
+        long ts = System.currentTimeMillis();
+
+        Map<String, Object> evento = new HashMap<>();
+        evento.put("tipo", "alerta_sonido");
+        evento.put("activar", active ? 1 : 0);
+        evento.put("timestamp", ts);
+
+        firestore.collection("Coches")
+                .document(carId)
+                .collection("eventos")
+                .add(evento)
+                .addOnSuccessListener(docRef ->
+                        Log.d("INTENTO", "✅ Evento alerta_sonido creado: " + active)
+                )
+                .addOnFailureListener(e ->
+                        Log.e("INTENTO", "❌ Error creando evento alerta_sonido", e)
+                );
+
+        // 2) Actualizar estado actual (tu código original)
         firestore.collection("Coches")
                 .document(carId)
                 .collection("estado")
                 .document("actual")
-                .update("alertas", active)
+                .update("alertaSonido", active)
                 .addOnSuccessListener(a ->
                         Log.d("INTENTO", "🔥 Alertas = " + active + " enviado a Firebase")
                 )
@@ -625,6 +648,7 @@ public class IntentoFragment extends Fragment {
                         Log.e("INTENTO", "❌ Error actualizando alertas", e)
                 );
     }
+
 
     // =========================
     //          UI
