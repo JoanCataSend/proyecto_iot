@@ -109,6 +109,10 @@
         <activity android:name=".PrimerCocheActivity" android:exported="false"/>
         <activity android:name=".EditarCocheActivity" android:exported="false"/>
         <activity android:name=".AnadirCoche" android:exported="false"/>
+        <activity
+            android:name=".EntryActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Proyecto_iot"/>
 
     </application>
 

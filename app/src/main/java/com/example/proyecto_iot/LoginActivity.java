@@ -239,6 +239,11 @@ public class LoginActivity extends AppCompatActivity {
     // LÓGICA PRINCIPAL → Decide dónde ir después del login
     private void navigateAfterLogin(FirebaseUser user) {
 
+        getSharedPreferences("kova_prefs", MODE_PRIVATE)
+                .edit()
+                .putBoolean("wizard_completed", true)
+                .apply();
+
         db.collection("Coches")
                 .whereArrayContains("Propietario", user.getUid())
                 .limit(1)
@@ -265,4 +270,5 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                 });
     }
+
 }
