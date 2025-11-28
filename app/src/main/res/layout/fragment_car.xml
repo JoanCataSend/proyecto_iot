@@ -7,12 +7,23 @@
     android:background="@color/fondo_claro">
 
     <!-- Contenido futuro del fragment del coche -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Información del coche"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_vertical">
+        <!-- Título centrado -->
+        <TextView
+            android:id="@+id/titleSeguridad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Informacion del coche"
+            android:textColor="@color/icono_normal"
+            android:textSize="20sp"
+            android:fontFamily="@font/roboto_medium"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

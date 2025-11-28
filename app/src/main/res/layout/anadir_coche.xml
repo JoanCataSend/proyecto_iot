@@ -6,50 +6,29 @@
     android:layout_height="match_parent">
 
     <!-- Logo -->
-    <TextView
-        android:id="@+id/logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="48dp"
-        android:fontFamily="@font/montserrat_bold_ttf"
-        android:text="KöVa"
-        android:textColor="@color/icono_normal"
-        android:textSize="32sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Botón de volver -->
-    <ImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginBottom="25dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/volver"
-        android:padding="0dp"
-        android:src="@drawable/ic_flecha_atras"
-        app:layout_constraintBottom_toTopOf="@+id/descripcion"
-        app:layout_constraintStart_toStartOf="parent"
-        app:tint="@color/icono_normal" />
 
     <!-- Título -->
-    <TextView
-        android:id="@+id/titulo"
-        style="@style/Seccion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:fontFamily="@font/montserrat_bold"
-        android:text="Añadir coche"
-        android:textColor="@color/icono_normal"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_vertical">
+        <!-- Título centrado -->
+        <TextView
+            android:id="@+id/titleSeguridad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Añadir coche"
+            android:textColor="@color/icono_normal"
+            android:textSize="20sp"
+            android:fontFamily="@font/roboto_medium"
+            android:textStyle="bold" />
 
+    </RelativeLayout>
     <!-- Descripcion -->
     <TextView
         android:id="@+id/descripcion"
@@ -57,13 +36,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
         android:fontFamily="@font/roboto_regular"
         android:text="Rellena los campos para añadir un nuevo coche"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titulo" />
+        tools:layout_editor_absoluteY="184dp" />
 
     <TextView
         android:id="@+id/txtNombre"

@@ -11,17 +11,34 @@
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/content_root"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical">
+                <!-- Título centrado -->
+                <TextView
+                    android:id="@+id/titleSeguridad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Configuracion"
+                    android:textColor="@color/icono_normal"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textStyle="bold" />
 
+            </RelativeLayout>
+            <!-- TARJETA DEL PERFIL -->
             <LinearLayout
                 android:id="@+id/profile_card"
                 android:layout_width="match_parent"
@@ -54,32 +71,36 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
+                    <!-- NOMBRE DEL USUARIO -->
                     <TextView
                         android:id="@+id/tv_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Usuario"
+                        android:text=""
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
+                    <!-- EMAIL DEL USUARIO -->
                     <TextView
                         android:id="@+id/tv_email"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="email@gmail.com"
+                        android:text=""
                         android:textColor="#777777"
                         android:textSize="14sp" />
 
+                    <!-- TIPO DE USUARIO + Nº DE COCHES -->
                     <TextView
                         android:id="@+id/tv_user_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Usuario estándar - 0 coches"
+                        android:text=""
                         android:textColor="#777777"
                         android:textSize="13sp" />
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- BOTÓN LOGOUT -->
             <Button
                 android:id="@+id/btn_logout"
                 android:layout_width="match_parent"
@@ -91,6 +112,7 @@
                 android:text="Cerrar sesión"
                 android:textAllCaps="false" />
 
+            <!-- LISTA DE OPCIONES / AJUSTES -->
             <LinearLayout
                 android:id="@+id/settings_list"
                 android:layout_width="match_parent"
@@ -98,6 +120,7 @@
                 android:layout_marginTop="20dp"
                 android:orientation="vertical">
 
+                <!-- Cuenta y perfil -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -132,6 +155,7 @@
                         android:textSize="16sp" />
                 </LinearLayout>
 
+                <!-- Coches registrados -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -166,6 +190,7 @@
                         android:textSize="16sp" />
                 </LinearLayout>
 
+                <!-- Notificaciones -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -203,6 +228,7 @@
                         android:textSize="16sp" />
                 </LinearLayout>
 
+                <!-- Seguridad -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -237,6 +263,7 @@
                         android:textSize="16sp" />
                 </LinearLayout>
 
+                <!-- Ayuda y soporte -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -270,7 +297,11 @@
                         android:textColor="@color/texto_oscuro"
                         android:textSize="16sp" />
                 </LinearLayout>
+
             </LinearLayout>
+
         </LinearLayout>
+
     </androidx.core.widget.NestedScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
