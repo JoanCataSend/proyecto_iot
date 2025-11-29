@@ -7,10 +7,10 @@ import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.proyecto_iot.utils.CustomToast;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -37,8 +37,8 @@ import java.util.Arrays;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
-    private ImageView togglePasswordImage;   // 👁️ NUEVO
-    private boolean passwordVisible = false; // 👁️ NUEVO
+    private ImageView togglePasswordImage;
+    private boolean passwordVisible = false;
 
     private Button loginButton, registerButton, forgotButton, googleButton, facebookButton, xButton;
 
@@ -51,17 +51,15 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.login);
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        // UI
         emailEditText = findViewById(R.id.editTextText);
         passwordEditText = findViewById(R.id.editTextTextPassword);
 
-        togglePasswordImage = findViewById(R.id.imageViewTogglePassword); // 👁️ NUEVO
+        togglePasswordImage = findViewById(R.id.imageViewTogglePassword);
 
         loginButton = findViewById(R.id.button);
         registerButton = findViewById(R.id.button2);
@@ -70,7 +68,6 @@ public class LoginActivity extends AppCompatActivity {
         facebookButton = findViewById(R.id.button6);
         xButton = findViewById(R.id.button5);
 
-        // 👁️ NUEVO — TOGGLE DEL OJO
         togglePasswordImage.setOnClickListener(v -> togglePasswordVisibility());
 
         loginButton.setOnClickListener(v -> loginWithEmail());
@@ -108,135 +105,135 @@ public class LoginActivity extends AppCompatActivity {
 
                         @Override
                         public void onCancel() {
-                            Toast.makeText(LoginActivity.this,
-                                    "Inicio con Facebook cancelado", Toast.LENGTH_SHORT).show();
+                            CustomToast.warning(LoginActivity.this,
+                                    "Inicio con Facebook cancelado");
                         }
 
                         @Override
                         public void onError(FacebookException error) {
-                            Toast.makeText(LoginActivity.this,
-                                    "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            CustomToast.error(LoginActivity.this,
+                                    "Error: " + error.getMessage());
                         }
                     });
         });
 
         xButton.setOnClickListener(v ->
-                Toast.makeText(this, "Inicio con X pendiente de implementación", Toast.LENGTH_SHORT).show());
+                CustomToast.warning(this, "Inicio con X pendiente de implementación"));
     }
 
-    // 👁️ NUEVO — MÉTODO DEL TOGGLE
+    // ======================================================
     private void togglePasswordVisibility() {
 
         if (!passwordVisible) {
-            // Mostrar contraseña
             passwordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-            togglePasswordImage.setImageResource(R.drawable.ic_eye_open); // Debes tener este icono
+            togglePasswordImage.setImageResource(R.drawable.ic_eye_open);
         } else {
-            // Ocultar contraseña
             passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             togglePasswordImage.setImageResource(R.drawable.ic_eye_closed);
         }
 
         passwordVisible = !passwordVisible;
-
-        // Mantener cursor al final
         passwordEditText.setSelection(passwordEditText.getText().length());
     }
 
-    // EMAIL LOGIN
+    // ======================================================
     private void loginWithEmail() {
+
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
+            CustomToast.warning(this, "Completa todos los campos");
             return;
         }
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
+
                     if (task.isSuccessful()) {
 
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         if (user != null && user.isEmailVerified()) {
                             navigateAfterLogin(user);
+
                         } else {
-                            Toast.makeText(this,
-                                    "Debes verificar tu email antes de continuar.",
-                                    Toast.LENGTH_LONG).show();
+                            CustomToast.warning(this,
+                                    "Debes verificar tu email antes de continuar.");
                             mAuth.signOut();
                         }
 
                     } else {
-                        Toast.makeText(this,
-                                "Error: " + task.getException().getLocalizedMessage(),
-                                Toast.LENGTH_LONG).show();
+                        CustomToast.error(this,
+                                "Error: " + task.getException().getLocalizedMessage());
                     }
                 });
     }
 
-    // GOOGLE LOGIN
+    // ======================================================
     private void signInWithGoogle() {
         startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         super.onActivityResult(requestCode, resultCode, data);
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
+
             Task<GoogleSignInAccount> task =
                     GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                GoogleSignInAccount account =
-                        task.getResult(ApiException.class);
 
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account.getIdToken());
 
             } catch (ApiException e) {
-                Toast.makeText(this,
-                        "Error en inicio con Google: " + e.getMessage(),
-                        Toast.LENGTH_LONG).show();
+                CustomToast.error(this,
+                        "Error en inicio con Google: " + e.getMessage());
             }
         }
     }
 
+    // ======================================================
     private void firebaseAuthWithGoogle(String idToken) {
+
         AuthCredential credential =
                 GoogleAuthProvider.getCredential(idToken, null);
 
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
+
                     if (task.isSuccessful()) {
                         navigateAfterLogin(mAuth.getCurrentUser());
                     } else {
-                        Toast.makeText(this,
-                                "Error al autenticar con Google",
-                                Toast.LENGTH_SHORT).show();
+                        CustomToast.error(this,
+                                "Error al autenticar con Google");
                     }
                 });
     }
 
-    // FACEBOOK LOGIN
+    // ======================================================
     private void handleFacebookAccessToken(AccessToken token) {
+
         AuthCredential credential =
                 FacebookAuthProvider.getCredential(token.getToken());
 
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
+
                     if (task.isSuccessful()) {
                         navigateAfterLogin(mAuth.getCurrentUser());
                     } else {
-                        Toast.makeText(this,
-                                "Error en inicio con Facebook",
-                                Toast.LENGTH_SHORT).show();
+                        CustomToast.error(this,
+                                "Error en inicio con Facebook");
                     }
                 });
     }
 
-    // LÓGICA PRINCIPAL → Decide dónde ir después del login
+    // ======================================================
     private void navigateAfterLogin(FirebaseUser user) {
 
         getSharedPreferences("kova_prefs", MODE_PRIVATE)
@@ -262,9 +259,9 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this,
-                            "Error comprobando los coches.",
-                            Toast.LENGTH_LONG).show();
+
+                    CustomToast.error(this,
+                            "Error comprobando los coches.");
 
                     startActivity(new Intent(this, PrimerCocheActivity.class));
                     finish();

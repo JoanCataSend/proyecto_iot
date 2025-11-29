@@ -6,13 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.proyecto_iot.utils.CustomToast;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -31,14 +30,10 @@ public class EditarCocheFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.editar_coche, container, false);
 
-        // Mostrar flecha atrás en el header
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).setBackButtonVisible(true);
         }
 
-        // ======================
-        // 1. ENLAZAR VISTAS
-        // ======================
         etMarca = view.findViewById(R.id.etMarca);
         etModelo = view.findViewById(R.id.etModeloE);
         etMatricula = view.findViewById(R.id.etMatriculaE);
@@ -47,32 +42,19 @@ public class EditarCocheFragment extends Fragment {
         btnGuardarCambios = view.findViewById(R.id.btnGuardarCambios);
         btnEliminarCoche = view.findViewById(R.id.btnEliminarCoche);
 
-        // ======================
-        // 2. OBTENER ID DEL COCHE
-        // ======================
         if (getArguments() != null) {
             cocheId = getArguments().getString("cocheId");
         }
 
-        // ======================
-        // 3. CARGAR DATOS DEL COCHE
-        // ======================
         cargarDatosCoche();
 
-        // ======================
-        // 4. GUARDAR CAMBIOS
-        // ======================
         btnGuardarCambios.setOnClickListener(v -> guardarCambios());
 
-        // ======================
-        // 5. ELIMINAR CON DIÁLOGO
-        // ======================
         btnEliminarCoche.setOnClickListener(v -> mostrarDialogoEliminar());
+
         return view;
     }
 
-    // ============================================================
-    // CARGAR DATOS DESDE FIRESTORE
     // ============================================================
     private void cargarDatosCoche() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -89,8 +71,6 @@ public class EditarCocheFragment extends Fragment {
     }
 
     // ============================================================
-    // GUARDAR CAMBIOS EN FIRESTORE
-    // ============================================================
     private void guardarCambios() {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -103,17 +83,16 @@ public class EditarCocheFragment extends Fragment {
                         "Nombre", etNombre.getText().toString()
                 )
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(requireContext(),
-                            "Cambios guardados correctamente", Toast.LENGTH_SHORT).show();
+                    CustomToast.success(requireActivity(),
+                            "Cambios guardados correctamente");
+
                     requireActivity().getSupportFragmentManager().popBackStack();
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(requireContext(),
-                                "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        CustomToast.error(requireActivity(),
+                                "Error: " + e.getMessage()));
     }
 
-    // ============================================================
-    // DIÁLOGO PERSONALIZADO PARA ELIMINAR COCHE
     // ============================================================
     private void mostrarDialogoEliminar() {
 
@@ -137,20 +116,15 @@ public class EditarCocheFragment extends Fragment {
                     .delete()
                     .addOnSuccessListener(aVoid -> {
 
-                        Toast.makeText(requireContext(),
-                                "Coche eliminado correctamente", Toast.LENGTH_SHORT).show();
+                        CustomToast.success(requireActivity(),
+                                "Coche eliminado correctamente");
 
                         dialog.dismiss();
-
-                        requireActivity()
-                                .getSupportFragmentManager()
-                                .popBackStack();
-
+                        requireActivity().getSupportFragmentManager().popBackStack();
                     })
                     .addOnFailureListener(e ->
-                            Toast.makeText(requireContext(),
-                                    "Error al eliminar: " + e.getMessage(),
-                                    Toast.LENGTH_SHORT).show());
+                            CustomToast.error(requireActivity(),
+                                    "Error al eliminar: " + e.getMessage()));
         });
 
         btnCancelar.setOnClickListener(v -> dialog.dismiss());

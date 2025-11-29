@@ -7,10 +7,10 @@ import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.proyecto_iot.utils.CustomToast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
@@ -83,6 +83,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registrarUsuario() {
+
         String nombreUsuario = nombreUsuarioEditText.getText().toString().trim();
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
@@ -90,68 +91,74 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(nombreUsuario) || TextUtils.isEmpty(email) ||
                 TextUtils.isEmpty(password) || TextUtils.isEmpty(repeatPassword)) {
-            Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
+            CustomToast.warning(this, "Por favor, completa todos los campos");
             return;
         }
 
         if (!password.equals(repeatPassword)) {
-            Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+            CustomToast.error(this, "Las contraseñas no coinciden");
             return;
         }
 
         if (password.length() < 6) {
-            Toast.makeText(this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
+            CustomToast.warning(this, "La contraseña debe tener al menos 6 caracteres");
             return;
         }
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
+
                     if (task.isSuccessful()) {
+
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
                             guardarUsuarioEnFirestore(user, nombreUsuario, email);
                         }
 
-                        // Enviar correo de verificación
                         if (user != null) {
                             user.sendEmailVerification()
                                     .addOnCompleteListener(verificationTask -> {
                                         if (verificationTask.isSuccessful()) {
-                                            Toast.makeText(this,
-                                                    "Registro exitoso. Verifica tu correo antes de iniciar sesión.",
-                                                    Toast.LENGTH_LONG).show();
+
+                                            CustomToast.success(this,
+                                                    "Registro exitoso. Verifica tu correo antes de iniciar sesión.");
+
                                             mAuth.signOut();
                                             startActivity(new Intent(this, LoginActivity.class));
                                             finish();
+
                                         } else {
-                                            Toast.makeText(this,
+
+                                            CustomToast.error(this,
                                                     "Error al enviar correo de verificación: "
-                                                            + verificationTask.getException().getMessage(),
-                                                    Toast.LENGTH_LONG).show();
+                                                            + verificationTask.getException().getMessage());
                                         }
                                     });
                         }
+
                     } else {
-                        Toast.makeText(this,
-                                "Error al registrar: " + task.getException().getMessage(),
-                                Toast.LENGTH_LONG).show();
+
+                        CustomToast.error(this,
+                                "Error al registrar: " + task.getException().getMessage());
                     }
                 });
     }
 
     private void guardarUsuarioEnFirestore(FirebaseUser user, String nombre, String email) {
+
         Map<String, Object> usuario = new HashMap<>();
         usuario.put("Usuario", nombre);
         usuario.put("Correo", email);
-        usuario.put("Imagen", "/foto/so"); // valor por defecto o cambia según tu lógica
+        usuario.put("Imagen", "/foto/so");
         usuario.put("FechaRegistro", FieldValue.serverTimestamp());
 
         db.collection("Usuarios")
                 .document(user.getUid())
                 .set(usuario)
                 .addOnSuccessListener(aVoid ->
-                        Toast.makeText(this, "Usuario guardado en Firestore", Toast.LENGTH_SHORT).show())
+                        CustomToast.success(this, "Usuario guardado en Firestore"))
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Error al guardar usuario: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        CustomToast.error(this,
+                                "Error al guardar usuario: " + e.getMessage()));
     }
 }
