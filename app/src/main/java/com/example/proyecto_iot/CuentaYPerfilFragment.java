@@ -47,13 +47,17 @@ public class CuentaYPerfilFragment extends Fragment {
     // ======================================================
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.cuentayperfil, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view,
+                              @Nullable Bundle savedInstanceState) {
+
         super.onViewCreated(view, savedInstanceState);
 
         auth = FirebaseAuth.getInstance();
@@ -89,23 +93,6 @@ public class CuentaYPerfilFragment extends Fragment {
     }
 
     // ======================================================
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PERMISO_GALERIA) {
-
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                abrirGaleria();
-            } else {
-                CustomToast.error(requireActivity(), "Permiso denegado para acceder a la galería");
-            }
-        }
-    }
-
-    // ======================================================
     private void abrirGaleria() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
@@ -113,44 +100,92 @@ public class CuentaYPerfilFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode,
+                                 @Nullable Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == PICK_IMAGE &&
+                resultCode == Activity.RESULT_OK &&
+                data != null &&
+                data.getData() != null) {
 
-            Uri imageUri = data.getData();
-            if (imageUri != null && user != null) {
-                subirFotoFirebase(imageUri);
-            }
+            subirFotoFirebase(data.getData());
         }
     }
 
+    // ======================================================
+    // OBTENER EXTENSIÓN REAL DE LA FOTO
+    // ======================================================
+    private String getFileExtension(Uri uri) {
+        String extension = null;
+
+        try {
+            String mime = requireContext().getContentResolver().getType(uri);
+            if (mime != null) {
+                extension = mime.substring(mime.lastIndexOf("/") + 1);
+            }
+        } catch (Exception ignored) {}
+
+        if (extension == null) {
+            String path = uri.getPath();
+            if (path != null && path.contains(".")) {
+                extension = path.substring(path.lastIndexOf(".") + 1);
+            }
+        }
+
+        if (extension == null || extension.isEmpty()) {
+            extension = "jpg";
+        }
+
+        return extension.toLowerCase();
+    }
+
+    // ======================================================
+    // SUBIR FOTO SOLO A fotos_perfil/
     // ======================================================
     private void subirFotoFirebase(Uri imageUri) {
 
         if (imageUri == null || user == null) return;
 
+        String extension = getFileExtension(imageUri);
+
         StorageReference ref = FirebaseStorage.getInstance()
                 .getReference()
-                .child(user.getUid() + ".jpg");
+                .child("fotos_perfil/" + user.getUid() + "." + extension);
 
         ref.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot ->
-                        taskSnapshot.getStorage().getDownloadUrl()
-                                .addOnSuccessListener(uri -> {
-                                    Glide.with(this).load(uri).into(fotoPerfil);
-                                    CustomToast.success(requireActivity(), "Imagen actualizada");
-                                })
-                                .addOnFailureListener(e ->
-                                        CustomToast.error(requireActivity(), "Error obteniendo URL")
-                                )
-                )
+                .addOnSuccessListener(taskSnapshot -> {
+                    ref.getDownloadUrl()
+                            .addOnSuccessListener(uri -> {
+
+                                // Cargar en la UI
+                                Glide.with(CuentaYPerfilFragment.this)
+                                        .load(uri)
+                                        .into(fotoPerfil);
+
+                                // Guardar URL en Firestore
+                                db.collection("Usuarios")
+                                        .document(user.getUid())
+                                        .update("Imagen", uri.toString())
+                                        .addOnSuccessListener(v ->
+                                                CustomToast.success(requireActivity(), "Imagen actualizada")
+                                        )
+                                        .addOnFailureListener(e ->
+                                                CustomToast.error(requireActivity(), "Error guardando URL")
+                                        );
+                            })
+                            .addOnFailureListener(e ->
+                                    CustomToast.error(requireActivity(), "Error obteniendo URL")
+                            );
+                })
                 .addOnFailureListener(e ->
                         CustomToast.error(requireActivity(), "Error subiendo imagen")
                 );
     }
 
+    // ======================================================
+    // CARGAR DATOS USUARIO
     // ======================================================
     private void cargarDatosUsuario() {
 
@@ -162,6 +197,7 @@ public class CuentaYPerfilFragment extends Fragment {
                 .document(user.getUid())
                 .get()
                 .addOnSuccessListener(doc -> {
+
                     if (doc.exists()) {
 
                         String usuario = doc.getString("Usuario");
@@ -214,9 +250,10 @@ public class CuentaYPerfilFragment extends Fragment {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 
-            if (ContextCompat.checkSelfPermission(requireContext(),
-                    android.Manifest.permission.READ_MEDIA_IMAGES)
-                    != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    android.Manifest.permission.READ_MEDIA_IMAGES
+            ) != PackageManager.PERMISSION_GRANTED) {
 
                 requestPermissions(
                         new String[]{android.Manifest.permission.READ_MEDIA_IMAGES},
@@ -228,9 +265,10 @@ public class CuentaYPerfilFragment extends Fragment {
 
         } else {
 
-            if (ContextCompat.checkSelfPermission(requireContext(),
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED) {
 
                 requestPermissions(
                         new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
