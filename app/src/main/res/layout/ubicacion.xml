@@ -13,17 +13,25 @@
         android:orientation="vertical">
 
         <!-- Título -->
-        <TextView
-            android:id="@+id/titulo"
-            style="@style/Seccion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="20dp"
-            android:fontFamily="@font/montserrat_bold"
-            android:text="@string/titulo_ubicacion"
-            android:textColor="@color/icono_normal"
-            android:textSize="20sp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical">
+            <!-- Título centrado -->
+            <TextView
+                android:id="@+id/titleSeguridad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Informacion de tus coches"
+                android:textColor="@color/icono_normal"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_medium"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
 
         <!-- Descripción -->
         <TextView
@@ -73,13 +81,25 @@
             android:layout_marginTop="15dp"
             android:background="@color/boton_oscuro" />
 
-        <TextView
-            android:id="@+id/panel_titulo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/titulo_mis_coches"
-            style="@style/Seccion"
-            android:layout_marginTop="17dp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical">
+            <!-- Título centrado -->
+            <TextView
+                android:id="@+id/titleSeguridad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Mis coches resistrados"
+                android:textColor="@color/icono_normal"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_medium"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/panel_descrip"

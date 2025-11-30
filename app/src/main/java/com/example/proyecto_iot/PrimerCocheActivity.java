@@ -4,10 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.proyecto_iot.utils.CustomToast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -45,16 +45,20 @@ public class PrimerCocheActivity extends AppCompatActivity {
         String matricula = etMatricula.getText().toString().trim();
         String nombre = etNombreCoche.getText().toString().trim();
 
+        // ===================== VALIDACIONES =====================
+
         if (marca.isEmpty() || modelo.isEmpty() || matricula.isEmpty() || nombre.isEmpty()) {
-            Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
+            CustomToast.warning(this, "Por favor, completa todos los campos");
             return;
         }
 
         String userId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
         if (userId == null) {
-            Toast.makeText(this, "Error: usuario no autenticado", Toast.LENGTH_SHORT).show();
+            CustomToast.error(this, "Error: usuario no autenticado");
             return;
         }
+
+        // ===================== CREACIÓN OBJETO =====================
 
         Map<String, Object> coche = new HashMap<>();
         coche.put("Marca", marca);
@@ -63,14 +67,17 @@ public class PrimerCocheActivity extends AppCompatActivity {
         coche.put("Nombre", nombre);
         coche.put("Propietario", Collections.singletonList(userId));
 
+        // ===================== FIRESTORE =====================
+
         db.collection("Coches")
                 .add(coche)
                 .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(this, "Coche registrado correctamente", Toast.LENGTH_SHORT).show();
+                    CustomToast.success(this, "Coche registrado correctamente");
                     irAPaginaPrincipal();
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Error al registrar coche: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        CustomToast.error(this, "Error al registrar coche: " + e.getMessage())
+                );
     }
 
     private void irAPaginaPrincipal() {

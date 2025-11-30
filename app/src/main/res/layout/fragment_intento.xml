@@ -80,13 +80,15 @@
             <ImageView
                 android:id="@+id/ivCar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
+                android:layout_height="240dp"
                 android:contentDescription="@string/nombre_coche"
-                android:padding="1dp"
                 android:layout_marginBottom="16dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/coche_mat" />
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                android:background="@drawable/bg_card_soft"
+                android:padding="6dp"
+                android:src="@drawable/coche_julia" />
+
 
             <!-- ACCIONES (LOCK, CAMARAS, SEÑALES, SEGURO) -->
             <LinearLayout

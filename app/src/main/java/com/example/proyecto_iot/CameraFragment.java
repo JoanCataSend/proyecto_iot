@@ -39,7 +39,7 @@ public class CameraFragment extends Fragment {
         webCamView = view.findViewById(R.id.webCamView);
         webCamView2 = view.findViewById(R.id.webCamView2);
         //Camara ESP32
-        configurarWebCam(webCamView, "http://172.20.10.4:81/stream");
+        configurarWebCam(webCamView, "http://192.168.0.117:81/stream");
         //Camara Raspberry Pi
         configurarWebCam(webCamView2, "http://192.168.1.91:8080/?action=stream");
     }

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.materialswitch.MaterialSwitch;
@@ -14,6 +13,8 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.example.proyecto_iot.utils.CustomToast;
 
 public class ConfigNotificacionesFragment extends Fragment {
 
@@ -27,6 +28,7 @@ public class ConfigNotificacionesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_config_notificaciones, container, false);
 
         // Header visible y flecha atrás activa
@@ -46,10 +48,9 @@ public class ConfigNotificacionesFragment extends Fragment {
         swApertura = view.findViewById(R.id.swApertura);
         btnGuardar = view.findViewById(R.id.btnGuardarNotificaciones);
 
-        // Cargar estados guardados
         loadSwitchStates();
 
-        // Listener común para detectar cambios
+        // Listener para detectar cambios
         MaterialSwitch[] switches = {
                 swVentanaRota, swPuertasAbiertas, swCamara, swMovimiento,
                 swSonido, swUbicacion, swApertura
@@ -62,34 +63,33 @@ public class ConfigNotificacionesFragment extends Fragment {
             });
         }
 
-        // Guardar cambios al pulsar el botón
+        // Guardar cambios
         btnGuardar.setOnClickListener(v -> {
             saveSwitchStates();
             cambiosPendientes = false;
             actualizarBotonGuardar();
-            Toast.makeText(requireContext(), "Cambios guardados correctamente", Toast.LENGTH_SHORT).show();
+            CustomToast.success(requireActivity(), "Cambios guardados correctamente");
             requireActivity().getSupportFragmentManager().popBackStack();
         });
 
-        // 🔹 Flecha atrás del header → volver al ConfigFragment
+        // Flecha atrás del header
         View btnBack = requireActivity().findViewById(R.id.btnBack);
         if (btnBack != null) {
-            btnBack.setOnClickListener(v -> {
-                requireActivity().getSupportFragmentManager().popBackStack();
-            });
+            btnBack.setOnClickListener(v ->
+                    requireActivity().getSupportFragmentManager().popBackStack());
         }
 
         return view;
     }
 
-    /** Activa o desactiva el botón "Guardar cambios" según haya modificaciones */
+    // ======================================================
     private void actualizarBotonGuardar() {
         if (btnGuardar == null) return;
         btnGuardar.setEnabled(cambiosPendientes);
         btnGuardar.setAlpha(cambiosPendientes ? 1f : 0.5f);
     }
 
-    /** Guarda los estados de todos los switches en SharedPreferences */
+    // ======================================================
     private void saveSwitchStates() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("swVentanaRota", swVentanaRota.isChecked());
@@ -102,7 +102,7 @@ public class ConfigNotificacionesFragment extends Fragment {
         editor.apply();
     }
 
-    /** Carga los estados guardados de SharedPreferences */
+    // ======================================================
     private void loadSwitchStates() {
         swVentanaRota.setChecked(prefs.getBoolean("swVentanaRota", true));
         swPuertasAbiertas.setChecked(prefs.getBoolean("swPuertasAbiertas", true));

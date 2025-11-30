@@ -34,6 +34,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -133,7 +134,6 @@ public class IntentoFragment extends Fragment {
         carsAdapter.setDropDownViewResource(R.layout.spinner_coches);
         spinnerCars.setAdapter(carsAdapter);
 
-        // Fondo del popup del spinner
         spinnerCars.setPopupBackgroundDrawable(
                 ContextCompat.getDrawable(context, R.drawable.bg_card_soft)
         );
@@ -141,15 +141,12 @@ public class IntentoFragment extends Fragment {
         int savedPosition = prefs.getInt(PREF_KEY_SELECTED_CAR, 0);
         currentCarIndex = savedPosition;
 
-        // Abrir spinner tocando toda la tarjeta
         vehicleSelector.setOnClickListener(v -> spinnerCars.performClick());
 
-        // Listener lock (APP → FIREBASE → RASPI)
         View.OnClickListener lockClickListener = v -> toggleLock(prefs);
         flLock.setOnClickListener(lockClickListener);
         ivLock.setOnClickListener(lockClickListener);
 
-        // Listener SPINNER
         spinnerCars.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
@@ -157,21 +154,16 @@ public class IntentoFragment extends Fragment {
 
                 currentCarIndex = position;
 
-                // Guardar selección
                 prefs.edit().putInt(PREF_KEY_SELECTED_CAR, position).apply();
 
-                // Actualizar coche
                 updateCarImage(position);
 
-                // Restaurar estado local bloqueado/desbloqueado
                 boolean savedLocked = prefs.getBoolean(getLockPrefKeyForIndex(currentCarIndex), true);
                 isLocked = savedLocked;
                 updateLockUi();
 
-                // Escuchar estado en tiempo real de este coche en Firebase
                 if (position < carIds.size()) {
                     String cocheIdReal = carIds.get(position);
-                    Log.d("INTENTO", "Car seleccionado ID REAL = " + cocheIdReal);
                     listenEstadoActual(cocheIdReal);
                 }
             }
@@ -180,15 +172,12 @@ public class IntentoFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) { }
         });
 
-        // Estado inicial del candado desde prefs
         boolean savedLocked = prefs.getBoolean(getLockPrefKeyForIndex(currentCarIndex), true);
         isLocked = savedLocked;
         updateLockUi();
 
-        // ====== CARGAR COCHES DESDE FIRESTORE ======
         loadCarsFromFirestore(savedPosition, carsAdapter);
 
-        // ====== NAVEGAR A CÁMARAS ======
         layoutCamaras.setOnClickListener(v ->
                 requireActivity()
                         .getSupportFragmentManager()
@@ -198,7 +187,6 @@ public class IntentoFragment extends Fragment {
                         .commit()
         );
 
-        // ====== ABRIR GOOGLE MAPS ======
         addressPill.setOnClickListener(v -> {
             double lat = 38.99614697675971;
             double lon = -0.16569078767633452;
@@ -208,7 +196,6 @@ public class IntentoFragment extends Fragment {
             startActivity(intent);
         });
 
-        // ====== SEÑALES (ANIMACIÓN + FIREBASE) ======
         View.OnClickListener signalsClick = v ->
                 handleSignalsClick(context, prefs, ivSignals);
         ivSignals.setOnClickListener(signalsClick);
@@ -219,13 +206,11 @@ public class IntentoFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        // Quitar listener de Firebase
         if (estadoListener != null) {
             estadoListener.remove();
             estadoListener = null;
         }
 
-        // Parar animaciones y vibración si quedaran activas
         stopSignalsEffects();
         if (vibrator != null) {
             vibrator.cancel();
@@ -287,8 +272,6 @@ public class IntentoFragment extends Fragment {
 
                     if (error != null || doc == null || !doc.exists()) return;
 
-                    Log.d("INTENTO", "Estado recibido: " + doc.getData());
-
                     String puerta = doc.getString("puerta");
                     Boolean impacto = doc.getBoolean("impacto");
 
@@ -297,7 +280,6 @@ public class IntentoFragment extends Fragment {
 
                         ultimaPuerta = puerta;
 
-                        // Mapeamos "open"/"closed" a nuestro candado
                         if ("open".equals(puerta)) {
                             isLocked = false;
                             updateLockUi();
@@ -316,7 +298,6 @@ public class IntentoFragment extends Fragment {
 
                     if (hayImpacto && !ultimoImpacto) {
                         ultimoImpacto = true;
-
                         verificarImpactoReciente(carId);
                     } else if (!hayImpacto) {
                         ultimoImpacto = false;
@@ -346,11 +327,8 @@ public class IntentoFragment extends Fragment {
 
                     long ahora = System.currentTimeMillis();
 
-                    // Impacto reciente = ocurrío hace menos de 10 segundos
                     if (tipo.equals("impacto") && (ahora - ts) < 10_000) {
                         manejarImpacto();
-                    } else {
-                        Log.d("INTENTO", "Impacto antiguo, NO abrir cámara");
                     }
                 });
     }
@@ -368,7 +346,6 @@ public class IntentoFragment extends Fragment {
     private void toggleLock(SharedPreferences prefs) {
 
         if (currentCarIndex < 0 || currentCarIndex >= carIds.size()) {
-            // Aún no se han cargado los coches
             isLocked = !isLocked;
             updateLockUi();
             return;
@@ -376,15 +353,12 @@ public class IntentoFragment extends Fragment {
 
         isLocked = !isLocked;
 
-        // Guardar local
         prefs.edit()
                 .putBoolean(getLockPrefKeyForIndex(currentCarIndex), isLocked)
                 .apply();
 
-        // Actualizar UI
         updateLockUi();
 
-        // Actualizar Firestore (puerta open/closed)
         String carId = carIds.get(currentCarIndex);
         String nuevoEstado = isLocked ? "closed" : "open";
 
@@ -392,13 +366,7 @@ public class IntentoFragment extends Fragment {
                 .document(carId)
                 .collection("estado")
                 .document("actual")
-                .update("puerta", nuevoEstado)
-                .addOnSuccessListener(a ->
-                        Log.d("INTENTO", "🔥 Puerta actualizada en Firebase → " + nuevoEstado)
-                )
-                .addOnFailureListener(e ->
-                        Log.e("INTENTO", "❌ Error actualizando puerta", e)
-                );
+                .update("puerta", nuevoEstado);
     }
 
     // =========================
@@ -408,8 +376,7 @@ public class IntentoFragment extends Fragment {
         Context ctx = requireContext();
         SharedPreferences prefs = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
-        boolean puertasAbiertasEnabled = prefs.getBoolean("swPuertasAbiertas", true);
-        if (!puertasAbiertasEnabled) return;
+        if (!prefs.getBoolean("swPuertasAbiertas", true)) return;
 
         String titulo = getString(R.string.puertas_abiertas);
         String mensaje = "Las puertas del coche se han desbloqueado correctamente.";
@@ -434,8 +401,7 @@ public class IntentoFragment extends Fragment {
         Context ctx = requireContext();
         SharedPreferences prefs = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
-        boolean puertasAbiertasEnabled = prefs.getBoolean("swPuertasAbiertas", true);
-        if (!puertasAbiertasEnabled) return;
+        if (!prefs.getBoolean("swPuertasAbiertas", true)) return;
 
         String titulo = getString(R.string.bloqueado);
         String mensaje = "Las puertas del coche se han bloqueado correctamente.";
@@ -460,7 +426,6 @@ public class IntentoFragment extends Fragment {
 
         Context ctx = requireContext();
 
-        // Vibración potente
         vibrator = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
         if (vibrator != null) {
             if (Build.VERSION.SDK_INT >= 26) {
@@ -475,7 +440,6 @@ public class IntentoFragment extends Fragment {
         String mensaje = "Tu vehículo ha recibido un impacto";
         String fecha = getFechaActual();
 
-        // Notificación
         NotificationCompat.Builder b =
                 new NotificationCompat.Builder(ctx, CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_info)
@@ -491,7 +455,6 @@ public class IntentoFragment extends Fragment {
                 new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info)
         );
 
-        // Abrir cámara
         requireActivity()
                 .getSupportFragmentManager()
                 .beginTransaction()
@@ -514,7 +477,7 @@ public class IntentoFragment extends Fragment {
 
         startColorBlinkAnimation(ivSignals, context);
         startVibrationPattern(context);
-        updateFirestoreAlerts(true);   // <<--- 7: mandar también al coche por Firebase
+        updateFirestoreAlerts(true);
 
         if (sonidoEnabled) {
             String titulo = "Alertas activadas";
@@ -548,10 +511,9 @@ public class IntentoFragment extends Fragment {
             if (vibrator != null) vibrator.cancel();
             ivSignals.setColorFilter(
                     ContextCompat.getColor(context, R.color.texto_oscuro));
-            updateFirestoreAlerts(false);  // apagar alertas en Firebase
+            updateFirestoreAlerts(false);
         };
 
-        // Parar señales tras 10 segundos
         signalsStopHandler.postDelayed(signalsStopRunnable, 10_000);
     }
 
@@ -616,7 +578,6 @@ public class IntentoFragment extends Fragment {
 
         String carId = carIds.get(currentCarIndex);
 
-        // 1) Crear evento para el M5Stack
         long ts = System.currentTimeMillis();
 
         Map<String, Object> evento = new HashMap<>();
@@ -627,26 +588,13 @@ public class IntentoFragment extends Fragment {
         firestore.collection("Coches")
                 .document(carId)
                 .collection("eventos")
-                .add(evento)
-                .addOnSuccessListener(docRef ->
-                        Log.d("INTENTO", "✅ Evento alerta_sonido creado: " + active)
-                )
-                .addOnFailureListener(e ->
-                        Log.e("INTENTO", "❌ Error creando evento alerta_sonido", e)
-                );
+                .add(evento);
 
-        // 2) Actualizar estado actual (tu código original)
         firestore.collection("Coches")
                 .document(carId)
                 .collection("estado")
                 .document("actual")
-                .update("alertaSonido", active)
-                .addOnSuccessListener(a ->
-                        Log.d("INTENTO", "🔥 Alertas = " + active + " enviado a Firebase")
-                )
-                .addOnFailureListener(e ->
-                        Log.e("INTENTO", "❌ Error actualizando alertas", e)
-                );
+                .update("alertaSonido", active);
     }
 
 
@@ -655,30 +603,47 @@ public class IntentoFragment extends Fragment {
     // =========================
     private void updateCarImage(int position) {
         if (ivCar == null) return;
+        if (position < 0 || position >= carIds.size()) return;
 
-        String drawableName;
-        switch (position) {
-            case 0:
-                drawableName = "coche_naranja";
-                break;
-            case 1:
-                drawableName = "coche_azul";
-                break;
-            case 2:
-                drawableName = "coche_negro";
-                break;
-            default:
-                drawableName = "coche_naranja";
-                break;
-        }
+        String carId = carIds.get(position);
 
-        int resId = getResources().getIdentifier(
-                drawableName,
-                "drawable",
-                requireContext().getPackageName()
-        );
-        if (resId != 0) ivCar.setImageResource(resId);
+        // Leer datos del coche
+        firestore.collection("Coches")
+                .document(carId)
+                .get()
+                .addOnSuccessListener(doc -> {
+
+                    if (doc.exists()) {
+                        String fotoUrl = doc.getString("Foto");
+
+                        if (fotoUrl != null && !fotoUrl.isEmpty()) {
+                            // ⭐ Cargar foto real con Glide
+                            Glide.with(requireContext())
+                                    .load(fotoUrl)
+                                    .placeholder(R.drawable.coche_julia)   // opcional
+                                    .into(ivCar);
+                            return;
+                        }
+                    }
+
+                    // ⭐ Si NO tiene foto → usar la imagen por defecto según posición
+                    String drawableName;
+                    switch (position) {
+                        case 0: drawableName = "coche_naranja"; break;
+                        case 1: drawableName = "coche_azul"; break;
+                        case 2: drawableName = "coche_negro"; break;
+                        default: drawableName = "coche_naranja"; break;
+                    }
+
+                    int resId = getResources().getIdentifier(drawableName, "drawable", requireContext().getPackageName());
+                    ivCar.setImageResource(resId);
+                })
+                .addOnFailureListener(e -> {
+                    // Error leyendo Firestore → usa imagen por defecto
+                    ivCar.setImageResource(R.drawable.coche_julia);
+                });
     }
+
 
     private void updateLockUi() {
         if (ivLock == null || tvLockState == null) return;

@@ -1,6 +1,5 @@
 package com.example.proyecto_iot;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -9,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.proyecto_iot.utils.CustomToast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -31,10 +30,8 @@ public class CochesRegistradosFragment extends Fragment {
     private CocheAdapter adapter;
     private List<Coche> listaCoches;
 
-    // BBDD
     private FirebaseAuth auth;
     private FirebaseFirestore db;
-
 
     @Nullable
     @Override
@@ -52,51 +49,58 @@ public class CochesRegistradosFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_cochesR);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Inicializar bbdd
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // 🧱 Datos de ejemplo
         listaCoches = new ArrayList<>();
         adapter = new CocheAdapter(listaCoches);
         recyclerView.setAdapter(adapter);
 
-        FirebaseUser user = auth.getCurrentUser();
-        if (user != null) {
-            String uid = user.getUid();
+        cargarCoches();
 
-            db.collection("Coches")
-                    .whereArrayContains("Propietario", uid)
-                    .get()
-                    .addOnSuccessListener(querySnapshot -> {
-                        listaCoches.clear(); // ya seguro que existe
-                        for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
-                            String id = doc.getId();
-                            String nombre = doc.getString("Nombre");
-                            listaCoches.add(new Coche(id, nombre));
-                        }
-                        adapter.notifyDataSetChanged();
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(requireContext(),
-                                "Error al cargar coches: " + e.getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                    });
-        }
-        adapter = new CocheAdapter(listaCoches);
-        recyclerView.setAdapter(adapter);
-
-        // Boton añadir coche
+        // =============================================
+        // BOTÓN "AÑADIR NUEVO COCHE" → abre fragment
+        // =============================================
         View btnAnadirCoche = view.findViewById(R.id.btnAnadirCoche);
         btnAnadirCoche.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), AnadirCoche.class);
-            startActivity(intent);
+
+            AnadirCocheFragment fragment = new AnadirCocheFragment();
+
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit();
         });
-
-
     }
 
-    // --- Clase interna del Adapter ---
+    private void cargarCoches() {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) return;
+
+        db.collection("Coches")
+                .whereArrayContains("Propietario", user.getUid())
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    listaCoches.clear();
+
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        listaCoches.add(new Coche(
+                                doc.getId(),
+                                doc.getString("Nombre")
+                        ));
+                    }
+
+                    adapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e ->
+                        CustomToast.error(requireActivity(),
+                                "Error al cargar coches: " + e.getMessage()));
+    }
+
+    // ===================================================================
+    //                             ADAPTER
+    // ===================================================================
     private class CocheAdapter extends RecyclerView.Adapter<CocheAdapter.CocheViewHolder> {
 
         private List<Coche> coches;
@@ -121,20 +125,40 @@ public class CochesRegistradosFragment extends Fragment {
             holder.btnOpciones.setOnClickListener(v -> {
                 PopupMenu popup = new PopupMenu(requireContext(), v);
                 popup.inflate(R.menu.menu_eliminar);
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getItemId() == R.id.opcion_eliminar) {
-                            int currentPosition = holder.getAdapterPosition();
-                            if (currentPosition != RecyclerView.NO_POSITION) {
-                                Toast.makeText(requireContext(), "Eliminando " + coches.get(currentPosition).getNombre(), Toast.LENGTH_SHORT).show();
-                                eliminarCoche(currentPosition);
-                                return true;
-                            }
-                        }
-                        return false;
+
+                popup.setOnMenuItemClickListener(item -> {
+                    int currentPosition = holder.getAdapterPosition();
+                    if (currentPosition == RecyclerView.NO_POSITION) return false;
+
+                    Coche cocheActual = coches.get(currentPosition);
+
+                    // ================= ELIMINAR =================
+                    if (item.getItemId() == R.id.opcion_eliminar) {
+                        eliminarCoche(currentPosition);
+                        return true;
                     }
+
+                    // ================= PERSONALIZAR =================
+                    if (item.getItemId() == R.id.opcion_personalizar) {
+
+                        EditarCocheFragment fragment = new EditarCocheFragment();
+
+                        Bundle args = new Bundle();
+                        args.putString("cocheId", cocheActual.getId());
+                        fragment.setArguments(args);
+
+                        requireActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fragment_container, fragment)
+                                .addToBackStack(null)
+                                .commit();
+
+                        return true;
+                    }
+
+                    return false;
                 });
+
                 popup.show();
             });
         }
@@ -144,25 +168,23 @@ public class CochesRegistradosFragment extends Fragment {
             return coches.size();
         }
 
-        public void eliminarCoche(int position) {
+        private void eliminarCoche(int position) {
             Coche coche = coches.get(position);
 
             db.collection("Coches")
                     .document(coche.getId())
                     .delete()
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(requireContext(), "Coche eliminado", Toast.LENGTH_SHORT).show();
+                        CustomToast.success(requireActivity(), "Coche eliminado");
                         coches.remove(position);
                         notifyItemRemoved(position);
                         notifyItemRangeChanged(position, coches.size() - position);
                     })
                     .addOnFailureListener(e ->
-                            Toast.makeText(requireContext(), "Error al eliminar: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                    );
+                            CustomToast.error(requireActivity(),
+                                    "Error al eliminar: " + e.getMessage()));
         }
 
-
-        // --- ViewHolder ---
         public class CocheViewHolder extends RecyclerView.ViewHolder {
             TextView nombreCoche;
             ImageButton btnOpciones;
@@ -175,9 +197,11 @@ public class CochesRegistradosFragment extends Fragment {
         }
     }
 
-    // --- Modelo simple ---
+    // ===================================================================
+    //                             MODELO
+    // ===================================================================
     private static class Coche {
-        private final String id; // ID del documento
+        private final String id;
         private final String nombre;
 
         public Coche(String id, String nombre) {

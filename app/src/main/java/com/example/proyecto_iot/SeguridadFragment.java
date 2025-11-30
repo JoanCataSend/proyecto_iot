@@ -10,12 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.example.proyecto_iot.utils.CustomToast;
 
 public class SeguridadFragment extends Fragment {
 
@@ -29,9 +29,9 @@ public class SeguridadFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.activity_seguridad, container, false);
 
-        // Inicialización de vistas
         checkPuertas = view.findViewById(R.id.checkPuertas);
         checkVentanas = view.findViewById(R.id.checkVentanas);
         checkMovimiento = view.findViewById(R.id.checkMovimiento);
@@ -44,7 +44,6 @@ public class SeguridadFragment extends Fragment {
         prefs = context.getSharedPreferences("seguridad_prefs", Context.MODE_PRIVATE);
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
-        // Restaurar estados guardados
         checkPuertas.setChecked(prefs.getBoolean("checkPuertas", true));
         checkVentanas.setChecked(prefs.getBoolean("checkVentanas", true));
         checkMovimiento.setChecked(prefs.getBoolean("checkMovimiento", true));
@@ -52,14 +51,11 @@ public class SeguridadFragment extends Fragment {
         checkLuces.setChecked(prefs.getBoolean("checkLuces", true));
         checkBloqueo.setChecked(prefs.getBoolean("checkBloqueo", true));
 
-        // Botón Guardar cambios
         btnGuardar.setOnClickListener(v -> {
             guardarPreferencias();
             vibrar();
-            Toast.makeText(context, "Cambios guardados correctamente", Toast.LENGTH_SHORT).show();
+            CustomToast.success(requireActivity(), "Cambios guardados correctamente");
         });
-
-        // Flecha volver
 
         return view;
     }
@@ -67,7 +63,7 @@ public class SeguridadFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Mostrar flecha en MainActivity
+
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).setBackButtonVisible(true);
         }
@@ -76,11 +72,12 @@ public class SeguridadFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        // Ocultar flecha al salir
+
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).setBackButtonVisible(false);
         }
     }
+
     private void guardarPreferencias() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("checkPuertas", checkPuertas.isChecked());
@@ -91,6 +88,7 @@ public class SeguridadFragment extends Fragment {
         editor.putBoolean("checkBloqueo", checkBloqueo.isChecked());
         editor.apply();
     }
+
     private void vibrar() {
         if (vibrator != null) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
