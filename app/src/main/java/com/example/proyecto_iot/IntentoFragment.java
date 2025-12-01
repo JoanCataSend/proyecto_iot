@@ -287,15 +287,15 @@ public class IntentoFragment extends Fragment {
                         }
                     }
 
-                    // ⭐ Añadir coches al desplegable
+                    //Añadir coches al desplegable
                     popupItems.addAll(carNames);
 
-                    // ⭐ Siempre añadir "Añadir coche" al final
-                    popupItems.add("➕ Añadir coche");
+                    //Siempre añadir "Añadir coche" al final
+                    popupItems.add("+ Añadir coche");
 
                     adapter.notifyDataSetChanged();
 
-                    // ⭐ Seleccionar el coche real (carNames)
+                    //Seleccionar el coche real (carNames)
                     if (!carNames.isEmpty()) {
                         int pos = savedPosition;
                         if (pos < 0 || pos >= carNames.size()) pos = 0;
