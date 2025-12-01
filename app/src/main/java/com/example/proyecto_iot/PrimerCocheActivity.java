@@ -45,12 +45,39 @@ public class PrimerCocheActivity extends AppCompatActivity {
         String matricula = etMatricula.getText().toString().trim();
         String nombre = etNombreCoche.getText().toString().trim();
 
-        // ===================== VALIDACIONES =====================
-
-        if (marca.isEmpty() || modelo.isEmpty() || matricula.isEmpty() || nombre.isEmpty()) {
-            CustomToast.warning(this, "Por favor, completa todos los campos");
+        // ===== VALIDACIONES GENERALES =====
+        if (marca.isEmpty()) {
+            etMarca.setError("El campo Marca es obligatorio");
+            etMarca.requestFocus();
             return;
         }
+
+        if (modelo.isEmpty()) {
+            etModelo.setError("El campo Modelo es obligatorio");
+            etModelo.requestFocus();
+            return;
+        }
+
+        if (matricula.isEmpty()) {
+            etMatricula.setError("El campo Matrícula es obligatorio");
+            etMatricula.requestFocus();
+            return;
+        }
+
+        if (!esMatriculaValida(matricula)) {
+            etMatricula.setError("Formato inválido. Debe ser 4 números y 3 letras (ej. 1234 DKB)");
+            etMatricula.requestFocus();
+            return;
+        }
+
+        if (nombre.isEmpty()) {
+            etNombreCoche.setError("El campo Nombre del coche es obligatorio");
+            etNombreCoche.requestFocus();
+            return;
+        }
+
+        // Normalizar matrícula → 1234DKB
+        matricula = matricula.replaceAll("\\s+", "").toUpperCase();
 
         String userId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
         if (userId == null) {
@@ -58,17 +85,15 @@ public class PrimerCocheActivity extends AppCompatActivity {
             return;
         }
 
-        // ===================== CREACIÓN OBJETO =====================
-
+        // ===== CREAR OBJETO =====
         Map<String, Object> coche = new HashMap<>();
         coche.put("Marca", marca);
         coche.put("Modelo", modelo);
-        coche.put("Matrícula", matricula.toUpperCase());
+        coche.put("Matrícula", matricula);
         coche.put("Nombre", nombre);
         coche.put("Propietario", Collections.singletonList(userId));
 
-        // ===================== FIRESTORE =====================
-
+        // ===== GUARDAR EN FIRESTORE =====
         db.collection("Coches")
                 .add(coche)
                 .addOnSuccessListener(documentReference -> {
@@ -80,10 +105,19 @@ public class PrimerCocheActivity extends AppCompatActivity {
                 );
     }
 
+
     private void irAPaginaPrincipal() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
     }
+
+    private boolean esMatriculaValida(String mat) {
+        if (mat == null || mat.isEmpty()) return false;
+        mat = mat.trim().toUpperCase();
+        String patron = "^[0-9]{4}\\s?[A-Z]{3}$";
+        return mat.matches(patron);
+    }
+
 }
