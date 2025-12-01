@@ -36,7 +36,8 @@
         <activity
             android:name=".SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.Proyecto_iot.Splash">
+            android:theme="@style/Theme.Proyecto_iot.Splash"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -76,43 +77,63 @@
         <activity
             android:name=".LoginActivity"
             android:exported="true"
-            android:theme="@style/Theme.Proyecto_iot"/>
+            android:theme="@style/Theme.Proyecto_iot"
+            android:screenOrientation="portrait"/>
 
         <!-- Actividades de autenticación -->
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
-            android:theme="@style/Theme.Proyecto_iot"/>
+            android:theme="@style/Theme.Proyecto_iot"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ForgotPasswordActivity"
             android:exported="false"
-            android:theme="@style/Theme.Proyecto_iot"/>
+            android:theme="@style/Theme.Proyecto_iot"
+            android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".RegisterWizardActivity"/>
+            android:name=".RegisterWizardActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".OnboardingIntroActivity"/>
+            android:name=".OnboardingIntroActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".HomeDemoActivity"/>
+            android:name=".HomeDemoActivity"
+            android:screenOrientation="portrait"/>
 
         <!-- Activity principal -->
         <activity
             android:name=".MainActivity"
             android:exported="false"
-            android:theme="@style/Theme.Proyecto_iot"/>
+            android:theme="@style/Theme.Proyecto_iot"
+            android:screenOrientation="portrait"/>
 
         <!-- Sistema de coches -->
-        <activity android:name=".RegistroCoche" android:exported="false"/>
-        <activity android:name=".PrimerCocheActivity" android:exported="false"/>
-        <activity android:name=".EditarCocheActivity" android:exported="false"/>
-        <activity android:name=".AnadirCoche" android:exported="false"/>
+        <activity
+            android:name=".RegistroCoche"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".PrimerCocheActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".EditarCocheActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".AnadirCoche"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".EntryActivity"
             android:exported="false"
-            android:theme="@style/Theme.Proyecto_iot"/>
+            android:theme="@style/Theme.Proyecto_iot"
+            android:screenOrientation="portrait"/>
 
     </application>
 
