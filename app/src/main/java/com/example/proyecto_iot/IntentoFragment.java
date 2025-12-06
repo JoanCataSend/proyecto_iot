@@ -187,7 +187,6 @@ public class IntentoFragment extends Fragment {
                 if (popupItems.get(position).contains("Añadir")) {
                     startActivity(new Intent(requireContext(), PrimerCocheActivity.class));
 
-                    // volver a la selección del coche actual
                     spinnerCars.setSelection(currentCarIndex, false);
                     return;
                 }
@@ -207,6 +206,10 @@ public class IntentoFragment extends Fragment {
                 if (position < carIds.size()) {
                     listenEstadoActual(carIds.get(position));
                 }
+
+                spinnerCars.post(() -> {
+                    ((ArrayAdapter) spinnerCars.getAdapter()).notifyDataSetChanged();
+                });
             }
 
             @Override
@@ -671,23 +674,12 @@ public class IntentoFragment extends Fragment {
                             // ⭐ Cargar foto real con Glide
                             Glide.with(requireContext())
                                     .load(fotoUrl)
-                                    .placeholder(R.drawable.coche_julia)   // opcional
+                                    .placeholder(R.drawable.coche_julia)
                                     .into(ivCar);
                             return;
                         }
                     }
 
-                    // ⭐ Si NO tiene foto → usar la imagen por defecto según posición
-                    String drawableName;
-                    switch (position) {
-                        case 0: drawableName = "coche_naranja"; break;
-                        case 1: drawableName = "coche_azul"; break;
-                        case 2: drawableName = "coche_negro"; break;
-                        default: drawableName = "coche_naranja"; break;
-                    }
-
-                    int resId = getResources().getIdentifier(drawableName, "drawable", requireContext().getPackageName());
-                    ivCar.setImageResource(resId);
                 })
                 .addOnFailureListener(e -> {
                     // Error leyendo Firestore → usa imagen por defecto
