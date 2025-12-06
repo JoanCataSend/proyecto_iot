@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -48,6 +51,9 @@ public class LoginActivity extends AppCompatActivity {
     private CallbackManager mCallbackManager;
     private static final int RC_SIGN_IN = 9001;
 
+    private FrameLayout loadingOverlay;
+    private ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +74,11 @@ public class LoginActivity extends AppCompatActivity {
         facebookButton = findViewById(R.id.button6);
         xButton = findViewById(R.id.button5);
 
-        togglePasswordImage.setOnClickListener(v -> togglePasswordVisibility());
+        // Overlay + loader
+        loadingOverlay = findViewById(R.id.loadingOverlay);
+        progressBar = findViewById(R.id.progressBar);
 
+        togglePasswordImage.setOnClickListener(v -> togglePasswordVisibility());
         loginButton.setOnClickListener(v -> loginWithEmail());
 
         registerButton.setOnClickListener(v ->
@@ -85,7 +94,11 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        googleButton.setOnClickListener(v -> signInWithGoogle());
+
+        googleButton.setOnClickListener(v -> {
+            mostrarLoading(true);
+            signInWithGoogle();
+        });
 
         // FACEBOOK LOGIN
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -93,6 +106,8 @@ public class LoginActivity extends AppCompatActivity {
         mCallbackManager = CallbackManager.Factory.create();
 
         facebookButton.setOnClickListener(v -> {
+            mostrarLoading(true);
+
             LoginManager.getInstance().logInWithReadPermissions(
                     LoginActivity.this, Arrays.asList("email", "public_profile"));
 
@@ -105,12 +120,14 @@ public class LoginActivity extends AppCompatActivity {
 
                         @Override
                         public void onCancel() {
+                            mostrarLoading(false);
                             CustomToast.warning(LoginActivity.this,
                                     "Inicio con Facebook cancelado");
                         }
 
                         @Override
                         public void onError(FacebookException error) {
+                            mostrarLoading(false);
                             CustomToast.error(LoginActivity.this,
                                     "Error: " + error.getMessage());
                         }
@@ -147,6 +164,8 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        mostrarLoading(true);
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
 
@@ -155,15 +174,19 @@ public class LoginActivity extends AppCompatActivity {
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         if (user != null && user.isEmailVerified()) {
+
+                            // IMPORTANTE: NO ocultamos overlay
                             navigateAfterLogin(user);
 
                         } else {
+                            mostrarLoading(false);
                             CustomToast.warning(this,
                                     "Debes verificar tu email antes de continuar.");
                             mAuth.signOut();
                         }
 
                     } else {
+                        mostrarLoading(false);
                         CustomToast.error(this,
                                 "Error: " + task.getException().getLocalizedMessage());
                     }
@@ -191,6 +214,7 @@ public class LoginActivity extends AppCompatActivity {
                 firebaseAuthWithGoogle(account.getIdToken());
 
             } catch (ApiException e) {
+                mostrarLoading(false);
                 CustomToast.error(this,
                         "Error en inicio con Google: " + e.getMessage());
             }
@@ -207,8 +231,12 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
 
                     if (task.isSuccessful()) {
+
+                        // No ocultamos overlay aquí
                         navigateAfterLogin(mAuth.getCurrentUser());
+
                     } else {
+                        mostrarLoading(false);
                         CustomToast.error(this,
                                 "Error al autenticar con Google");
                     }
@@ -225,8 +253,12 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
 
                     if (task.isSuccessful()) {
+
+                        // No quitamos overlay
                         navigateAfterLogin(mAuth.getCurrentUser());
+
                     } else {
+                        mostrarLoading(false);
                         CustomToast.error(this,
                                 "Error en inicio con Facebook");
                     }
@@ -256,10 +288,12 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     startActivity(next);
-                    finish();
+                    finish(); // overlay desaparece aquí automáticamente
+
                 })
                 .addOnFailureListener(e -> {
 
+                    mostrarLoading(false);
                     CustomToast.error(this,
                             "Error comprobando los coches.");
 
@@ -268,4 +302,32 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    // ======================================================
+    private void mostrarLoading(boolean mostrar) {
+
+        if (mostrar) {
+            loadingOverlay.setAlpha(0f);
+            loadingOverlay.setVisibility(View.VISIBLE);
+            loadingOverlay.animate().alpha(1f).setDuration(200).start();
+
+            loginButton.setEnabled(false);
+            googleButton.setEnabled(false);
+            facebookButton.setEnabled(false);
+            registerButton.setEnabled(false);
+            forgotButton.setEnabled(false);
+            xButton.setEnabled(false);
+
+        } else {
+            loadingOverlay.animate().alpha(0f).setDuration(200)
+                    .withEndAction(() -> loadingOverlay.setVisibility(View.GONE))
+                    .start();
+
+            loginButton.setEnabled(true);
+            googleButton.setEnabled(true);
+            facebookButton.setEnabled(true);
+            registerButton.setEnabled(true);
+            forgotButton.setEnabled(true);
+            xButton.setEnabled(true);
+        }
+    }
 }

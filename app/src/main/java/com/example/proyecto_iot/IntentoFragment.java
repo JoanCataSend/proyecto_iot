@@ -93,6 +93,11 @@ public class IntentoFragment extends Fragment {
     private Runnable signalsStopRunnable;
     private Vibrator vibrator;
 
+    private final List<String> popupItems = new ArrayList<>();
+    private boolean spinnerInicializado = false;
+
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,7 +135,28 @@ public class IntentoFragment extends Fragment {
 
         // ====== SPINNER COCHES ======
         ArrayAdapter<String> carsAdapter =
-                new ArrayAdapter<>(context, R.layout.spinner_coches, carNames);
+                new ArrayAdapter<String>(context, R.layout.spinner_coches, carNames) {
+
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        // ⭐ LO QUE SE MUESTRA ARRIBA → SIEMPRE EL COCHE REAL
+                        return super.getView(currentCarIndex, convertView, parent);
+                    }
+
+                    @Override
+                    public int getCount() {
+                        // ⭐ EL DESPLEGABLE USA popupItems
+                        return popupItems.size();
+                    }
+
+                    @Override
+                    public String getItem(int position) {
+                        // ⭐ ELEMENTO DEL DESPLEGABLE
+                        return popupItems.get(position);
+                    }
+                };
+
+
         carsAdapter.setDropDownViewResource(R.layout.spinner_coches);
         spinnerCars.setAdapter(carsAdapter);
 
@@ -150,10 +176,26 @@ public class IntentoFragment extends Fragment {
         spinnerCars.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+
+                // ⛔ IGNORAR la primera llamada automática
+                if (!spinnerInicializado) {
+                    spinnerInicializado = true;
+                    return;
+                }
+
+                // === SI EL ÍTEM ES “Añadir coche” ===
+                if (popupItems.get(position).contains("Añadir")) {
+                    startActivity(new Intent(requireContext(), PrimerCocheActivity.class));
+
+                    // volver a la selección del coche actual
+                    spinnerCars.setSelection(currentCarIndex, false);
+                    return;
+                }
+
+                // === SELECCIÓN NORMAL ===
                 if (position < 0 || position >= carNames.size()) return;
 
                 currentCarIndex = position;
-
                 prefs.edit().putInt(PREF_KEY_SELECTED_CAR, position).apply();
 
                 updateCarImage(position);
@@ -163,14 +205,14 @@ public class IntentoFragment extends Fragment {
                 updateLockUi();
 
                 if (position < carIds.size()) {
-                    String cocheIdReal = carIds.get(position);
-                    listenEstadoActual(cocheIdReal);
+                    listenEstadoActual(carIds.get(position));
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
         });
+
 
         boolean savedLocked = prefs.getBoolean(getLockPrefKeyForIndex(currentCarIndex), true);
         isLocked = savedLocked;
@@ -235,6 +277,7 @@ public class IntentoFragment extends Fragment {
 
                     carNames.clear();
                     carIds.clear();
+                    popupItems.clear();
 
                     for (QueryDocumentSnapshot doc : query) {
                         String nombre = doc.getString("Nombre");
@@ -244,12 +287,20 @@ public class IntentoFragment extends Fragment {
                         }
                     }
 
+                    //Añadir coches al desplegable
+                    popupItems.addAll(carNames);
+
+                    //Siempre añadir "Añadir coche" al final
+                    popupItems.add("+ Añadir coche");
+
                     adapter.notifyDataSetChanged();
 
+                    //Seleccionar el coche real (carNames)
                     if (!carNames.isEmpty()) {
                         int pos = savedPosition;
                         if (pos < 0 || pos >= carNames.size()) pos = 0;
-                        spinnerCars.setSelection(pos);
+                        currentCarIndex = pos;
+                        spinnerCars.setSelection(pos, false);
                     }
                 });
     }

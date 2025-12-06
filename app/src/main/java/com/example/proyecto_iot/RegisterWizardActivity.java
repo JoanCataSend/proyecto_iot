@@ -3,10 +3,14 @@ package com.example.proyecto_iot;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,12 +30,15 @@ public class RegisterWizardActivity extends AppCompatActivity {
     private EditText etNombre, etEmail, etPassword, etRepeatPassword;
     private TextView tvStep, tvTitle, tvSubtitle, tvLogin;
     private Button btnPrimary;
+    private ProgressBar progressBar;
 
     private int currentStep = 0;
 
     private String nombreUsuario, email, password, repeatPassword;
 
     private FirebaseAuth mAuth;
+    private FrameLayout loadingOverlay;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +62,10 @@ public class RegisterWizardActivity extends AppCompatActivity {
         tvLogin = findViewById(R.id.tvLogin);
         btnPrimary = findViewById(R.id.btnPrimary);
 
+        // Overlay + loader
+        loadingOverlay = findViewById(R.id.loadingOverlay);
+        progressBar = findViewById(R.id.progressBar);
+
         ImageButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> goPreviousStep());
 
@@ -68,6 +79,7 @@ public class RegisterWizardActivity extends AppCompatActivity {
         updateUiForStep();
     }
 
+
     // ======================================================
     private void onPrimaryClicked() {
 
@@ -75,22 +87,30 @@ public class RegisterWizardActivity extends AppCompatActivity {
 
             case 0:
                 nombreUsuario = etNombre.getText().toString().trim();
+
                 if (TextUtils.isEmpty(nombreUsuario)) {
                     CustomToast.warning(this, "Introduce tu nombre");
                     return;
                 }
+
                 currentStep++;
                 updateUiForStep();
                 break;
 
             case 1:
                 email = etEmail.getText().toString().trim();
+
                 if (TextUtils.isEmpty(email)) {
                     CustomToast.warning(this, "Introduce tu correo");
                     return;
                 }
-                currentStep++;
-                updateUiForStep();
+
+                if (!esEmailValido(email)) {
+                    CustomToast.error(this, "Introduce un email válido");
+                    return;
+                }
+
+                comprobarEmailExiste(email);
                 break;
 
             case 2:
@@ -117,6 +137,10 @@ public class RegisterWizardActivity extends AppCompatActivity {
         }
     }
 
+    private boolean esEmailValido(String email) {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
     private void goPreviousStep() {
         if (currentStep > 0) {
             currentStep--;
@@ -129,9 +153,9 @@ public class RegisterWizardActivity extends AppCompatActivity {
     // ======================================================
     private void updateUiForStep() {
 
-        stepNombre.setVisibility(currentStep == 0 ? LinearLayout.VISIBLE : LinearLayout.GONE);
-        stepEmail.setVisibility(currentStep == 1 ? LinearLayout.VISIBLE : LinearLayout.GONE);
-        stepPassword.setVisibility(currentStep == 2 ? LinearLayout.VISIBLE : LinearLayout.GONE);
+        stepNombre.setVisibility(currentStep == 0 ? View.VISIBLE : View.GONE);
+        stepEmail.setVisibility(currentStep == 1 ? View.VISIBLE : View.GONE);
+        stepPassword.setVisibility(currentStep == 2 ? View.VISIBLE : View.GONE);
 
         tvStep.setText("Paso " + (currentStep + 1) + " de 3");
 
@@ -157,10 +181,41 @@ public class RegisterWizardActivity extends AppCompatActivity {
     }
 
     // ======================================================
+    private void comprobarEmailExiste(String email) {
+
+        mostrarLoading(true);
+
+        mAuth.fetchSignInMethodsForEmail(email)
+                .addOnCompleteListener(task -> {
+
+                    mostrarLoading(false);
+
+                    if (!task.isSuccessful()) {
+                        CustomToast.error(this,
+                                "Error comprobando email: " + task.getException().getMessage());
+                        return;
+                    }
+
+                    boolean existe = !task.getResult().getSignInMethods().isEmpty();
+
+                    if (existe) {
+                        CustomToast.error(this, "Este correo ya está registrado");
+                    } else {
+                        currentStep++;
+                        updateUiForStep();
+                    }
+                });
+    }
+
+    // ======================================================
     private void registrarUsuario() {
+
+        mostrarLoading(true);
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
+
+                    mostrarLoading(false);
 
                     if (!task.isSuccessful()) {
                         CustomToast.error(this,
@@ -222,4 +277,23 @@ public class RegisterWizardActivity extends AppCompatActivity {
                         CustomToast.error(this,
                                 "Error guardando usuario: " + e.getMessage()));
     }
+
+    // ======================================================
+    private void mostrarLoading(boolean mostrar) {
+
+        if (mostrar) {
+            loadingOverlay.setAlpha(0f);
+            loadingOverlay.setVisibility(View.VISIBLE);
+            loadingOverlay.animate().alpha(1f).setDuration(200).start();
+            btnPrimary.setEnabled(false);
+
+        } else {
+            loadingOverlay.animate().alpha(0f).setDuration(200)
+                    .withEndAction(() -> loadingOverlay.setVisibility(View.GONE))
+                    .start();
+
+            btnPrimary.setEnabled(true);
+        }
+    }
+
 }

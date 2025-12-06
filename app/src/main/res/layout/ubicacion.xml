@@ -125,7 +125,7 @@
             android:orientation="horizontal"
             android:gravity="center"
             android:layout_marginTop="20dp"
-            android:background="#335B47A0"
+            android:background="@drawable/bg_boton_anadir_coche"
             android:padding="10dp">
 
             <ImageView

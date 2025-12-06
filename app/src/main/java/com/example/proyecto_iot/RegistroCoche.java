@@ -30,50 +30,56 @@ public class RegistroCoche extends AppCompatActivity {
 
         cargarDatos();
 
-        btnRegistrar.setOnClickListener(v -> {
+        btnRegistrar.setOnClickListener(v -> registrarVehiculo());
+    }
 
-            marca = etMarca.getText().toString().trim();
-            modelo = etModelo.getText().toString().trim();
-            matricula = etMatricula.getText().toString().trim();
-            nombreCoche = etNombreCoche.getText().toString().trim();
+    private void registrarVehiculo() {
 
-            if (marca.isEmpty()) {
-                etMarca.setError("El campo Marca es obligatorio");
-                etMarca.requestFocus();
-                return;
-            }
-            if (modelo.isEmpty()) {
-                etModelo.setError("El campo Modelo es obligatorio");
-                etModelo.requestFocus();
-                return;
-            }
-            if (matricula.isEmpty()) {
-                etMatricula.setError("El campo Matrícula es obligatorio");
-                etMatricula.requestFocus();
-                return;
-            }
-            if (nombreCoche.isEmpty()) {
-                etNombreCoche.setError("El campo Nombre del coche es obligatorio");
-                etNombreCoche.requestFocus();
-                return;
-            }
+        marca = etMarca.getText().toString().trim();
+        modelo = etModelo.getText().toString().trim();
+        matricula = etMatricula.getText().toString().trim();
+        nombreCoche = etNombreCoche.getText().toString().trim();
 
-            if (!esMatriculaValida(matricula)) {
-                etMatricula.setError("Formato inválido. Debe ser 4 números y 3 letras (ej. 1234DKB o 1234 DKB).");
-                etMatricula.requestFocus();
-                return;
-            }
+        // ===== VALIDACIONES =====
+        if (marca.isEmpty()) {
+            etMarca.setError("El campo Marca es obligatorio");
+            etMarca.requestFocus();
+            return;
+        }
+        if (modelo.isEmpty()) {
+            etModelo.setError("El campo Modelo es obligatorio");
+            etModelo.requestFocus();
+            return;
+        }
+        if (matricula.isEmpty()) {
+            etMatricula.setError("El campo Matrícula es obligatorio");
+            etMatricula.requestFocus();
+            return;
+        }
+        if (nombreCoche.isEmpty()) {
+            etNombreCoche.setError("El campo Nombre del coche es obligatorio");
+            etNombreCoche.requestFocus();
+            return;
+        }
 
-            matricula = matricula.replaceAll("\\s+", "").toUpperCase();
-            guardarDatos();
+        // Validación EXACTA del usuario
+        if (!esMatriculaValida(matricula)) {
+            etMatricula.setError("Formato inválido. Debe ser 4 números y 3 letras (ej. 1234 DKB)");
+            etMatricula.requestFocus();
+            return;
+        }
 
-            CustomToast.success(this, "Vehículo registrado correctamente");
-        });
+        // Normalizar matrícula → 1234DKB
+        matricula = matricula.replaceAll("\\s+", "").toUpperCase();
+
+        guardarDatos();
+        CustomToast.success(this, "Vehículo registrado correctamente");
     }
 
     private boolean esMatriculaValida(String mat) {
         if (TextUtils.isEmpty(mat)) return false;
-        String patron = "^[0-9]{4}\\s?[A-Za-z]{3}$";
+        mat = mat.trim().toUpperCase();
+        String patron = "^[0-9]{4}\\s?[A-Z]{3}$";
         return mat.matches(patron);
     }
 

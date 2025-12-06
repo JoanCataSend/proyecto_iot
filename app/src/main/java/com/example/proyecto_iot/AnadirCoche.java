@@ -43,13 +43,23 @@ public class AnadirCoche extends AppCompatActivity {
 
         String marca = etMarca.getText().toString().trim();
         String modelo = etModelo.getText().toString().trim();
-        String matricula = etMatricula.getText().toString().trim();
+        String matricula = etMatricula.getText().toString().trim().toUpperCase();
         String nombre = etNombre.getText().toString().trim();
 
+        // ===== VALIDACIONES =====
         if (marca.isEmpty() || modelo.isEmpty() || matricula.isEmpty() || nombre.isEmpty()) {
             CustomToast.warning(this, "Rellena todos los campos");
             return;
         }
+
+        if (!esMatriculaValida(matricula)) {
+            etMatricula.setError("Formato inválido. Debe ser 4 números y 3 letras (ej. 1234 DKB)");
+            etMatricula.requestFocus();
+            return;
+        }
+
+        // Normalizar → quitar espacios
+        matricula = matricula.replaceAll("\\s+", "");
 
         String uid = auth.getCurrentUser().getUid();
 
@@ -71,4 +81,17 @@ public class AnadirCoche extends AppCompatActivity {
                         CustomToast.error(this, "Error al añadir un nuevo coche")
                 );
     }
+
+
+    private boolean esMatriculaValida(String mat) {
+        if (mat == null || mat.isEmpty()) return false;
+
+        mat = mat.trim().toUpperCase(); // normalizar
+
+        // Patrón → 4 dígitos + espacio opcional + 3 letras
+        String patron = "^[0-9]{4}\\s?[A-Z]{3}$";
+
+        return mat.matches(patron);
+    }
+
 }
