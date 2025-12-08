@@ -2,7 +2,9 @@ package com.example.proyecto_iot;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,31 +38,34 @@ public class OnboardingIntroActivity extends AppCompatActivity {
         btnPrimary = findViewById(R.id.btnPrimary);
         tvSecondary = findViewById(R.id.tvSecondaryAction);
         TabLayout tabLayout = findViewById(R.id.tabDots);
+        TextView tvSkip = findViewById(R.id.tvSkip);
 
         // Crear páginas
         pages = new ArrayList<>();
         pages.add(new OnboardingPage(
                 "Convierte tu coche en un vehículo inteligente",
-                "Controla, localiza y protege tu vehículo en tiempo real desde tu móvil.",
-                R.drawable.ic_coche));
+                "Convierte tu coche en un vehículo conectado. Instala Köva y controla todo desde tu móvil, estés donde estés.",
+                R.drawable.primerpaso));
         pages.add(new OnboardingPage(
-                "Protección 24/7",
-                "Recibe alertas instantáneas ante golpes, vibraciones o intentos de acceso.",
-                R.drawable.ic_escudo));
+                "Protección activa las 24 horas",
+                "Detecta golpes, vibraciones e intentos de acceso al instante. Köva te avisa siempre que algo importante ocurre.",
+                R.drawable.segundopaso));
         pages.add(new OnboardingPage(
-                "Control total",
-                "Abre o cierra tu coche, activa el modo vigilancia y emite señales remotas.",
-                R.drawable.ic_wifi));
+                "Control total desde tu móvil",
+                "Abre, cierra, activa vigilancia o emite señales remotas. Tu coche responde a ti, incluso cuando estás lejos.",
+                R.drawable.tercerpaso));
         pages.add(new OnboardingPage(
-                "Siempre conectado",
-                "Consulta la ubicación de tu coche y gestiona varios vehículos desde KöVa.",
-                R.drawable.ic_ubicacion));
+                "Siempre localizado y bajo tu control",
+                "Consulta la ubicación en tiempo real, revisa rutas y gestiona varios vehículos en una sola app, de forma sencilla y segura.",
+                R.drawable.cuartopaso));
 
         adapter = new OnboardingPagerAdapter(pages);
         viewPager.setAdapter(adapter);
 
         // Vincular con TabLayout
-        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {}).attach();
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+            tab.setCustomView(getLayoutInflater().inflate(R.layout.item_tab_dot, null));
+        }).attach();
 
         updateUiForPosition(0);
 
@@ -83,8 +88,16 @@ public class OnboardingIntroActivity extends AppCompatActivity {
             }
         });
 
-// El texto secundario SIEMPRE lleva a login
+        // Ya tengo cuenta
+        tvSecondary.setPaintFlags(tvSecondary.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         tvSecondary.setOnClickListener(v -> goToLogin());
+
+        // Omitit
+        tvSkip.setPaintFlags(tvSkip.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        tvSkip.setOnClickListener(v -> {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        });
 
     }
 
