@@ -1,6 +1,7 @@
 package com.example.proyecto_iot;
 
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
@@ -24,7 +25,7 @@ public class RegisterWizardActivity extends AppCompatActivity {
 
     private LinearLayout stepNombre, stepEmail, stepPassword;
     private EditText etNombre, etEmail, etPassword, etRepeatPassword;
-    private TextView tvStep, tvTitle, tvSubtitle, tvLogin;
+    private TextView tvStep, tvTitle, tvSubtitle, tvSecondaryAction;
     private Button btnPrimary;
 
     private int currentStep = 0;
@@ -55,13 +56,23 @@ public class RegisterWizardActivity extends AppCompatActivity {
         tvStep = findViewById(R.id.tvStep);
         tvTitle = findViewById(R.id.tvTitle);
         tvSubtitle = findViewById(R.id.tvSubtitle);
-        tvLogin = findViewById(R.id.tvLogin);
+        tvSecondaryAction = findViewById(R.id.tvSecondaryAction);
+
+        // Omitir
+        TextView tvSkip = findViewById(R.id.tvSkip);
+        tvSkip.setPaintFlags(tvSkip.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        tvSkip.setOnClickListener(v -> {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        });
+
         btnPrimary = findViewById(R.id.btnPrimary);
 
         ImageButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> goPreviousStep());
 
-        tvLogin.setOnClickListener(v -> {
+        tvSecondaryAction.setPaintFlags(tvSecondaryAction.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        tvSecondaryAction.setOnClickListener(v -> {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
@@ -135,21 +146,24 @@ public class RegisterWizardActivity extends AppCompatActivity {
 
         switch (currentStep) {
             case 0:
-                tvTitle.setText("Vamos a conocernos");
-                tvSubtitle.setText("¿Cómo te llamas?");
-                btnPrimary.setText("Siguiente");
+                tvTitle.setText("Empecemos con lo básico");
+                tvSubtitle.setText("Cuéntanos tu nombre para personalizar tu experiencia.");
+                btnPrimary.setText("Continuar");
                 break;
+
             case 1:
                 tvTitle.setText("Tu correo electrónico");
-                tvSubtitle.setText("Lo usaremos para crear tu cuenta.");
-                btnPrimary.setText("Siguiente");
+                tvSubtitle.setText("Será tu usuario y donde recibirás avisos importantes.");
+                btnPrimary.setText("Continuar");
                 break;
+
             case 2:
-                tvTitle.setText("Protege tu cuenta");
-                tvSubtitle.setText("Crea una contraseña segura.");
+                tvTitle.setText("Crea una contraseña segura");
+                tvSubtitle.setText("Protegeremos tu cuenta con tus datos cifrados.");
                 btnPrimary.setText("Crear cuenta");
                 break;
         }
+
     }
 
     private void registrarUsuario() {

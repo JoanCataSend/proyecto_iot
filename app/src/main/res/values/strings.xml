@@ -105,14 +105,4 @@
     <string name="apertura_vehiculo">Apertura vehiculo</string>
     <string name="google_maps_key">AIzaSyCvjpWVS9xG6Wg7l6qY0bvWM0-d-b6QVFA</string>
     <string name="cambiar_contrasena">Cambiar contraseña</string>
-
-    <string-array name="lista_coches">
-        <item>El Champon</item>
-        <item>Speedy Azul</item>
-        <item>Roadster Negro</item>
-    </string-array>
-
-
-
-
 </resources>
