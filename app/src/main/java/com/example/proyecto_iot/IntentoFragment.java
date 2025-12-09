@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -202,6 +204,9 @@ public class IntentoFragment extends Fragment {
                 prefs.edit().putInt(PREF_KEY_SELECTED_CAR, position).apply();
 
                 updateCarImage(position);
+                if (position < carIds.size()) {
+                    updateCarLocation(carIds.get(position));
+                }
 
                 boolean savedLocked = prefs.getBoolean(getLockPrefKeyForIndex(currentCarIndex), true);
                 isLocked = savedLocked;
@@ -306,9 +311,18 @@ public class IntentoFragment extends Fragment {
                     if (!carNames.isEmpty()) {
                         int pos = savedPosition;
                         if (pos < 0 || pos >= carNames.size()) pos = 0;
+
                         currentCarIndex = pos;
                         spinnerCars.setSelection(pos, false);
+
+                        // Cargar imagen, ubicación y estado desde el primer momento
+                        if (pos < carIds.size()) {
+                            updateCarImage(pos);
+                            updateCarLocation(carIds.get(pos));
+                            listenEstadoActual(carIds.get(pos));
+                        }
                     }
+
                 });
     }
 
@@ -690,7 +704,50 @@ public class IntentoFragment extends Fragment {
                     ivCar.setImageResource(R.drawable.coche_julia);
                 });
     }
+    private void updateCarLocation(String carId) {
 
+        firestore.collection("Coches")
+                .document(carId)
+                .get()
+                .addOnSuccessListener(doc -> {
+
+                    if (!doc.exists()) return;
+
+                    Double lat = doc.getDouble("lat");
+                    Double lng = doc.getDouble("lng");
+
+                    if (lat == null || lng == null) return;
+
+                    // 🔵 Geocoder → convierte lat/lng a dirección real
+                    String direccion = "Ubicación desconocida";
+                    try {
+                        Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+                        List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+                        if (!addresses.isEmpty()) {
+                            direccion = addresses.get(0).getAddressLine(0);
+                        }
+                    } catch (Exception e) {
+                        direccion = "Dirección no disponible";
+                    }
+
+                    // Mostrar en pantalla
+                    TextView tvAddress = requireView().findViewById(R.id.tvAddress);
+                    tvAddress.setText(direccion);
+
+                    // Click → abrir Google Maps
+                    View addressPill = requireView().findViewById(R.id.addressPill);
+                    double finalLat = lat;
+                    double finalLng = lng;
+
+                    addressPill.setOnClickListener(v -> {
+                        String uri = "geo:" + finalLat + "," + finalLng
+                                + "?q=" + finalLat + "," + finalLng;
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                        intent.setPackage("com.google.android.apps.maps");
+                        startActivity(intent);
+                    });
+                });
+    }
 
     private void updateLockUi() {
         if (ivLock == null || tvLockState == null) return;
