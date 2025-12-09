@@ -117,6 +117,10 @@ public class IntentoFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setBackButtonVisible(false);
+        }
+
         firestore = FirebaseFirestore.getInstance();
         Context context = requireContext();
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
