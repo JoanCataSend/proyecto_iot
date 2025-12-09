@@ -15,11 +15,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.proyecto_iot.utils.CustomToast;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.List;
 import java.util.UUID;
 
 public class EditarCocheFragment extends Fragment {
@@ -189,21 +192,40 @@ public class EditarCocheFragment extends Fragment {
 
         btnEliminarDef.setOnClickListener(v -> {
 
+            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // 1️⃣ Quitar al usuario del array Propietario
             db.collection("Coches").document(cocheId)
-                    .delete()
+                    .update("Propietario", FieldValue.arrayRemove(uid))
                     .addOnSuccessListener(aVoid -> {
 
-                        CustomToast.success(requireActivity(), "Coche eliminado");
+                        // 2️⃣ Volver a leer el documento
+                        db.collection("Coches").document(cocheId)
+                                .get()
+                                .addOnSuccessListener(doc -> {
 
-                        dialog.dismiss();
-                        requireActivity()
-                                .getSupportFragmentManager()
-                                .popBackStack();
+                                    List<String> propietarios = (List<String>) doc.get("Propietario");
+
+                                    // 3️⃣ Si el coche ya no tiene dueños → eliminarlo de Firestore
+                                    if (propietarios == null || propietarios.isEmpty()) {
+                                        db.collection("Coches").document(cocheId).delete();
+                                    }
+
+                                    CustomToast.success(requireActivity(),
+                                            "Coche eliminado de tu cuenta");
+
+                                    dialog.dismiss();
+                                    requireActivity()
+                                            .getSupportFragmentManager()
+                                            .popBackStack();
+                                });
                     })
                     .addOnFailureListener(e ->
-                            CustomToast.error(requireActivity(), "Error al eliminar"));
+                            CustomToast.error(requireActivity(),
+                                    "Error al eliminar: " + e.getMessage()));
         });
+
 
         btnCancelar.setOnClickListener(v -> dialog.dismiss());
     }
