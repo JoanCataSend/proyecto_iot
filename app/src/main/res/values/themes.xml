@@ -10,7 +10,7 @@
 
         <!-- Fondo y barra de estado -->
         <item name="android:colorBackground">@color/fondo_claro</item>
-        <item name="android:statusBarColor">@color/icono_normal</item>
+        <item name="android:statusBarColor">@color/fondo_claro</item>
 
         <!-- Tipografía -->
         <item name="fontFamily">@font/roboto_regular_ttf</item>
