@@ -5,21 +5,21 @@
     android:layout_height="match_parent"
     android:textAlignment="center">
 
-    <!-- CONTENIDO PRINCIPAL -->
+    <!-- Contenido principal ahora en LinearLayout (weight sí funciona) -->
     <LinearLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- TÍTULO -->
+        <!-- Título -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:gravity="center_vertical">
-
+            <!-- Título centrado -->
             <TextView
                 android:id="@+id/titleSeguridad"
                 android:layout_width="wrap_content"
@@ -30,9 +30,10 @@
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_medium"
                 android:textStyle="bold" />
+
         </RelativeLayout>
 
-        <!-- DESCRIPCIÓN -->
+        <!-- Descripción -->
         <TextView
             android:id="@+id/descripcion"
             style="@style/DescripciónActividad"
@@ -45,7 +46,7 @@
             android:text="@string/descripcion_ubicacion"
             android:textColor="@color/icono_normal" />
 
-        <!-- MAPA -->
+        <!-- Mapa con weight (ocupa todo el espacio libre disponible) -->
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -54,11 +55,12 @@
             android:layout_marginStart="30dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="30dp"
-            android:layout_marginBottom="40dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:layout_marginBottom="40dp"/>
+
     </LinearLayout>
 
-    <!-- PANEL DESPLEGABLE -->
+    <!-- Panel desplegable con altura controlada -->
     <LinearLayout
         android:id="@+id/panel_desplegable"
         android:layout_width="match_parent"
@@ -68,7 +70,7 @@
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
         android:paddingBottom="0dp"
-        android:maxHeight="460dp"
+        android:maxHeight="420dp"
         android:translationY="5dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
@@ -79,27 +81,26 @@
             android:layout_marginTop="15dp"
             android:background="@color/boton_oscuro" />
 
-        <!-- TÍTULO PANEL -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:gravity="center_vertical">
-
+            <!-- Título centrado -->
             <TextView
                 android:id="@+id/titleSeguridad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Mis coches registrados"
+                android:text="Mis coches resistrados"
                 android:textColor="@color/icono_normal"
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_medium"
                 android:textStyle="bold" />
+
         </RelativeLayout>
 
-        <!-- DESCRIPCIÓN PANEL -->
         <TextView
             android:id="@+id/panel_descrip"
             android:layout_width="wrap_content"
@@ -109,24 +110,21 @@
             style="@style/DescripciónActividad"
             android:layout_marginTop="8dp" />
 
-        <!-- LISTA DE COCHES (RECYCLER) -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerCoches"
+        <ListView
+            android:id="@+id/listViewCoches"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="1"
-            android:overScrollMode="never"/>
-
-        <!-- BOTÓN AÑADIR COCHE -->
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:dividerHeight="10dp"
+            android:layout_marginTop="14dp" />
+        <!-- Botón para añadir nuevo coche -->
         <LinearLayout
             android:id="@+id/btnAnadirCoche"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/bg_boton_anadir_coche"
             android:padding="10dp">
 
@@ -145,6 +143,7 @@
                 android:layout_marginStart="10dp"
                 android:fontFamily="@font/montserrat_bold"/>
         </LinearLayout>
+
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
