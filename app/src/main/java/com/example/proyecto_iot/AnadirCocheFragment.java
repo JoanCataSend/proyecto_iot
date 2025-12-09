@@ -67,31 +67,48 @@ public class AnadirCocheFragment extends Fragment {
         }
 
         if (!esMatriculaValida(matricula)) {
-            etMatricula.setError("Formato inválido. Debe ser 4 números y 3 letras (ej. 1234 DKB)");
+            etMatricula.setError("Formato inválido. Ej: 1234 DKB");
             etMatricula.requestFocus();
             return;
         }
 
-        // Normalizar → quitar espacios
         matricula = matricula.replaceAll("\\s+", "");
-
+        String finalMatricula = matricula;
         String uid = auth.getCurrentUser().getUid();
 
-        Map<String, Object> coche = new HashMap<>();
-        coche.put("Marca", marca);
-        coche.put("Modelo", modelo);
-        coche.put("Matrícula", matricula);
-        coche.put("Nombre", nombre);
-        coche.put("Propietario", java.util.Collections.singletonList(uid));
-
+        // ===== COMPROBAR MATRÍCULA ÚNICA =====
         db.collection("Coches")
-                .add(coche)
-                .addOnSuccessListener(ref -> {
-                    CustomToast.success(requireActivity(), "Coche añadido correctamente");
-                    requireActivity().getSupportFragmentManager().popBackStack();
+                .whereEqualTo("Matrícula", finalMatricula)
+                .get()
+                .addOnSuccessListener(query -> {
+
+                    if (!query.isEmpty()) {
+                        etMatricula.setError("Esta matrícula ya está registrada");
+                        etMatricula.requestFocus();
+                        CustomToast.error(requireActivity(), "La matrícula ya existe");
+                        return;
+                    }
+
+                    // Guardar coche
+                    Map<String, Object> coche = new HashMap<>();
+                    coche.put("Marca", marca);
+                    coche.put("Modelo", modelo);
+                    coche.put("Matrícula", finalMatricula);
+                    coche.put("Nombre", nombre);
+                    coche.put("Propietario", java.util.Collections.singletonList(uid));
+
+                    db.collection("Coches")
+                            .add(coche)
+                            .addOnSuccessListener(ref -> {
+                                CustomToast.success(requireActivity(), "Coche añadido correctamente");
+                                requireActivity().getSupportFragmentManager().popBackStack();
+                            })
+                            .addOnFailureListener(e ->
+                                    CustomToast.error(requireActivity(), "Error al añadir un nuevo coche")
+                            );
                 })
                 .addOnFailureListener(e ->
-                        CustomToast.error(requireActivity(), "Error al añadir un nuevo coche")
+                        CustomToast.error(requireActivity(), "Error comprobando matrícula")
                 );
     }
 
