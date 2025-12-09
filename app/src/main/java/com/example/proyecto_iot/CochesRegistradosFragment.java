@@ -59,7 +59,7 @@ public class CochesRegistradosFragment extends Fragment {
         cargarCoches();
 
         // =============================================
-        // BOTÓN "AÑADIR NUEVO COCHE" → abre fragment
+        // BOTÓN "AÑADIR NUEVO COCHE"
         // =============================================
         View btnAnadirCoche = view.findViewById(R.id.btnAnadirCoche);
         btnAnadirCoche.setOnClickListener(v -> {
@@ -74,6 +74,9 @@ public class CochesRegistradosFragment extends Fragment {
         });
     }
 
+    // ===============================================================
+    // CARGAR COCHES DEL USUARIO
+    // ===============================================================
     private void cargarCoches() {
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) return;
@@ -98,9 +101,58 @@ public class CochesRegistradosFragment extends Fragment {
                                 "Error al cargar coches: " + e.getMessage()));
     }
 
-    // ===================================================================
-    //                             ADAPTER
-    // ===================================================================
+
+    // ===============================================================
+    // MOSTRAR DIÁLOGO DE CONFIRMACIÓN DE ELIMINACIÓN
+    // ===============================================================
+    private void mostrarDialogoEliminar(int position, Coche coche) {
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        View dialogView = inflater.inflate(R.layout.dialog_eliminar_coche, null);
+
+        androidx.appcompat.app.AlertDialog.Builder builder =
+                new androidx.appcompat.app.AlertDialog.Builder(requireContext());
+
+        builder.setView(dialogView);
+
+        androidx.appcompat.app.AlertDialog dialog = builder.create();
+
+        // Botón cancelar
+        dialogView.findViewById(R.id.btnCancelar).setOnClickListener(v -> dialog.dismiss());
+
+        // Botón eliminar definitivo (ID correcto: btnEliminarDef)
+        dialogView.findViewById(R.id.btnEliminarDef).setOnClickListener(v -> {
+            eliminarCocheFirestore(position, coche, dialog);
+        });
+
+        dialog.show();
+    }
+
+
+    // ===============================================================
+    // ELIMINAR EN FIRESTORE (solo después de confirmar)
+    // ===============================================================
+    private void eliminarCocheFirestore(int position, Coche coche, androidx.appcompat.app.AlertDialog dialog) {
+
+        db.collection("Coches")
+                .document(coche.getId())
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    dialog.dismiss();
+                    CustomToast.success(requireActivity(), "Coche eliminado");
+
+                    listaCoches.remove(position);
+                    adapter.notifyItemRemoved(position);
+                    adapter.notifyItemRangeChanged(position, listaCoches.size() - position);
+                })
+                .addOnFailureListener(e ->
+                        CustomToast.error(requireActivity(),
+                                "Error al eliminar: " + e.getMessage()));
+    }
+
+
+    // ===============================================================
+    // ADAPTER
+    // ===============================================================
     private class CocheAdapter extends RecyclerView.Adapter<CocheAdapter.CocheViewHolder> {
 
         private List<Coche> coches;
@@ -132,13 +184,13 @@ public class CochesRegistradosFragment extends Fragment {
 
                     Coche cocheActual = coches.get(currentPosition);
 
-                    // ================= ELIMINAR =================
+                    // ================= OPCIÓN ELIMINAR =================
                     if (item.getItemId() == R.id.opcion_eliminar) {
-                        eliminarCoche(currentPosition);
+                        mostrarDialogoEliminar(currentPosition, cocheActual);
                         return true;
                     }
 
-                    // ================= PERSONALIZAR =================
+                    // ================= OPCIÓN PERSONALIZAR =================
                     if (item.getItemId() == R.id.opcion_personalizar) {
 
                         EditarCocheFragment fragment = new EditarCocheFragment();
@@ -168,23 +220,6 @@ public class CochesRegistradosFragment extends Fragment {
             return coches.size();
         }
 
-        private void eliminarCoche(int position) {
-            Coche coche = coches.get(position);
-
-            db.collection("Coches")
-                    .document(coche.getId())
-                    .delete()
-                    .addOnSuccessListener(aVoid -> {
-                        CustomToast.success(requireActivity(), "Coche eliminado");
-                        coches.remove(position);
-                        notifyItemRemoved(position);
-                        notifyItemRangeChanged(position, coches.size() - position);
-                    })
-                    .addOnFailureListener(e ->
-                            CustomToast.error(requireActivity(),
-                                    "Error al eliminar: " + e.getMessage()));
-        }
-
         public class CocheViewHolder extends RecyclerView.ViewHolder {
             TextView nombreCoche;
             ImageButton btnOpciones;
@@ -197,9 +232,10 @@ public class CochesRegistradosFragment extends Fragment {
         }
     }
 
-    // ===================================================================
-    //                             MODELO
-    // ===================================================================
+
+    // ===============================================================
+    // MODELO DE DATOS
+    // ===============================================================
     private static class Coche {
         private final String id;
         private final String nombre;

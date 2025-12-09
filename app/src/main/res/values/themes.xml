@@ -16,16 +16,17 @@
         <item name="fontFamily">@font/roboto_regular_ttf</item>
         <item name="android:fontFamily">@font/roboto_regular_ttf</item>
 
-        <!-- Botones personalizados -->
+        <!-- Botones PRINCIPALES por defecto -->
         <item name="buttonStyle">@style/Boton.Proyecto_iot</item>
     </style>
 
-    <!-- Botón personalizado -->
+    <!-- Botón principal morado por defecto -->
     <style name="Boton.Proyecto_iot" parent="Widget.Material3.Button">
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/texto_claro</item>
         <item name="android:background">@drawable/boton_principal_selector</item>
         <item name="android:fontFamily">@font/montserrat_bold_ttf</item>
     </style>
+
 
 </resources>

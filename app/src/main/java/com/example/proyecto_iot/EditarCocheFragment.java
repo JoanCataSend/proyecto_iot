@@ -60,7 +60,6 @@ public class EditarCocheFragment extends Fragment {
 
         btnGuardar.setOnClickListener(v -> guardarCambios());
         btnEliminar.setOnClickListener(v -> mostrarDialogoEliminar());
-
         btnCambiarFoto.setOnClickListener(v -> abrirGaleria());
 
         return view;
@@ -106,8 +105,7 @@ public class EditarCocheFragment extends Fragment {
                                                             "Error guardando URL"));
                                 }))
                 .addOnFailureListener(e ->
-                        CustomToast.error(requireActivity(),
-                                "Error subiendo foto"));
+                        CustomToast.error(requireActivity(), "Error subiendo foto"));
     }
 
     // ============================================================
@@ -125,15 +123,45 @@ public class EditarCocheFragment extends Fragment {
         });
     }
 
+    // ============================================================
+    // VALIDACIÓN DE MATRÍCULA
+    private boolean esMatriculaValida(String mat) {
+        if (mat == null || mat.isEmpty()) return false;
+
+        mat = mat.trim().toUpperCase();
+
+        // Formato: 4 números + opcional espacio + 3 letras
+        String patron = "^[0-9]{4}\\s?[A-Z]{3}$";
+
+        return mat.matches(patron);
+    }
+
     private void guardarCambios() {
+
+        String marca = edtMarca.getText().toString().trim();
+        String modelo = edtModelo.getText().toString().trim();
+        String matricula = edtMatricula.getText().toString().trim().toUpperCase();
+        String nombre = edtNombre.getText().toString().trim();
+
+        // ---- VALIDACIONES ----
+        if (marca.isEmpty() || modelo.isEmpty() || matricula.isEmpty() || nombre.isEmpty()) {
+            CustomToast.warning(requireActivity(), "Rellena todos los campos");
+            return;
+        }
+
+        if (!esMatriculaValida(matricula)) {
+            CustomToast.error(requireActivity(), "Matrícula inválida (Formato: 1234 ABC)");
+            return;
+        }
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("Coches").document(cocheId)
                 .update(
-                        "Marca", edtMarca.getText().toString(),
-                        "Modelo", edtModelo.getText().toString(),
-                        "Matrícula", edtMatricula.getText().toString(),
-                        "Nombre", edtNombre.getText().toString()
+                        "Marca", marca,
+                        "Modelo", modelo,
+                        "Matrícula", matricula,
+                        "Nombre", nombre
                 )
                 .addOnSuccessListener(aVoid -> {
                     CustomToast.success(requireActivity(), "Cambios guardados");
@@ -143,6 +171,7 @@ public class EditarCocheFragment extends Fragment {
                         CustomToast.error(requireActivity(), "Error: " + e.getMessage()));
     }
 
+    // ============================================================
     private void mostrarDialogoEliminar() {
 
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_eliminar_coche, null);

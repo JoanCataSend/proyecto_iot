@@ -9,13 +9,14 @@
 
     <ImageView
         android:id="@+id/ivIllustration"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="24dp"
-        android:contentDescription="@string/app_name"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_coche"
-        app:tint="@color/icono_normal" />
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/app_name" />
 
     <TextView
         android:id="@+id/tvTitle"

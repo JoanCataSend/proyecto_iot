@@ -5,51 +5,68 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondo_claro">
+    android:paddingHorizontal="20dp">
 
     <!-- LOGO KÖVA ARRIBA CENTRADO -->
     <ImageView
         android:id="@+id/imageViewLogo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/logokova"
-        android:contentDescription="@string/app_name"
+        android:layout_width="160dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="40dp"
         android:adjustViewBounds="true"
+        android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
-        android:layout_marginStart="48dp"
-        android:layout_marginEnd="48dp"
-        android:layout_marginTop="32dp"
+        android:src="@drawable/logokova"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- VIEWPAGER CON LAS PANTALLAS -->
+    <TextView
+        android:id="@+id/tvSkip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="110dp"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="@font/roboto_regular"
+        android:padding="8dp"
+        android:text="Omitir"
+        android:textColor="@color/icono_normal"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="@+id/viewPagerOnboarding"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!-- VIEWPAGER CON LAS PANTALLAS (OCUPA TODA LA ZONA CENTRAL) -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPagerOnboarding"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
         app:layout_constraintTop_toBottomOf="@id/imageViewLogo"
         app:layout_constraintBottom_toTopOf="@+id/tabDots"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.3"
         tools:listitem="@layout/item_onboarding_page" />
-
 
     <!-- INDICADORES (PUNTOS) -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabDots"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:tabIndicatorHeight="0dp"
-        app:tabSelectedTextColor="@color/icono_seleccionado"
-        app:tabTextColor="@color/icono_normal"
+        android:layout_marginBottom="16dp"
         app:layout_constraintTop_toBottomOf="@id/viewPagerOnboarding"
         app:layout_constraintBottom_toTopOf="@+id/llButtons"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tabIndicatorHeight="0dp"
+        app:tabRippleColor="@android:color/transparent"
+        android:background="@android:color/transparent"
+        />
+
 
     <!-- ZONA INFERIOR CON BOTONES -->
     <LinearLayout
@@ -57,7 +74,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -68,8 +86,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Siguiente"
-            android:textColor="@color/texto_claro"
-            android:padding="12dp" />
+            android:textAllCaps="false"
+            android:letterSpacing="0.03"
+            android:minHeight="48dp"
+            android:paddingVertical="12dp" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvSecondaryAction"
@@ -80,7 +100,8 @@
             android:textSize="14sp"
             android:layout_marginTop="12dp"
             android:layout_gravity="center_horizontal"
-            android:fontFamily="@font/roboto_regular"/>
+            android:fontFamily="@font/roboto_regular"
+            android:letterSpacing="0.02"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
