@@ -21,6 +21,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,8 +36,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 
@@ -57,7 +58,7 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
         View view = inflater.inflate(R.layout.ubicacion, container, false);
 
-        // Quitar flecha atrás
+        // Ocultar flecha
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).setBackButtonVisible(false);
         }
@@ -68,18 +69,14 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         bottomSheetBehavior.setPeekHeight(120);
 
-        // ALTURA DEL PANEL (40%)
         DisplayMetrics dm = new DisplayMetrics();
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
         int maxHeight = (int) (dm.heightPixels * 0.60f);
         panel.getLayoutParams().height = maxHeight;
 
         // BOTÓN AÑADIR COCHE
-        LinearLayout btnAnadirCoche = view.findViewById(R.id.btnAnadirCoche);
-        btnAnadirCoche.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), AnadirCoche.class);
-            startActivity(intent);
-        });
+        view.findViewById(R.id.btnAnadirCoche)
+                .setOnClickListener(v -> startActivity(new Intent(getActivity(), AnadirCoche.class)));
 
         // RECYCLER VIEW
         RecyclerView recycler = view.findViewById(R.id.recyclerCoches);
@@ -101,11 +98,11 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
                         listaCoches.clear();
 
-                        for (DocumentSnapshot doc : query.getDocuments()) {
+                        for (DocumentSnapshot doc : query) {
 
                             Double lat = doc.getDouble("lat");
                             Double lng = doc.getDouble("lng");
-                            String fotoUrl = doc.getString("Foto"); // <-- nombre correcto
+                            String fotoUrl = doc.getString("Foto");
 
                             listaCoches.add(new CocheMapa(
                                     doc.getId(),
@@ -116,7 +113,7 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                                     lat != null ? lat : 0.0,
                                     lng != null ? lng : 0.0,
                                     fotoUrl,
-                                    "" // dirección opcional
+                                    ""
                             ));
                         }
 
@@ -163,13 +160,12 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
+
             mMap.setMyLocationEnabled(true);
         }
     }
 
-    // -------------------------
-    // MARCADORES EN EL MAPA
-    // -------------------------
+    // ================= MARCADORES =======================
     private void actualizarMarcadores() {
         if (mMap == null) return;
 
@@ -179,72 +175,67 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
             if (coche.lat == 0.0 && coche.lng == 0.0) continue;
 
-            LatLng posicion = new LatLng(coche.lat, coche.lng);
+            LatLng pos = new LatLng(coche.lat, coche.lng);
 
             if (coche.fotoUrl != null && !coche.fotoUrl.isEmpty()) {
-                cargarIconoPersonalizado(posicion, coche.fotoUrl, coche.nombre);
+
+                cargarIconoPersonalizado(pos, coche.fotoUrl, coche.nombre);
+
             } else {
+
                 mMap.addMarker(new MarkerOptions()
-                        .position(posicion)
+                        .position(pos)
                         .title(coche.nombre));
             }
         }
 
-        // Centrar en el primer coche válido
-        for (CocheMapa coche : listaCoches) {
-            if (coche.lat != 0 && coche.lng != 0) {
+        // Mover cámara al primer coche
+        for (CocheMapa c : listaCoches) {
+            if (c.lat != 0 && c.lng != 0) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(coche.lat, coche.lng), 14f
+                        new LatLng(c.lat, c.lng), 14f
                 ));
                 break;
             }
         }
     }
 
-    // -------------------------
-    // Cargar imagen SIN recorte
-    // -------------------------
+    // ÍCONO PERSONALIZADO DEL COCHE SIN RECORTE
     private void cargarIconoPersonalizado(LatLng pos, String url, String nombre) {
 
-        Picasso.get()
+        Glide.with(requireContext())
+                .asBitmap()
                 .load(url)
-                .resize(100, 100)        // tamaño del icono
+                .override(120, 120)
                 .centerInside()
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                .into(new CustomTarget<Bitmap>() {
 
-                        Bitmap finalBitmap = agregarPadding(bitmap, 10);
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap bitmap,
+                                                @Nullable Transition<? super Bitmap> transition) {
+
+                        Bitmap bmpConPadding = agregarPadding(bitmap, 10);
 
                         mMap.addMarker(new MarkerOptions()
                                 .position(pos)
                                 .title(nombre)
-                                .icon(BitmapDescriptorFactory.fromBitmap(finalBitmap)));
+                                .icon(BitmapDescriptorFactory.fromBitmap(bmpConPadding)));
                     }
 
                     @Override
-                    public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                        mMap.addMarker(new MarkerOptions().position(pos).title(nombre));
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {}
+                    public void onLoadCleared(@Nullable Drawable placeholder) { }
                 });
     }
 
-    // Añade un pequeño margen al icono
-    private Bitmap agregarPadding(Bitmap bmp, int padding) {
-
-        Bitmap output = Bitmap.createBitmap(
-                bmp.getWidth() + padding * 2,
-                bmp.getHeight() + padding * 2,
+    private Bitmap agregarPadding(Bitmap bmp, int p) {
+        Bitmap out = Bitmap.createBitmap(
+                bmp.getWidth() + p * 2,
+                bmp.getHeight() + p * 2,
                 Bitmap.Config.ARGB_8888
         );
-
-        Canvas canvas = new Canvas(output);
-        canvas.drawBitmap(bmp, padding, padding, null);
-
-        return output;
+        Canvas c = new Canvas(out);
+        c.drawBitmap(bmp, p, p, null);
+        return out;
     }
 
     @Override
@@ -254,9 +245,7 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
         habilitarMiUbicacionEnMapa();
     }
 
-    // -------------------------
-    // MODELO CocheMapa
-    // -------------------------
+    // Modelo coche
     public static class CocheMapa {
         public String id, nombre, marca, modelo, matricula, fotoUrl, direccion;
         public double lat, lng;

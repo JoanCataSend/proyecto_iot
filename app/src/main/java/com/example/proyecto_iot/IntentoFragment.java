@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -139,19 +138,16 @@ public class IntentoFragment extends Fragment {
 
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
-                        // ⭐ LO QUE SE MUESTRA ARRIBA → SIEMPRE EL COCHE REAL
                         return super.getView(currentCarIndex, convertView, parent);
                     }
 
                     @Override
                     public int getCount() {
-                        // ⭐ EL DESPLEGABLE USA popupItems
                         return popupItems.size();
                     }
 
                     @Override
                     public String getItem(int position) {
-                        // ⭐ ELEMENTO DEL DESPLEGABLE
                         return popupItems.get(position);
                     }
                 };
@@ -177,21 +173,17 @@ public class IntentoFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
 
-                // ⛔ IGNORAR la primera llamada automática
                 if (!spinnerInicializado) {
                     spinnerInicializado = true;
                     return;
                 }
 
-                // === SI EL ÍTEM ES “Añadir coche” ===
                 if (popupItems.get(position).contains("Añadir")) {
                     startActivity(new Intent(requireContext(), PrimerCocheActivity.class));
-
                     spinnerCars.setSelection(currentCarIndex, false);
                     return;
                 }
 
-                // === SELECCIÓN NORMAL ===
                 if (position < 0 || position >= carNames.size()) return;
 
                 currentCarIndex = position;
@@ -213,7 +205,7 @@ public class IntentoFragment extends Fragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
 
@@ -246,6 +238,9 @@ public class IntentoFragment extends Fragment {
         ivSignals.setOnClickListener(signalsClick);
         flSignals.setOnClickListener(signalsClick);
     }
+
+
+
 
     @Override
     public void onDestroyView() {
@@ -290,20 +285,17 @@ public class IntentoFragment extends Fragment {
                         }
                     }
 
-                    //Añadir coches al desplegable
                     popupItems.addAll(carNames);
-
-                    //Siempre añadir "Añadir coche" al final
                     popupItems.add("+ Añadir coche");
 
                     adapter.notifyDataSetChanged();
 
-                    //Seleccionar el coche real (carNames)
                     if (!carNames.isEmpty()) {
                         int pos = savedPosition;
                         if (pos < 0 || pos >= carNames.size()) pos = 0;
                         currentCarIndex = pos;
                         spinnerCars.setSelection(pos, false);
+                        updateCarImage(pos); // cargar imagen precargada
                     }
                 });
     }
@@ -329,7 +321,6 @@ public class IntentoFragment extends Fragment {
                     String puerta = doc.getString("puerta");
                     Boolean impacto = doc.getBoolean("impacto");
 
-                    // ===== PUERTA =====
                     if (puerta != null && !puerta.equals(ultimaPuerta)) {
 
                         ultimaPuerta = puerta;
@@ -347,7 +338,6 @@ public class IntentoFragment extends Fragment {
                         }
                     }
 
-                    // ===== IMPACTO =====
                     boolean hayImpacto = impacto != null && impacto;
 
                     if (hayImpacto && !ultimoImpacto) {
@@ -653,38 +643,58 @@ public class IntentoFragment extends Fragment {
 
 
     // =========================
-    //          UI
+    //          UI (IMAGEN AUTO + PRECARGA)
     // =========================
     private void updateCarImage(int position) {
+
         if (ivCar == null) return;
         if (position < 0 || position >= carIds.size()) return;
 
         String carId = carIds.get(position);
 
-        // Leer datos del coche
+        // Intentamos cargar LA URL desde precarga
         firestore.collection("Coches")
                 .document(carId)
                 .get()
                 .addOnSuccessListener(doc -> {
 
-                    if (doc.exists()) {
-                        String fotoUrl = doc.getString("Foto");
-
-                        if (fotoUrl != null && !fotoUrl.isEmpty()) {
-                            // ⭐ Cargar foto real con Glide
-                            Glide.with(requireContext())
-                                    .load(fotoUrl)
-                                    .placeholder(R.drawable.coche_julia)
-                                    .into(ivCar);
-                            return;
-                        }
+                    if (!doc.exists()) {
+                        ivCar.setImageResource(R.drawable.coche_julia);
+                        return;
                     }
 
-                })
-                .addOnFailureListener(e -> {
-                    // Error leyendo Firestore → usa imagen por defecto
+                    String fotoUrl = doc.getString("Foto");
+
+                    // ============================
+                    // 1️⃣ SI YA ESTÁ PRECARGADA → instantáneo
+                    // ============================
+                    if (fotoUrl != null &&
+                            ImagePreloader.getCarImages().contains(fotoUrl)) {
+
+                        Glide.with(requireContext())
+                                .load(fotoUrl)
+                                .placeholder(R.drawable.coche_julia)
+                                .into(ivCar);
+
+                        return;
+                    }
+
+                    // ============================
+                    // 2️⃣ Si NO está precargada → cargar normalmente y cachear
+                    // ============================
+                    if (fotoUrl != null && !fotoUrl.isEmpty()) {
+
+                        Glide.with(requireContext())
+                                .load(fotoUrl)
+                                .placeholder(R.drawable.coche_julia)
+                                .into(ivCar);
+
+                        return;
+                    }
+
                     ivCar.setImageResource(R.drawable.coche_julia);
-                });
+                })
+                .addOnFailureListener(e -> ivCar.setImageResource(R.drawable.coche_julia));
     }
 
 

@@ -25,29 +25,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Referencias del navbar
         navHome = findViewById(R.id.nav_home);
         navCar = findViewById(R.id.nav_car);
         navNotifications = findViewById(R.id.nav_notifications);
         navSettings = findViewById(R.id.nav_settings);
 
-        // Indicadores
         indicatorHome = findViewById(R.id.indicator_home);
         indicatorCar = findViewById(R.id.indicator_car);
         indicatorNotifications = findViewById(R.id.indicator_notifications);
         indicatorSettings = findViewById(R.id.indicator_settings);
 
-        // Header
         btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> handleBack());
 
-        // Animación táctil en íconos
         attachIconTouchAnimation(navHome);
         attachIconTouchAnimation(navCar);
         attachIconTouchAnimation(navNotifications);
         attachIconTouchAnimation(navSettings);
 
-        // Clicks del navbar
         navHome.setOnClickListener(v -> {
             updateNavbarSelection(R.id.nav_home);
             replaceFragment(new IntentoFragment(), false);
@@ -56,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
 
         navCar.setOnClickListener(v -> {
             updateNavbarSelection(R.id.nav_car);
-            // Aquí abrimos el fragmento de ubicación con el mapa
             replaceFragment(new UbicacionFragment(), true);
             setBackButtonVisible(false);
         });
@@ -73,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
             setBackButtonVisible(false);
         });
 
-        // Cargar fragment inicial solo una vez
         if (savedInstanceState == null) {
             updateNavbarSelection(R.id.nav_home);
             replaceFragment(new IntentoFragment(), false);
@@ -81,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** Animación sutil de presión y rebote en íconos */
     private void attachIconTouchAnimation(ImageButton btn) {
         btn.setOnTouchListener((v, event) -> {
             switch (event.getActionMasked()) {
@@ -110,17 +102,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void replaceFragment(Fragment fragment, boolean addToBackstack) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-
-        // Contenedor correcto de tu MainActivity
         ft.replace(R.id.fragment_container, fragment);
-
         if (addToBackstack) ft.addToBackStack(null);
         ft.commit();
     }
 
     private void updateNavbarSelection(int selectedNavId) {
-        if (indicatorHome == null) return;
-
         indicatorHome.setVisibility(selectedNavId == R.id.nav_home ? View.VISIBLE : View.INVISIBLE);
         indicatorCar.setVisibility(selectedNavId == R.id.nav_car ? View.VISIBLE : View.INVISIBLE);
         indicatorNotifications.setVisibility(selectedNavId == R.id.nav_notifications ? View.VISIBLE : View.INVISIBLE);
@@ -128,9 +115,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setBackButtonVisible(boolean visible) {
-        if (btnBack != null) {
-            btnBack.setVisibility(visible ? View.VISIBLE : View.GONE);
-        }
+        btnBack.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     private void handleBack() {

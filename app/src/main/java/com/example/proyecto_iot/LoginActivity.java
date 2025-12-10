@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
         facebookButton = findViewById(R.id.button6);
         xButton = findViewById(R.id.button5);
 
-        // Overlay + loader
+        // Overlay
         loadingOverlay = findViewById(R.id.loadingOverlay);
         progressBar = findViewById(R.id.progressBar);
 
@@ -140,7 +140,6 @@ public class LoginActivity extends AppCompatActivity {
 
     // ======================================================
     private void togglePasswordVisibility() {
-
         if (!passwordVisible) {
             passwordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
             togglePasswordImage.setImageResource(R.drawable.ic_eye_open);
@@ -155,7 +154,6 @@ public class LoginActivity extends AppCompatActivity {
 
     // ======================================================
     private void loginWithEmail() {
-
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
@@ -175,7 +173,9 @@ public class LoginActivity extends AppCompatActivity {
 
                         if (user != null && user.isEmailVerified()) {
 
-                            // IMPORTANTE: NO ocultamos overlay
+                            // PRE-CARGAR TODAS LAS IMÁGENES
+                            ImagePreloader.precargarImagenes();
+
                             navigateAfterLogin(user);
 
                         } else {
@@ -211,6 +211,10 @@ public class LoginActivity extends AppCompatActivity {
 
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+
+                // PRE-CARGA ANTES DE ENTRAR
+                ImagePreloader.precargarImagenes();
+
                 firebaseAuthWithGoogle(account.getIdToken());
 
             } catch (ApiException e) {
@@ -232,7 +236,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (task.isSuccessful()) {
 
-                        // No ocultamos overlay aquí
+                        ImagePreloader.precargarImagenes();
                         navigateAfterLogin(mAuth.getCurrentUser());
 
                     } else {
@@ -254,7 +258,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (task.isSuccessful()) {
 
-                        // No quitamos overlay
+                        ImagePreloader.precargarImagenes();
                         navigateAfterLogin(mAuth.getCurrentUser());
 
                     } else {
@@ -288,7 +292,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     startActivity(next);
-                    finish(); // overlay desaparece aquí automáticamente
+                    finish();
 
                 })
                 .addOnFailureListener(e -> {
