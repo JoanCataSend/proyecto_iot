@@ -1,64 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginVertical="6dp"
-    android:layout_marginHorizontal="12dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
-    android:background="@drawable/bg_card_soft">
+    android:orientation="vertical"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="4dp">
 
-    <LinearLayout
+    <!-- HEADER DE DÍA (SEPARADOR) -->
+    <TextView
+        android:id="@+id/header_dia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12dp">
+        android:paddingVertical="4dp"
+        android:text="12/10/25"
+        android:textStyle="bold"
+        android:textColor="@color/boton_oscuro"
+        android:gravity="center_horizontal"
+        android:visibility="gone"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="8dp" />
 
-        <!-- Ícono de la notificación -->
-        <ImageView
-            android:id="@+id/icono_notificacion"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="12dp"
-            app:tint="@color/fondo_oscuro"
-            />
+    <!-- TARJETA DE LA NOTIFICACIÓN -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        android:background="@drawable/bg_card_soft"
+        app:cardUseCompatPadding="true"
+        app:cardPreventCornerOverlap="true"
+        app:cardBackgroundColor="@color/texto_claro">
 
-        <!-- Contenido de texto -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:padding="12dp">
 
-            <TextView
-                android:id="@+id/titulo_notificacion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textColor="@color/fondo_oscuro"
-                android:textSize="15sp" />
+            <!-- Ícono de la notificación -->
+            <ImageView
+                android:id="@+id/icono_notificacion"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="12dp"
+                app:tint="@color/fondo_oscuro" />
 
-            <TextView
-                android:id="@+id/mensaje_notificacion"
-                android:layout_width="wrap_content"
+            <!-- Contenido de texto -->
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/texto_oscuro"
-                android:textSize="13sp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="6dp" />
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/fecha_notificacion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:textSize="12sp"
-                android:textColor="@color/texto_oscuro"
-                android:alpha="0.7"
-                android:layout_gravity="end"
-                android:gravity="end"/>
+                <TextView
+                    android:id="@+id/titulo_notificacion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/fondo_oscuro"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/mensaje_notificacion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/texto_oscuro"
+                    android:textSize="13sp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:id="@+id/fecha_notificacion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/texto_oscuro"
+                    android:alpha="0.7"
+                    android:layout_gravity="end"
+                    android:gravity="end" />
+
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
-</androidx.cardview.widget.CardView>
+</LinearLayout>
