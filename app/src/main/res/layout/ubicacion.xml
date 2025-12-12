@@ -5,27 +5,34 @@
     android:layout_height="match_parent"
     android:textAlignment="center">
 
-    <!-- Contenido principal ahora en LinearLayout (weight sí funciona) -->
+    <!-- CONTENIDO PRINCIPAL -->
     <LinearLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Título -->
-        <TextView
-            android:id="@+id/titulo"
-            style="@style/Seccion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="20dp"
-            android:fontFamily="@font/montserrat_bold"
-            android:text="@string/titulo_ubicacion"
-            android:textColor="@color/icono_normal"
-            android:textSize="20sp" />
+        <!-- TÍTULO -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical">
 
-        <!-- Descripción -->
+            <TextView
+                android:id="@+id/titleSeguridad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Informacion de tus coches"
+                android:textColor="@color/icono_normal"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_medium"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- DESCRIPCIÓN -->
         <TextView
             android:id="@+id/descripcion"
             style="@style/DescripciónActividad"
@@ -38,7 +45,7 @@
             android:text="@string/descripcion_ubicacion"
             android:textColor="@color/icono_normal" />
 
-        <!-- Mapa con weight (ocupa todo el espacio libre disponible) -->
+        <!-- MAPA -->
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -47,11 +54,11 @@
             android:layout_marginStart="30dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="30dp"
-            android:layout_weight="1" />
-
+            android:layout_marginBottom="40dp"
+            android:layout_weight="1"/>
     </LinearLayout>
 
-    <!-- Panel desplegable con altura controlada -->
+    <!-- PANEL DESPLEGABLE -->
     <LinearLayout
         android:id="@+id/panel_desplegable"
         android:layout_width="match_parent"
@@ -61,8 +68,8 @@
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
         android:paddingBottom="0dp"
-        android:maxHeight="420dp"
-        android:translationY="38dp"
+        android:maxHeight="460dp"
+        android:translationY="5dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
@@ -72,14 +79,27 @@
             android:layout_marginTop="15dp"
             android:background="@color/boton_oscuro" />
 
-        <TextView
-            android:id="@+id/panel_titulo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/titulo_mis_coches"
-            style="@style/Seccion"
-            android:layout_marginTop="17dp" />
+        <!-- TÍTULO PANEL -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical">
 
+            <TextView
+                android:id="@+id/titleSeguridad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Mis coches registrados"
+                android:textColor="@color/icono_normal"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_medium"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- DESCRIPCIÓN PANEL -->
         <TextView
             android:id="@+id/panel_descrip"
             android:layout_width="wrap_content"
@@ -89,22 +109,25 @@
             style="@style/DescripciónActividad"
             android:layout_marginTop="8dp" />
 
-        <ListView
-            android:id="@+id/listViewCoches"
+        <!-- LISTA DE COCHES (RECYCLER) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerCoches"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@null"
-            android:dividerHeight="10dp"
-            android:layout_marginTop="14dp" />
-        <!-- Botón para añadir nuevo coche -->
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:overScrollMode="never"/>
+
+        <!-- BOTÓN AÑADIR COCHE -->
         <LinearLayout
             android:id="@+id/btnAnadirCoche"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginTop="20dp"
-            android:background="#335B47A0"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_boton_anadir_coche"
             android:padding="10dp">
 
             <ImageView
@@ -122,7 +145,6 @@
                 android:layout_marginStart="10dp"
                 android:fontFamily="@font/montserrat_bold"/>
         </LinearLayout>
-
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

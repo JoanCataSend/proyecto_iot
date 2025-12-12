@@ -4,15 +4,19 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.proyecto_iot.utils.CustomToast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
@@ -27,12 +31,15 @@ public class RegisterWizardActivity extends AppCompatActivity {
     private EditText etNombre, etEmail, etPassword, etRepeatPassword;
     private TextView tvStep, tvTitle, tvSubtitle, tvSecondaryAction;
     private Button btnPrimary;
+    private ProgressBar progressBar;
 
     private int currentStep = 0;
 
     private String nombreUsuario, email, password, repeatPassword;
 
     private FirebaseAuth mAuth;
+    private FrameLayout loadingOverlay;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,18 +48,15 @@ public class RegisterWizardActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        // Steps
         stepNombre = findViewById(R.id.stepNombre);
         stepEmail = findViewById(R.id.stepEmail);
         stepPassword = findViewById(R.id.stepPassword);
 
-        // Inputs
         etNombre = findViewById(R.id.etNombre);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         etRepeatPassword = findViewById(R.id.etRepeatPassword);
 
-        // UI
         tvStep = findViewById(R.id.tvStep);
         tvTitle = findViewById(R.id.tvTitle);
         tvSubtitle = findViewById(R.id.tvSubtitle);
@@ -68,6 +72,10 @@ public class RegisterWizardActivity extends AppCompatActivity {
 
         btnPrimary = findViewById(R.id.btnPrimary);
 
+        // Overlay + loader
+        loadingOverlay = findViewById(R.id.loadingOverlay);
+        progressBar = findViewById(R.id.progressBar);
+
         ImageButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> goPreviousStep());
 
@@ -82,26 +90,38 @@ public class RegisterWizardActivity extends AppCompatActivity {
         updateUiForStep();
     }
 
+
+    // ======================================================
     private void onPrimaryClicked() {
+
         switch (currentStep) {
+
             case 0:
                 nombreUsuario = etNombre.getText().toString().trim();
+
                 if (TextUtils.isEmpty(nombreUsuario)) {
-                    etNombre.setError("Introduce tu nombre");
+                    CustomToast.warning(this, "Introduce tu nombre");
                     return;
                 }
+
                 currentStep++;
                 updateUiForStep();
                 break;
 
             case 1:
                 email = etEmail.getText().toString().trim();
+
                 if (TextUtils.isEmpty(email)) {
-                    etEmail.setError("Introduce tu correo");
+                    CustomToast.warning(this, "Introduce tu correo");
                     return;
                 }
-                currentStep++;
-                updateUiForStep();
+
+                if (!esEmailValido(email)) {
+                    CustomToast.error(this, "Introduce un email válido");
+                    return;
+                }
+
+                comprobarEmailExiste(email);
                 break;
 
             case 2:
@@ -109,23 +129,27 @@ public class RegisterWizardActivity extends AppCompatActivity {
                 repeatPassword = etRepeatPassword.getText().toString().trim();
 
                 if (TextUtils.isEmpty(password) || TextUtils.isEmpty(repeatPassword)) {
-                    Toast.makeText(this, "Completa la contraseña", Toast.LENGTH_SHORT).show();
+                    CustomToast.warning(this, "Completa la contraseña");
                     return;
                 }
 
                 if (!password.equals(repeatPassword)) {
-                    Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+                    CustomToast.error(this, "Las contraseñas no coinciden");
                     return;
                 }
 
                 if (password.length() < 6) {
-                    Toast.makeText(this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
+                    CustomToast.warning(this, "La contraseña debe tener al menos 6 caracteres");
                     return;
                 }
 
                 registrarUsuario();
                 break;
         }
+    }
+
+    private boolean esEmailValido(String email) {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private void goPreviousStep() {
@@ -137,10 +161,12 @@ public class RegisterWizardActivity extends AppCompatActivity {
         }
     }
 
+    // ======================================================
     private void updateUiForStep() {
-        stepNombre.setVisibility(currentStep == 0 ? LinearLayout.VISIBLE : LinearLayout.GONE);
-        stepEmail.setVisibility(currentStep == 1 ? LinearLayout.VISIBLE : LinearLayout.GONE);
-        stepPassword.setVisibility(currentStep == 2 ? LinearLayout.VISIBLE : LinearLayout.GONE);
+
+        stepNombre.setVisibility(currentStep == 0 ? View.VISIBLE : View.GONE);
+        stepEmail.setVisibility(currentStep == 1 ? View.VISIBLE : View.GONE);
+        stepPassword.setVisibility(currentStep == 2 ? View.VISIBLE : View.GONE);
 
         tvStep.setText("Paso " + (currentStep + 1) + " de 3");
 
@@ -166,24 +192,53 @@ public class RegisterWizardActivity extends AppCompatActivity {
 
     }
 
+    // ======================================================
+    private void comprobarEmailExiste(String email) {
+
+        mostrarLoading(true);
+
+        mAuth.fetchSignInMethodsForEmail(email)
+                .addOnCompleteListener(task -> {
+
+                    mostrarLoading(false);
+
+                    if (!task.isSuccessful()) {
+                        CustomToast.error(this,
+                                "Error comprobando email: " + task.getException().getMessage());
+                        return;
+                    }
+
+                    boolean existe = !task.getResult().getSignInMethods().isEmpty();
+
+                    if (existe) {
+                        CustomToast.error(this, "Este correo ya está registrado");
+                    } else {
+                        currentStep++;
+                        updateUiForStep();
+                    }
+                });
+    }
+
+    // ======================================================
     private void registrarUsuario() {
+
+        mostrarLoading(true);
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
 
+                    mostrarLoading(false);
+
                     if (!task.isSuccessful()) {
-                        Toast.makeText(this,
-                                "Error al registrar: " + task.getException().getMessage(),
-                                Toast.LENGTH_LONG).show();
+                        CustomToast.error(this,
+                                "Error al registrar: " + task.getException().getMessage());
                         return;
                     }
 
                     FirebaseUser user = mAuth.getCurrentUser();
 
                     if (user == null) {
-                        Toast.makeText(this,
-                                "Error inesperado: usuario nulo.",
-                                Toast.LENGTH_LONG).show();
+                        CustomToast.error(this, "Error inesperado: usuario nulo.");
                         return;
                     }
 
@@ -191,9 +246,9 @@ public class RegisterWizardActivity extends AppCompatActivity {
                             .addOnCompleteListener(verificationTask -> {
 
                                 if (!verificationTask.isSuccessful()) {
-                                    Toast.makeText(this,
-                                            "Error enviando correo: " + verificationTask.getException().getMessage(),
-                                            Toast.LENGTH_LONG).show();
+                                    CustomToast.error(this,
+                                            "Error enviando correo: " +
+                                                    verificationTask.getException().getMessage());
                                     return;
                                 }
 
@@ -202,6 +257,7 @@ public class RegisterWizardActivity extends AppCompatActivity {
                 });
     }
 
+    // ======================================================
     private void guardarUsuarioEnFirestore(FirebaseUser user) {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -209,7 +265,7 @@ public class RegisterWizardActivity extends AppCompatActivity {
         Map<String, Object> userData = new HashMap<>();
         userData.put("Usuario", nombreUsuario);
         userData.put("Correo", email);
-        userData.put("Imagen", "/foto/so"); // mismo valor que tu otro registro
+        userData.put("Imagen", "/foto/so");
         userData.put("FechaRegistro", FieldValue.serverTimestamp());
 
         db.collection("Usuarios")
@@ -222,17 +278,34 @@ public class RegisterWizardActivity extends AppCompatActivity {
                             .putBoolean("wizard_completed", true)
                             .apply();
 
-                    Toast.makeText(this,
-                            "¡Registro exitoso! Verifica tu correo antes de iniciar sesión.",
-                            Toast.LENGTH_LONG).show();
+                    CustomToast.success(this,
+                            "¡Registro exitoso! Verifica tu correo antes de iniciar sesión.");
 
                     mAuth.signOut();
                     startActivity(new Intent(this, LoginActivity.class));
                     finish();
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this,
-                                "Error guardando usuario: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show());
+                        CustomToast.error(this,
+                                "Error guardando usuario: " + e.getMessage()));
     }
+
+    // ======================================================
+    private void mostrarLoading(boolean mostrar) {
+
+        if (mostrar) {
+            loadingOverlay.setAlpha(0f);
+            loadingOverlay.setVisibility(View.VISIBLE);
+            loadingOverlay.animate().alpha(1f).setDuration(200).start();
+            btnPrimary.setEnabled(false);
+
+        } else {
+            loadingOverlay.animate().alpha(0f).setDuration(200)
+                    .withEndAction(() -> loadingOverlay.setVisibility(View.GONE))
+                    .start();
+
+            btnPrimary.setEnabled(true);
+        }
+    }
+
 }

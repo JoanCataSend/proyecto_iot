@@ -8,6 +8,14 @@
     android:background="@color/fondo_claro"
     tools:context=".MainActivity">
 
+    <!-- 🟦 CONTENEDOR PARA MOSTRAR FRAGMENTS (CÁMARAS, ETC) -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <!-- 🟧 CONTENIDO PRINCIPAL SCROLLEABLE -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
@@ -23,6 +31,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selecciona el coche:"
+                android:textColor="#505050"
+                android:textSize="16sp"
+                android:layout_marginBottom="7dp" />
 
             <!-- SELECTOR VEHÍCULO -->
             <LinearLayout
@@ -60,18 +76,20 @@
                     app:tint="@color/icono_normal" />
             </LinearLayout>
 
-            <!-- IMAGEN DEL COCHE SIN CAJA ALREDEDOR -->
+            <!-- IMAGEN DEL COCHE -->
             <ImageView
                 android:id="@+id/ivCar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
+                android:layout_height="240dp"
                 android:contentDescription="@string/nombre_coche"
-                android:padding="1dp"
                 android:layout_marginBottom="16dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/coche_naranja" />
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                android:padding="6dp"
+                android:src="@drawable/coche_julia" />
 
+
+            <!-- ACCIONES (LOCK, CAMARAS, SEÑALES, SEGURO) -->
             <LinearLayout
                 android:id="@+id/actionsRow"
                 android:layout_width="match_parent"
@@ -80,8 +98,9 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <!-- 🔹 COLUMNA CANDADO -->
+                <!-- CANDADO -->
                 <LinearLayout
+                    android:id="@+id/layoutLock"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -119,7 +138,7 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- 🔹 COLUMNA CÁMARAS -->
+                <!-- CÁMARAS -->
                 <LinearLayout
                     android:id="@+id/layoutCamaras"
                     android:layout_width="0dp"
@@ -157,8 +176,9 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- 🔹 COLUMNA SEÑALES -->
+                <!-- SEÑALES -->
                 <LinearLayout
+                    android:id="@+id/layoutSignals"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -169,6 +189,7 @@
                     android:foreground="?attr/selectableItemBackgroundBorderless">
 
                     <FrameLayout
+                        android:id="@+id/flSignals"
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:background="@drawable/bg_card_soft"
@@ -194,8 +215,9 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- 🔹 COLUMNA MODO SEGURO -->
+                <!-- MODO SEGURO -->
                 <LinearLayout
+                    android:id="@+id/layoutSafeMode"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -230,8 +252,10 @@
                         android:textColor="@color/texto_oscuro"
                         android:textSize="14sp" />
                 </LinearLayout>
+
             </LinearLayout>
 
+            <!-- UBICACIÓN -->
             <LinearLayout
                 android:id="@+id/addressPill"
                 android:layout_width="match_parent"
@@ -242,7 +266,6 @@
                 android:background="@drawable/bg_pill_soft"
                 android:layout_marginBottom="20dp">
 
-                <!-- ICONO IZQUIERDA -->
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
@@ -250,7 +273,6 @@
                     android:contentDescription="@string/titulo_ubicacion"
                     app:tint="@color/icono_normal" />
 
-                <!-- TEXTO CENTRADO RELATIVAMENTE -->
                 <TextView
                     android:id="@+id/tvAddress"
                     android:layout_width="0dp"
@@ -259,20 +281,17 @@
                     android:layout_marginStart="12dp"
                     android:text="@string/calle"
                     android:textColor="@color/texto_oscuro"
-                    android:textStyle="bold"
-                    android:textSize="15dp" />
+                    android:textSize="15sp" />
 
-                <!-- FLECHA DERECHA -->
                 <ImageView
                     android:layout_width="15dp"
                     android:layout_height="15dp"
                     android:src="@drawable/ic_flecha_derecha"
                     android:contentDescription="@string/titulo_ubicacion"
                     app:tint="@color/icono_normal" />
-
             </LinearLayout>
-            <!-- 🔹 SECCIÓN ESTADO DEL SISTEMA -->
 
+            <!-- INFORMACIÓN SISTEMA -->
             <LinearLayout
                 android:id="@+id/systemState"
                 android:layout_width="match_parent"
@@ -283,12 +302,10 @@
                 android:background="@drawable/bg_card_soft"
                 android:elevation="4dp">
 
-                <!-- 🔹 TÍTULO + SEPARADOR -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Más información del sistema:"
-                    android:textStyle="bold"
                     android:textColor="@color/texto_oscuro"
                     android:textSize="16sp"
                     android:layout_marginBottom="12dp" />
@@ -299,11 +316,9 @@
                     android:background="#D3D3D3"
                     android:layout_marginBottom="20dp" />
 
-                <!-- FILA: Estado del sistema -->
                 <View
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:layout_marginEnd="0dp"
                     android:background="@drawable/bg_dot_ok" />
 
                 <LinearLayout
@@ -342,21 +357,22 @@
                             android:textColor="#7A7A7A"
                             android:textSize="14sp" />
                     </LinearLayout>
+
                 </LinearLayout>
 
-                <!-- FILA: Estado de batería -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="24dp">
 
                     <ImageView
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:src="@drawable/ic_tiempo"
                         app:tint="@color/icono_normal"
-                        android:contentDescription="@string/batería" />
+                        android:contentDescription="Tiempo" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -381,7 +397,6 @@
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
-
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

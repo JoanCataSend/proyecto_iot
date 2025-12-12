@@ -4,10 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.proyecto_iot.utils.CustomToast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -45,33 +45,66 @@ public class PrimerCocheActivity extends AppCompatActivity {
         String matricula = etMatricula.getText().toString().trim();
         String nombre = etNombreCoche.getText().toString().trim();
 
-        if (marca.isEmpty() || modelo.isEmpty() || matricula.isEmpty() || nombre.isEmpty()) {
-            Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show();
+        // ===== VALIDACIONES GENERALES =====
+        if (marca.isEmpty()) {
+            etMarca.setError("El campo Marca es obligatorio");
+            etMarca.requestFocus();
             return;
         }
+
+        if (modelo.isEmpty()) {
+            etModelo.setError("El campo Modelo es obligatorio");
+            etModelo.requestFocus();
+            return;
+        }
+
+        if (matricula.isEmpty()) {
+            etMatricula.setError("El campo Matrícula es obligatorio");
+            etMatricula.requestFocus();
+            return;
+        }
+
+        if (!esMatriculaValida(matricula)) {
+            etMatricula.setError("Formato inválido. Debe ser 4 números y 3 letras (ej. 1234 DKB)");
+            etMatricula.requestFocus();
+            return;
+        }
+
+        if (nombre.isEmpty()) {
+            etNombreCoche.setError("El campo Nombre del coche es obligatorio");
+            etNombreCoche.requestFocus();
+            return;
+        }
+
+        // Normalizar matrícula → 1234DKB
+        matricula = matricula.replaceAll("\\s+", "").toUpperCase();
 
         String userId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
         if (userId == null) {
-            Toast.makeText(this, "Error: usuario no autenticado", Toast.LENGTH_SHORT).show();
+            CustomToast.error(this, "Error: usuario no autenticado");
             return;
         }
 
+        // ===== CREAR OBJETO =====
         Map<String, Object> coche = new HashMap<>();
         coche.put("Marca", marca);
         coche.put("Modelo", modelo);
-        coche.put("Matrícula", matricula.toUpperCase());
+        coche.put("Matrícula", matricula);
         coche.put("Nombre", nombre);
         coche.put("Propietario", Collections.singletonList(userId));
 
+        // ===== GUARDAR EN FIRESTORE =====
         db.collection("Coches")
                 .add(coche)
                 .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(this, "Coche registrado correctamente", Toast.LENGTH_SHORT).show();
+                    CustomToast.success(this, "Coche registrado correctamente");
                     irAPaginaPrincipal();
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Error al registrar coche: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        CustomToast.error(this, "Error al registrar coche: " + e.getMessage())
+                );
     }
+
 
     private void irAPaginaPrincipal() {
         Intent intent = new Intent(this, MainActivity.class);
@@ -79,4 +112,12 @@ public class PrimerCocheActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+    private boolean esMatriculaValida(String mat) {
+        if (mat == null || mat.isEmpty()) return false;
+        mat = mat.trim().toUpperCase();
+        String patron = "^[0-9]{4}\\s?[A-Z]{3}$";
+        return mat.matches(patron);
+    }
+
 }

@@ -48,6 +48,17 @@ public class ConfigFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // =====================================================
+        // EVITAR CRASH SI EL USUARIO YA ESTÁ DESLOGUEADO
+        // =====================================================
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() == null) {
+            Intent i = new Intent(requireContext(), LoginActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
+            return;
+        }
+
         // =========================
         // CERRAR SESIÓN
         // =========================
@@ -71,15 +82,12 @@ public class ConfigFragment extends Fragment {
                     // --- Cerrar sesión Firebase ---
                     try { FirebaseAuth.getInstance().signOut(); } catch (Exception ignored) {}
 
-                    // --- Volver a la pantalla de entrada ---
-                    Intent i = new Intent(requireContext(), EntryActivity.class);
+                    // --- Volver al login sin cerrar la app ---
+                    Intent i = new Intent(requireContext(), LoginActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(i);
-                    requireActivity().finish();
-
                 });
             });
-
         }
 
 
@@ -155,7 +163,7 @@ public class ConfigFragment extends Fragment {
         TextView tvEmail = view.findViewById(R.id.tv_email);
         ImageView profileImage = view.findViewById(R.id.profile_image);
 
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uid = auth.getCurrentUser().getUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("Usuarios").document(uid).get()
@@ -178,10 +186,6 @@ public class ConfigFragment extends Fragment {
 
                         // Numero de coches
                         TextView tvUserType = view.findViewById(R.id.tv_user_type);
-
-                        DocumentReference userRef = FirebaseFirestore.getInstance()
-                                .collection("Usuarios")
-                                .document(uid);
 
                         db.collection("Coches")
                                 .whereArrayContains("Propietario", uid)

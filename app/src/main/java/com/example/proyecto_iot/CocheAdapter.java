@@ -1,5 +1,6 @@
 package com.example.proyecto_iot;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -8,10 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.proyecto_iot.utils.CustomToast;
 
 import java.util.List;
 
@@ -34,44 +36,35 @@ public class CocheAdapter extends RecyclerView.Adapter<CocheAdapter.CocheViewHol
 
     @Override
     public void onBindViewHolder(@NonNull CocheViewHolder holder, int position) {
-        // Obtenemos el coche para la posición de dibujado
+
         Coche coche = listaCoches.get(position);
         holder.nombreCoche.setText(coche.getNombre());
 
-        holder.btnOpciones.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PopupMenu popup = new PopupMenu(context, view);
-                popup.inflate(R.menu.menu_eliminar);
+        holder.btnOpciones.setOnClickListener(view -> {
 
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getItemId() == R.id.opcion_eliminar) {
+            PopupMenu popup = new PopupMenu(context, view);
+            popup.inflate(R.menu.menu_eliminar);
 
-                            // --- INICIO DE LA CORRECCIÓN ---
+            popup.setOnMenuItemClickListener(item -> {
 
-                            // 1. Obtenemos la posición ACTUAL en el momento del clic.
-                            int currentPosition = holder.getAdapterPosition();
+                if (item.getItemId() == R.id.opcion_eliminar) {
 
-                            // 2. Comprobamos que la posición es válida
-                            if (currentPosition != RecyclerView.NO_POSITION) {
-                                // 3. Obtenemos el coche correcto usando la posición actual
-                                Coche cocheActual = listaCoches.get(currentPosition);
-                                Toast.makeText(context, "Eliminando " + cocheActual.getNombre(), Toast.LENGTH_SHORT).show();
+                    int currentPosition = holder.getAdapterPosition();
 
-                                // 4. Usamos la posición actual y válida
-                                eliminarCoche(currentPosition);
-                                return true;
-                            }
-                            // --- FIN DE LA CORRECCIÓN ---
-                        }
-                        return false;
+                    if (currentPosition != RecyclerView.NO_POSITION) {
+
+                        Coche cocheActual = listaCoches.get(currentPosition);
+
+                        CustomToast.warning((Activity) context,"Eliminando " + cocheActual.getNombre());
+
+                        eliminarCoche(currentPosition);
+                        return true;
                     }
-                });
+                }
+                return false;
+            });
 
-                popup.show();
-            }
+            popup.show();
         });
     }
 
@@ -82,12 +75,10 @@ public class CocheAdapter extends RecyclerView.Adapter<CocheAdapter.CocheViewHol
 
     public void eliminarCoche(int position) {
         if (position >= 0 && position < listaCoches.size()) {
+
             listaCoches.remove(position);
             notifyItemRemoved(position);
 
-            // --- MEJORA RECOMENDADA ---
-            // Notifica al adapter que las posiciones de los items *debajo* del eliminado
-            // han cambiado, para evitar errores de consistencia.
             notifyItemRangeChanged(position, listaCoches.size() - position);
         }
     }

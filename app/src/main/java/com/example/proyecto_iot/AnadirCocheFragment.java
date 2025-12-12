@@ -1,10 +1,15 @@
 package com.example.proyecto_iot;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.example.proyecto_iot.utils.CustomToast;
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,7 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AnadirCoche extends AppCompatActivity {
+public class AnadirCocheFragment extends Fragment {
 
     private EditText etMarca, etModelo, etMatricula, etNombre;
     private Button btnGuardar;
@@ -21,20 +26,29 @@ public class AnadirCoche extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth auth;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.anadir_coche);
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.anadir_coche, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view,
+                              @Nullable Bundle savedInstanceState) {
+
+        super.onViewCreated(view, savedInstanceState);
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
-        etMarca = findViewById(R.id.etMarcaEditar);
-        etModelo = findViewById(R.id.etModeloEditar);
-        etMatricula = findViewById(R.id.etMatriculaEditar);
-        etNombre = findViewById(R.id.etNombreCocheEditar);
+        etMarca = view.findViewById(R.id.etMarcaEditar);
+        etModelo = view.findViewById(R.id.etModeloEditar);
+        etMatricula = view.findViewById(R.id.etMatriculaEditar);
+        etNombre = view.findViewById(R.id.etNombreCocheEditar);
 
-        btnGuardar = findViewById(R.id.btnGuardarCambios);
+        btnGuardar = view.findViewById(R.id.btnGuardarCambios);
 
         btnGuardar.setOnClickListener(v -> guardarCoche());
     }
@@ -48,7 +62,7 @@ public class AnadirCoche extends AppCompatActivity {
 
         // ===== VALIDACIONES =====
         if (marca.isEmpty() || modelo.isEmpty() || matricula.isEmpty() || nombre.isEmpty()) {
-            CustomToast.warning(this, "Rellena todos los campos");
+            CustomToast.warning(requireActivity(), "Rellena todos los campos");
             return;
         }
 
@@ -73,12 +87,11 @@ public class AnadirCoche extends AppCompatActivity {
         db.collection("Coches")
                 .add(coche)
                 .addOnSuccessListener(ref -> {
-                    CustomToast.success(this, "Coche añadido correctamente");
-                    setResult(RESULT_OK);
-                    finish();
+                    CustomToast.success(requireActivity(), "Coche añadido correctamente");
+                    requireActivity().getSupportFragmentManager().popBackStack();
                 })
                 .addOnFailureListener(e ->
-                        CustomToast.error(this, "Error al añadir un nuevo coche")
+                        CustomToast.error(requireActivity(), "Error al añadir un nuevo coche")
                 );
     }
 

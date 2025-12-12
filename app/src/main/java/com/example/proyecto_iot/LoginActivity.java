@@ -2,13 +2,18 @@ package com.example.proyecto_iot;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.proyecto_iot.utils.CustomToast;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -35,6 +40,9 @@ import java.util.Arrays;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
+    private ImageView togglePasswordImage;
+    private boolean passwordVisible = false;
+
     private Button loginButton, registerButton, forgotButton, googleButton, facebookButton, xButton;
 
     private FirebaseAuth mAuth;
@@ -43,18 +51,22 @@ public class LoginActivity extends AppCompatActivity {
     private CallbackManager mCallbackManager;
     private static final int RC_SIGN_IN = 9001;
 
+    private FrameLayout loadingOverlay;
+    private ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.login);
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        // UI
         emailEditText = findViewById(R.id.editTextText);
         passwordEditText = findViewById(R.id.editTextTextPassword);
+
+        togglePasswordImage = findViewById(R.id.imageViewTogglePassword);
+
         loginButton = findViewById(R.id.button);
         registerButton = findViewById(R.id.button2);
         forgotButton = findViewById(R.id.button3);
@@ -62,6 +74,11 @@ public class LoginActivity extends AppCompatActivity {
         facebookButton = findViewById(R.id.button6);
         xButton = findViewById(R.id.button5);
 
+        // Overlay
+        loadingOverlay = findViewById(R.id.loadingOverlay);
+        progressBar = findViewById(R.id.progressBar);
+
+        togglePasswordImage.setOnClickListener(v -> togglePasswordVisibility());
         loginButton.setOnClickListener(v -> loginWithEmail());
 
         registerButton.setOnClickListener(v ->
@@ -77,7 +94,11 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        googleButton.setOnClickListener(v -> signInWithGoogle());
+
+        googleButton.setOnClickListener(v -> {
+            mostrarLoading(true);
+            signInWithGoogle();
+        });
 
         // FACEBOOK LOGIN
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -85,6 +106,8 @@ public class LoginActivity extends AppCompatActivity {
         mCallbackManager = CallbackManager.Factory.create();
 
         facebookButton.setOnClickListener(v -> {
+            mostrarLoading(true);
+
             LoginManager.getInstance().logInWithReadPermissions(
                     LoginActivity.this, Arrays.asList("email", "public_profile"));
 
@@ -97,117 +120,162 @@ public class LoginActivity extends AppCompatActivity {
 
                         @Override
                         public void onCancel() {
-                            Toast.makeText(LoginActivity.this,
-                                    "Inicio con Facebook cancelado", Toast.LENGTH_SHORT).show();
+                            mostrarLoading(false);
+                            CustomToast.warning(LoginActivity.this,
+                                    "Inicio con Facebook cancelado");
                         }
 
                         @Override
                         public void onError(FacebookException error) {
-                            Toast.makeText(LoginActivity.this,
-                                    "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            mostrarLoading(false);
+                            CustomToast.error(LoginActivity.this,
+                                    "Error: " + error.getMessage());
                         }
                     });
         });
 
         xButton.setOnClickListener(v ->
-                Toast.makeText(this, "Inicio con X pendiente de implementación", Toast.LENGTH_SHORT).show());
+                CustomToast.warning(this, "Inicio con X pendiente de implementación"));
     }
 
-    // EMAIL LOGIN
+    // ======================================================
+    private void togglePasswordVisibility() {
+        if (!passwordVisible) {
+            passwordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            togglePasswordImage.setImageResource(R.drawable.ic_eye_open);
+        } else {
+            passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            togglePasswordImage.setImageResource(R.drawable.ic_eye_closed);
+        }
+
+        passwordVisible = !passwordVisible;
+        passwordEditText.setSelection(passwordEditText.getText().length());
+    }
+
+    // ======================================================
     private void loginWithEmail() {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
+            CustomToast.warning(this, "Completa todos los campos");
             return;
         }
 
+        mostrarLoading(true);
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
+
                     if (task.isSuccessful()) {
 
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         if (user != null && user.isEmailVerified()) {
+
+                            // PRE-CARGAR TODAS LAS IMÁGENES
+                            ImagePreloader.precargarImagenes();
+
                             navigateAfterLogin(user);
+
                         } else {
-                            Toast.makeText(this,
-                                    "Debes verificar tu email antes de continuar.",
-                                    Toast.LENGTH_LONG).show();
+                            mostrarLoading(false);
+                            CustomToast.warning(this,
+                                    "Debes verificar tu email antes de continuar.");
                             mAuth.signOut();
                         }
 
                     } else {
-                        Toast.makeText(this,
-                                "Error: " + task.getException().getLocalizedMessage(),
-                                Toast.LENGTH_LONG).show();
+                        mostrarLoading(false);
+                        CustomToast.error(this,
+                                "Error: " + task.getException().getLocalizedMessage());
                     }
                 });
     }
 
-    // GOOGLE LOGIN
+    // ======================================================
     private void signInWithGoogle() {
         startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         super.onActivityResult(requestCode, resultCode, data);
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
+
             Task<GoogleSignInAccount> task =
                     GoogleSignIn.getSignedInAccountFromIntent(data);
+
             try {
-                GoogleSignInAccount account =
-                        task.getResult(ApiException.class);
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+
+                // PRE-CARGA ANTES DE ENTRAR
+                ImagePreloader.precargarImagenes();
 
                 firebaseAuthWithGoogle(account.getIdToken());
 
             } catch (ApiException e) {
-                Toast.makeText(this,
-                        "Error en inicio con Google: " + e.getMessage(),
-                        Toast.LENGTH_LONG).show();
+                mostrarLoading(false);
+                CustomToast.error(this,
+                        "Error en inicio con Google: " + e.getMessage());
             }
         }
     }
 
+    // ======================================================
     private void firebaseAuthWithGoogle(String idToken) {
+
         AuthCredential credential =
                 GoogleAuthProvider.getCredential(idToken, null);
 
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
+
                     if (task.isSuccessful()) {
+
+                        ImagePreloader.precargarImagenes();
                         navigateAfterLogin(mAuth.getCurrentUser());
+
                     } else {
-                        Toast.makeText(this,
-                                "Error al autenticar con Google",
-                                Toast.LENGTH_SHORT).show();
+                        mostrarLoading(false);
+                        CustomToast.error(this,
+                                "Error al autenticar con Google");
                     }
                 });
     }
 
-    // FACEBOOK LOGIN
+    // ======================================================
     private void handleFacebookAccessToken(AccessToken token) {
+
         AuthCredential credential =
                 FacebookAuthProvider.getCredential(token.getToken());
 
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
+
                     if (task.isSuccessful()) {
+
+                        ImagePreloader.precargarImagenes();
                         navigateAfterLogin(mAuth.getCurrentUser());
+
                     } else {
-                        Toast.makeText(this,
-                                "Error en inicio con Facebook",
-                                Toast.LENGTH_SHORT).show();
+                        mostrarLoading(false);
+                        CustomToast.error(this,
+                                "Error en inicio con Facebook");
                     }
                 });
     }
 
-    // LÓGICA PRINCIPAL → Decide dónde ir después del login
+    // ======================================================
     private void navigateAfterLogin(FirebaseUser user) {
+
+        getSharedPreferences("kova_prefs", MODE_PRIVATE)
+                .edit()
+                .putBoolean("wizard_completed", true)
+                .apply();
 
         db.collection("Coches")
                 .whereArrayContains("Propietario", user.getUid())
@@ -218,24 +286,52 @@ public class LoginActivity extends AppCompatActivity {
                     Intent next;
 
                     if (query.isEmpty()) {
-                        // No tiene coche registrado → registrar el primero
                         next = new Intent(this, PrimerCocheActivity.class);
                     } else {
-                        // Ya tiene coche → ir al home
                         next = new Intent(this, MainActivity.class);
                     }
 
                     startActivity(next);
                     finish();
+
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this,
-                            "Error comprobando los coches.",
-                            Toast.LENGTH_LONG).show();
 
-                    // Por seguridad, lo mandamos al registro del coche
+                    mostrarLoading(false);
+                    CustomToast.error(this,
+                            "Error comprobando los coches.");
+
                     startActivity(new Intent(this, PrimerCocheActivity.class));
                     finish();
                 });
+    }
+
+    // ======================================================
+    private void mostrarLoading(boolean mostrar) {
+
+        if (mostrar) {
+            loadingOverlay.setAlpha(0f);
+            loadingOverlay.setVisibility(View.VISIBLE);
+            loadingOverlay.animate().alpha(1f).setDuration(200).start();
+
+            loginButton.setEnabled(false);
+            googleButton.setEnabled(false);
+            facebookButton.setEnabled(false);
+            registerButton.setEnabled(false);
+            forgotButton.setEnabled(false);
+            xButton.setEnabled(false);
+
+        } else {
+            loadingOverlay.animate().alpha(0f).setDuration(200)
+                    .withEndAction(() -> loadingOverlay.setVisibility(View.GONE))
+                    .start();
+
+            loginButton.setEnabled(true);
+            googleButton.setEnabled(true);
+            facebookButton.setEnabled(true);
+            registerButton.setEnabled(true);
+            forgotButton.setEnabled(true);
+            xButton.setEnabled(true);
+        }
     }
 }

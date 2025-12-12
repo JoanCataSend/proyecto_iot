@@ -5,18 +5,25 @@
     android:orientation="vertical"
     android:paddingTop="8dp">
 
-
-    <TextView
-        android:id="@+id/titulo_pantalla"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:text="Coches Registrados"
-        android:textColor="@color/fondo_oscuro"
-        android:textSize="22sp"
-        />
+        android:gravity="center_vertical">
+        <!-- Título centrado -->
+        <TextView
+            android:id="@+id/titleSeguridad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Coches registrados"
+            android:textColor="@color/icono_normal"
+            android:textSize="20sp"
+            android:fontFamily="@font/roboto_medium"
+            android:textStyle="bold" />
 
+    </RelativeLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_cochesR"
         android:layout_width="match_parent"
