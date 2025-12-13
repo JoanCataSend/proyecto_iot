@@ -10,6 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 public class CocheMapaAdapter extends RecyclerView.Adapter<CocheMapaAdapter.CocheHolder> {
@@ -37,11 +40,23 @@ public class CocheMapaAdapter extends RecyclerView.Adapter<CocheMapaAdapter.Coch
         UbicacionFragment.CocheMapa coche = coches.get(position);
 
         holder.nombre.setText(coche.nombre);
-
-        // Esto ya funciona porque coche sí tiene "direccion"
         holder.ubicacion.setText(coche.direccion != null ? coche.direccion : "");
 
-        // ------------------- Abrir EDITAR COCHE -------------------
+        // ===============================================
+        //   CUANDO PULSAS EL ITEM → MOVER MAPA
+        // ===============================================
+        holder.itemView.setOnClickListener(v -> {
+            if (fragmentPadre.getMapa() != null) {
+
+                LatLng destino = new LatLng(coche.lat, coche.lng);
+
+                fragmentPadre.getMapa().animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(destino, 16f)
+                );
+            }
+        });
+
+        // ================= Abrir EDITAR coche ==================
         holder.btnEditar.setOnClickListener(v -> {
 
             EditarCocheFragment fragment = new EditarCocheFragment();

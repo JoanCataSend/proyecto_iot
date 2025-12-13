@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -38,6 +40,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
@@ -45,6 +49,10 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
     private BottomSheetBehavior<View> bottomSheetBehavior;
     private GoogleMap mMap;
+
+    public GoogleMap getMapa() {
+        return mMap;
+    }
 
     private final ArrayList<CocheMapa> listaCoches = new ArrayList<>();
     private FirebaseFirestore db;
@@ -76,7 +84,9 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
         // BOTÓN AÑADIR COCHE
         view.findViewById(R.id.btnAnadirCoche)
-                .setOnClickListener(v -> startActivity(new Intent(getActivity(), AnadirCoche.class)));
+                .setOnClickListener(v ->
+                        startActivity(new Intent(getActivity(), AnadirCoche.class))
+                );
 
         // RECYCLER VIEW
         RecyclerView recycler = view.findViewById(R.id.recyclerCoches);
@@ -104,6 +114,11 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                             Double lng = doc.getDouble("lng");
                             String fotoUrl = doc.getString("Foto");
 
+                            String direccion = "";
+                            if (lat != null && lng != null && lat != 0 && lng != 0) {
+                                direccion = obtenerDireccionDesdeLatLng(lat, lng);
+                            }
+
                             listaCoches.add(new CocheMapa(
                                     doc.getId(),
                                     doc.getString("Nombre"),
@@ -113,7 +128,7 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                                     lat != null ? lat : 0.0,
                                     lng != null ? lng : 0.0,
                                     fotoUrl,
-                                    ""
+                                    direccion
                             ));
                         }
 
@@ -137,6 +152,27 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
         return view;
     }
 
+    // ==================================================================
+    //      OBTENER DIRECCIÓN REAL DESDE LATITUD/LONGITUD
+    // ==================================================================
+    private String obtenerDireccionDesdeLatLng(double lat, double lng) {
+        try {
+            Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+            List<Address> direcciones =
+                    geocoder.getFromLocation(lat, lng, 1);
+
+            if (direcciones != null && !direcciones.isEmpty()) {
+                return direcciones.get(0).getAddressLine(0);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "Ubicación desconocida";
+    }
+
+    // ==================================================================
     private void solicitarPermisoUbicacionSiEsNecesario() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -165,7 +201,9 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    // ================= MARCADORES =======================
+    // ==================================================================
+    //                   MARCADORES DEL MAPA
+    // ==================================================================
     private void actualizarMarcadores() {
         if (mMap == null) return;
 
@@ -245,7 +283,9 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
         habilitarMiUbicacionEnMapa();
     }
 
-    // Modelo coche
+    // ==================================================================
+    //                          MODELO COCHE
+    // ==================================================================
     public static class CocheMapa {
         public String id, nombre, marca, modelo, matricula, fotoUrl, direccion;
         public double lat, lng;
