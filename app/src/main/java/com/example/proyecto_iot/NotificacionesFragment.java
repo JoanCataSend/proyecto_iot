@@ -1,5 +1,6 @@
 package com.example.proyecto_iot;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,7 +47,9 @@ public class NotificacionesFragment extends Fragment {
     // filtros actuales
     private String filterCar = "Todos";
     private String filterType = "Todos";
-    private String filterRange = "Todo";
+    // rango fechas (0 = sin filtro)
+    private long filterFromTs = 0L;
+    private long filterToTs = 0L;
 
     @Nullable
     @Override
@@ -227,20 +231,14 @@ public class NotificacionesFragment extends Fragment {
     private void applyFilters() {
         notificaciones.clear();
 
-        long now = System.currentTimeMillis();
-        long minTs = 0;
-
-        // rango de tiempo (ejemplos)
-        if ("24h".equals(filterRange)) minTs = now - 24L * 60 * 60 * 1000;
-        else if ("7d".equals(filterRange)) minTs = now - 7L * 24 * 60 * 60 * 1000;
-        else if ("30d".equals(filterRange)) minTs = now - 30L * 24 * 60 * 60 * 1000;
-
         for (Notificacion n : allNotificaciones) {
 
-            // OJO: esto requiere que Notificacion tenga carName, category y timestamp
             boolean okCar = "Todos".equals(filterCar) || filterCar.equals(n.getCarName());
             boolean okType = "Todos".equals(filterType) || filterType.equals(n.getCategory());
-            boolean okTime = "Todo".equals(filterRange) || n.getTimestamp() >= minTs;
+
+            boolean okTime = true;
+            if (filterFromTs > 0L) okTime = n.getTimestamp() >= filterFromTs;
+            if (okTime && filterToTs > 0L) okTime = n.getTimestamp() <= filterToTs;
 
             if (okCar && okType && okTime) {
                 notificaciones.add(n);
@@ -250,9 +248,8 @@ public class NotificacionesFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    private void openFilterPopup() {
 
-        if (getContext() == null) return;
+    private void openFilterPopup() {
 
         BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
         View sheet = LayoutInflater.from(requireContext()).inflate(R.layout.filter_notifications, null);
@@ -260,12 +257,17 @@ public class NotificacionesFragment extends Fragment {
 
         Spinner spCar = sheet.findViewById(R.id.spFilterCar);
         Spinner spType = sheet.findViewById(R.id.spFilterType);
-        Spinner spRange = sheet.findViewById(R.id.spFilterRange);
+
+        TextView tvFrom = sheet.findViewById(R.id.tvFromDate);
+        TextView tvTo = sheet.findViewById(R.id.tvToDate);
 
         TextView btnApply = sheet.findViewById(R.id.btnApplyFilters);
         TextView btnClear = sheet.findViewById(R.id.btnClearFilters);
 
-        // ---- LISTA COCHES (desde historial ya cargado) ----
+        TextView btnClose = sheet.findViewById(R.id.btnCloseSheet);
+        TextView btnClearDates = sheet.findViewById(R.id.tvQuickClearDates);
+
+        // ---- coches ----
         Set<String> carsSet = new LinkedHashSet<>();
         carsSet.add("Todos");
         for (Notificacion n : allNotificaciones) {
@@ -275,21 +277,13 @@ public class NotificacionesFragment extends Fragment {
         }
         List<String> cars = new ArrayList<>(carsSet);
 
-        // ---- LISTA TIPOS ----
+        // ---- tipos ----
         List<String> types = new ArrayList<>();
         types.add("Todos");
         types.add("Alarmas");
         types.add("Puertas");
         types.add("Impacto");
 
-        // ---- LISTA RANGOS ----
-        List<String> ranges = new ArrayList<>();
-        ranges.add("Todo");
-        ranges.add("24h");
-        ranges.add("7d");
-        ranges.add("30d");
-
-        // Adapters
         ArrayAdapter<String> carAdapter = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_spinner_item, cars);
         carAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -300,20 +294,46 @@ public class NotificacionesFragment extends Fragment {
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spType.setAdapter(typeAdapter);
 
-        ArrayAdapter<String> rangeAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_item, ranges);
-        rangeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spRange.setAdapter(rangeAdapter);
-
-        // Preseleccionar lo que ya estaba elegido
         spCar.setSelection(Math.max(0, cars.indexOf(filterCar)));
         spType.setSelection(Math.max(0, types.indexOf(filterType)));
-        spRange.setSelection(Math.max(0, ranges.indexOf(filterRange)));
+
+        // mostrar fechas actuales
+        tvFrom.setText(filterFromTs > 0 ? ("Desde: " + formatOnlyDate(filterFromTs)) : "Desde: --/--/----");
+        tvTo.setText(filterToTs > 0 ? ("Hasta: " + formatOnlyDate(filterToTs)) : "Hasta: --/--/----");
+
+        tvFrom.setOnClickListener(v -> openDatePicker(true, (ts) -> {
+            filterFromTs = startOfDay(ts);
+            tvFrom.setText("Desde: " + formatOnlyDate(filterFromTs));
+
+            // si hasta < desde, lo limpiamos
+            if (filterToTs > 0 && filterToTs < filterFromTs) {
+                filterToTs = 0;
+                tvTo.setText("Hasta: --/--/----");
+            }
+        }));
+
+        tvTo.setOnClickListener(v -> openDatePicker(false, (ts) -> {
+            // fin del día para incluir ese día completo
+            filterToTs = endOfDay(ts);
+            tvTo.setText("Hasta: " + formatOnlyDate(filterToTs));
+
+            // si desde > hasta, lo limpiamos
+            if (filterFromTs > 0 && filterToTs < filterFromTs) {
+                filterFromTs = 0;
+                tvFrom.setText("Desde: --/--/----");
+            }
+        }));
+
+        btnClearDates.setOnClickListener(v -> {
+            filterFromTs = 0L;
+            filterToTs = 0L;
+            tvFrom.setText("Desde: --/--/----");
+            tvTo.setText("Hasta: --/--/----");
+        });
 
         btnApply.setOnClickListener(v -> {
             filterCar = (String) spCar.getSelectedItem();
             filterType = (String) spType.getSelectedItem();
-            filterRange = (String) spRange.getSelectedItem();
 
             applyFilters();
             dialog.dismiss();
@@ -322,13 +342,66 @@ public class NotificacionesFragment extends Fragment {
         btnClear.setOnClickListener(v -> {
             filterCar = "Todos";
             filterType = "Todos";
-            filterRange = "Todo";
+            filterFromTs = 0L;
+            filterToTs = 0L;
 
             applyFilters();
             dialog.dismiss();
         });
 
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+
         dialog.show();
+    }
+
+    private interface DatePickedCallback {
+        void onPicked(long ts);
+    }
+
+    private void openDatePicker(boolean isFrom, DatePickedCallback cb) {
+        Calendar c = Calendar.getInstance();
+
+        long base = isFrom ? filterFromTs : filterToTs;
+        if (base > 0) c.setTimeInMillis(base);
+
+        int y = c.get(Calendar.YEAR);
+        int m = c.get(Calendar.MONTH);
+        int d = c.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog dialog = new DatePickerDialog(requireContext(),
+                (view, year, month, dayOfMonth) -> {
+                    Calendar picked = Calendar.getInstance();
+                    picked.set(Calendar.YEAR, year);
+                    picked.set(Calendar.MONTH, month);
+                    picked.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    cb.onPicked(picked.getTimeInMillis());
+                }, y, m, d);
+
+        dialog.show();
+    }
+
+    private String formatOnlyDate(long ts) {
+        return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date(ts));
+    }
+
+    private long startOfDay(long ts) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(ts);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return c.getTimeInMillis();
+    }
+
+    private long endOfDay(long ts) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(ts);
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.SECOND, 59);
+        c.set(Calendar.MILLISECOND, 999);
+        return c.getTimeInMillis();
     }
 
 
