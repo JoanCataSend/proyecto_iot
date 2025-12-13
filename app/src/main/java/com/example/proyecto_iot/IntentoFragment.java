@@ -92,10 +92,13 @@ public class IntentoFragment extends Fragment {
     private Runnable signalsStopRunnable;
     private Vibrator vibrator;
 
+    // Spinner
     private final List<String> popupItems = new ArrayList<>();
     private boolean spinnerInicializado = false;
 
-
+    // Para NO duplicar notificaciones cuando tú mismo cambias desde la app
+    // (guardamos el valor esperado, no un booleano genérico)
+    private String expectedDoorFromApp = null;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -126,9 +129,11 @@ public class IntentoFragment extends Fragment {
         flLock           = view.findViewById(R.id.flLock);
         ivLock           = view.findViewById(R.id.ivLock);
         tvLockState      = view.findViewById(R.id.tvLockState);
+
         LinearLayout vehicleSelector = view.findViewById(R.id.vehicleSelector);
         LinearLayout layoutCamaras   = view.findViewById(R.id.layoutCamaras);
         LinearLayout addressPill     = view.findViewById(R.id.addressPill);
+
         ImageView ivSignals          = view.findViewById(R.id.ivSignals);
         FrameLayout flSignals        = (FrameLayout) ivSignals.getParent();
 
@@ -152,7 +157,6 @@ public class IntentoFragment extends Fragment {
                     }
                 };
 
-
         carsAdapter.setDropDownViewResource(R.layout.spinner_coches);
         spinnerCars.setAdapter(carsAdapter);
 
@@ -165,7 +169,8 @@ public class IntentoFragment extends Fragment {
 
         vehicleSelector.setOnClickListener(v -> spinnerCars.performClick());
 
-        View.OnClickListener lockClickListener = v -> toggleLock(prefs);
+        // Candado (notifica al tocar)
+        View.OnClickListener lockClickListener = v -> toggleLockAndNotify(prefs);
         flLock.setOnClickListener(lockClickListener);
         ivLock.setOnClickListener(lockClickListener);
 
@@ -199,15 +204,12 @@ public class IntentoFragment extends Fragment {
                     listenEstadoActual(carIds.get(position));
                 }
 
-                spinnerCars.post(() -> {
-                    ((ArrayAdapter) spinnerCars.getAdapter()).notifyDataSetChanged();
-                });
+                spinnerCars.post(() -> ((ArrayAdapter) spinnerCars.getAdapter()).notifyDataSetChanged());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
-
 
         boolean savedLocked = prefs.getBoolean(getLockPrefKeyForIndex(currentCarIndex), true);
         isLocked = savedLocked;
@@ -233,14 +235,10 @@ public class IntentoFragment extends Fragment {
             startActivity(intent);
         });
 
-        View.OnClickListener signalsClick = v ->
-                handleSignalsClick(context, prefs, ivSignals);
+        View.OnClickListener signalsClick = v -> handleSignalsClick(context, prefs, ivSignals);
         ivSignals.setOnClickListener(signalsClick);
         flSignals.setOnClickListener(signalsClick);
     }
-
-
-
 
     @Override
     public void onDestroyView() {
@@ -295,7 +293,12 @@ public class IntentoFragment extends Fragment {
                         if (pos < 0 || pos >= carNames.size()) pos = 0;
                         currentCarIndex = pos;
                         spinnerCars.setSelection(pos, false);
-                        updateCarImage(pos); // cargar imagen precargada
+                        updateCarImage(pos);
+
+                        // IMPORTANTE: empezar a escuchar el coche seleccionado
+                        if (pos < carIds.size()) {
+                            listenEstadoActual(carIds.get(pos));
+                        }
                     }
                 });
     }
@@ -325,16 +328,30 @@ public class IntentoFragment extends Fragment {
 
                         ultimaPuerta = puerta;
 
+                        // Guardar evento en historial
+                        guardarEventoPuerta(carId, puerta);
+
+                        // Actualizar UI + prefs SIEMPRE
                         if ("open".equals(puerta)) {
                             isLocked = false;
                             updateLockUi();
                             guardarLockEnPrefs(false);
-                            mostrarNotifPuertaAbierta();
                         } else {
                             isLocked = true;
                             updateLockUi();
                             guardarLockEnPrefs(true);
-                            mostrarNotifPuertaCerrada();
+                        }
+
+                        // Si el cambio fue causado por el botón, NO duplicamos notificación
+                        if (expectedDoorFromApp != null && expectedDoorFromApp.equals(puerta)) {
+                            expectedDoorFromApp = null;
+                        } else {
+                            // Cambio externo => sí notifica
+                            if ("open".equals(puerta)) {
+                                mostrarNotifPuertaAbierta();
+                            } else {
+                                mostrarNotifPuertaCerrada();
+                            }
                         }
                     }
 
@@ -346,12 +363,10 @@ public class IntentoFragment extends Fragment {
                     } else if (!hayImpacto) {
                         ultimoImpacto = false;
                     }
-
                 });
     }
 
     private void verificarImpactoReciente(String carId) {
-
         firestore.collection("Coches")
                 .document(carId)
                 .collection("eventos")
@@ -359,7 +374,6 @@ public class IntentoFragment extends Fragment {
                 .limit(1)
                 .get()
                 .addOnSuccessListener(snap -> {
-
                     if (snap.isEmpty()) return;
 
                     QueryDocumentSnapshot doc = (QueryDocumentSnapshot) snap.getDocuments().get(0);
@@ -377,7 +391,6 @@ public class IntentoFragment extends Fragment {
                 });
     }
 
-
     private void guardarLockEnPrefs(boolean locked) {
         Context ctx = requireContext();
         SharedPreferences prefs = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -385,9 +398,9 @@ public class IntentoFragment extends Fragment {
     }
 
     // =========================
-    //  APP → FIREBASE → RASPI
+    //  BOTÓN CANDADO: NOTIFICA AL TOCAR
     // =========================
-    private void toggleLock(SharedPreferences prefs) {
+    private void toggleLockAndNotify(SharedPreferences prefs) {
 
         if (currentCarIndex < 0 || currentCarIndex >= carIds.size()) {
             isLocked = !isLocked;
@@ -395,17 +408,27 @@ public class IntentoFragment extends Fragment {
             return;
         }
 
+        // 1) Cambiamos estado local + UI
         isLocked = !isLocked;
+        updateLockUi();
 
         prefs.edit()
                 .putBoolean(getLockPrefKeyForIndex(currentCarIndex), isLocked)
                 .apply();
 
-        updateLockUi();
+        // 2) Notificación INMEDIATA al tocar
+        if (isLocked) {
+            mostrarNotifPuertaCerrada();
+        } else {
+            mostrarNotifPuertaAbierta();
+        }
 
-        String carId = carIds.get(currentCarIndex);
+        // 3) Guardamos lo esperado para que el listener no duplique
         String nuevoEstado = isLocked ? "closed" : "open";
+        expectedDoorFromApp = nuevoEstado;
 
+        // 4) Enviar a Firestore
+        String carId = carIds.get(currentCarIndex);
         firestore.collection("Coches")
                 .document(carId)
                 .collection("estado")
@@ -641,7 +664,6 @@ public class IntentoFragment extends Fragment {
                 .update("alertaSonido", active);
     }
 
-
     // =========================
     //          UI (IMAGEN AUTO + PRECARGA)
     // =========================
@@ -652,7 +674,6 @@ public class IntentoFragment extends Fragment {
 
         String carId = carIds.get(position);
 
-        // Intentamos cargar LA URL desde precarga
         firestore.collection("Coches")
                 .document(carId)
                 .get()
@@ -665,9 +686,6 @@ public class IntentoFragment extends Fragment {
 
                     String fotoUrl = doc.getString("Foto");
 
-                    // ============================
-                    // 1️⃣ SI YA ESTÁ PRECARGADA → instantáneo
-                    // ============================
                     if (fotoUrl != null &&
                             ImagePreloader.getCarImages().contains(fotoUrl)) {
 
@@ -679,9 +697,6 @@ public class IntentoFragment extends Fragment {
                         return;
                     }
 
-                    // ============================
-                    // 2️⃣ Si NO está precargada → cargar normalmente y cachear
-                    // ============================
                     if (fotoUrl != null && !fotoUrl.isEmpty()) {
 
                         Glide.with(requireContext())
@@ -696,7 +711,6 @@ public class IntentoFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> ivCar.setImageResource(R.drawable.coche_julia));
     }
-
 
     private void updateLockUi() {
         if (ivLock == null || tvLockState == null) return;
@@ -736,12 +750,18 @@ public class IntentoFragment extends Fragment {
         }
     }
 
-    private void guardarEventoPuerta(String carId, String estado) {
+    private void guardarEventoPuerta(String carId, String puerta) {
         if (firestore == null || carId == null) return;
 
         HashMap<String, Object> evento = new HashMap<>();
-        evento.put("tipo", "estado");
-        evento.put("estado", estado.equals("open") ? "open" : "closed");
+        evento.put("tipo", "puerta");
+
+        if ("open".equals(puerta)) {
+            evento.put("puerta", "open");
+        } else {
+            evento.put("puerta", "closed");
+        }
+
         evento.put("timestamp", System.currentTimeMillis());
 
         firestore.collection("Coches")
@@ -749,8 +769,6 @@ public class IntentoFragment extends Fragment {
                 .collection("eventos")
                 .add(evento);
     }
-
-
 
     // =========================
     //      HELPERS
