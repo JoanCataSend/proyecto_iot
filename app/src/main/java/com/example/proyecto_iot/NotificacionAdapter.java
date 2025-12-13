@@ -19,10 +19,14 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
         this.listaNotificaciones = listaNotificaciones;
     }
 
+    public void setListaNotificaciones(List<Notificacion> nuevas) {
+        this.listaNotificaciones = nuevas;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Infla el layout XML del ítem
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_notificacion, parent, false);
         return new ViewHolder(view);
@@ -30,31 +34,24 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // Asigna los datos del modelo a las vistas
         Notificacion notif = listaNotificaciones.get(position);
         holder.titulo.setText(notif.getTitulo());
         holder.mensaje.setText(notif.getMensaje());
         holder.fecha.setText(notif.getFecha());
         holder.icono.setImageResource(notif.getIcono());
 
-        // ---- LÓGICA DEL SEPARADOR POR DÍA ----
-        String fechaActual = extraerDia(notif.getFecha()); // ej: "12/10/25"
+        String fechaActual = extraerDia(notif.getFecha());
 
         if (position == 0) {
-            // Primera notificación: siempre mostramos separador
             holder.headerDia.setVisibility(View.VISIBLE);
             holder.headerDia.setText(fechaActual);
         } else {
-            String fechaAnterior = extraerDia(
-                    listaNotificaciones.get(position - 1).getFecha()
-            );
+            String fechaAnterior = extraerDia(listaNotificaciones.get(position - 1).getFecha());
 
             if (!fechaActual.equals(fechaAnterior)) {
-                // Cambia el día -> mostramos header
                 holder.headerDia.setVisibility(View.VISIBLE);
                 holder.headerDia.setText(fechaActual);
             } else {
-                // Mismo día -> ocultamos header
                 holder.headerDia.setVisibility(View.GONE);
             }
         }
@@ -62,7 +59,7 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
 
     @Override
     public int getItemCount() {
-        return listaNotificaciones.size();
+        return listaNotificaciones != null ? listaNotificaciones.size() : 0;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -79,19 +76,10 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
         }
     }
 
-    /**
-     * Extrae solo el día de la fecha.
-     * Si el formato es "18:42  12/10/25", devolvemos "12/10/25".
-     */
     private String extraerDia(String fechaCompleta) {
         if (fechaCompleta == null) return "";
         String[] partes = fechaCompleta.trim().split("\\s+");
-        if (partes.length >= 2) {
-            return partes[1]; // "12/10/25"
-        } else {
-            // Si por lo que sea no viene con hora, devolvemos todo
-            return fechaCompleta.trim();
-        }
+        if (partes.length >= 2) return partes[1];
+        return fechaCompleta.trim();
     }
 }
-

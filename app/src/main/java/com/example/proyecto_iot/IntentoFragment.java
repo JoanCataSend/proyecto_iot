@@ -736,6 +736,22 @@ public class IntentoFragment extends Fragment {
         }
     }
 
+    private void guardarEventoPuerta(String carId, String estado) {
+        if (firestore == null || carId == null) return;
+
+        HashMap<String, Object> evento = new HashMap<>();
+        evento.put("tipo", "estado");
+        evento.put("estado", estado.equals("open") ? "open" : "closed");
+        evento.put("timestamp", System.currentTimeMillis());
+
+        firestore.collection("Coches")
+                .document(carId)
+                .collection("eventos")
+                .add(evento);
+    }
+
+
+
     // =========================
     //      HELPERS
     // =========================
