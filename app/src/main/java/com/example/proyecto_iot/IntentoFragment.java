@@ -459,8 +459,15 @@ public class IntentoFragment extends Fragment {
 
         NotificationManagerCompat.from(ctx).notify(NOTIFICATION_ID_PUERTAS, b.build());
 
+        String carName = (currentCarIndex >= 0 && currentCarIndex < carNames.size())
+                ? carNames.get(currentCarIndex)
+                : "Vehículo";
+        String category = "Puertas";
+        long timestamp = System.currentTimeMillis();
+
         NotificacionRepository.getInstance().addNotificacion(
-                new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info)
+                new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info,
+                        carName, category, timestamp)
         );
     }
 
@@ -484,9 +491,17 @@ public class IntentoFragment extends Fragment {
 
         NotificationManagerCompat.from(ctx).notify(NOTIFICATION_ID_PUERTAS_CERRADAS, b.build());
 
+        String carName = (currentCarIndex >= 0 && currentCarIndex < carNames.size())
+                ? carNames.get(currentCarIndex)
+                : "Vehículo";
+        String category = "Puertas";
+        long timestamp = System.currentTimeMillis();
+
         NotificacionRepository.getInstance().addNotificacion(
-                new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info)
+                new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info,
+                        carName, category, timestamp)
         );
+
     }
 
     private void manejarImpacto() {
@@ -518,9 +533,17 @@ public class IntentoFragment extends Fragment {
 
         NotificationManagerCompat.from(ctx).notify(NOTIFICATION_ID_IMPACTO, b.build());
 
+        String carName = (currentCarIndex >= 0 && currentCarIndex < carNames.size())
+                ? carNames.get(currentCarIndex)
+                : "Vehículo";
+        String category = "Impacto";
+        long timestamp = System.currentTimeMillis();
+
         NotificacionRepository.getInstance().addNotificacion(
-                new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info)
+                new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info,
+                        carName, category, timestamp)
         );
+
 
         requireActivity()
                 .getSupportFragmentManager()
@@ -562,9 +585,17 @@ public class IntentoFragment extends Fragment {
             NotificationManagerCompat.from(context)
                     .notify(NOTIFICATION_ID_SENALES, builder.build());
 
+            String carName = (currentCarIndex >= 0 && currentCarIndex < carNames.size())
+                    ? carNames.get(currentCarIndex)
+                    : "Vehículo";
+            String category = "Alarmas";
+            long timestamp = System.currentTimeMillis();
+
             NotificacionRepository.getInstance().addNotificacion(
-                    new Notificacion(titulo, mensaje, fecha, R.drawable.ic_sonido)
+                    new Notificacion(titulo, mensaje, fecha, R.drawable.ic_sonido,
+                            carName, category, timestamp)
             );
+
         }
 
         if (signalsStopHandler == null)
