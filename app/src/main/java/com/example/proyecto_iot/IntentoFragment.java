@@ -63,6 +63,10 @@ public class IntentoFragment extends Fragment {
     private static final String PREF_KEY_SELECTED_CAR = "vehiculo_seleccionado";
 
     private static final long SIGNALS_DURATION_MS = 5_000;
+    private boolean doorUpdateInFlight = false;
+    private long lastDoorClickMs = 0L;
+    private static final long DOOR_CLICK_DEBOUNCE_MS = 600;
+
 
     // =========================
     //      FIRESTORE / DATOS
@@ -254,8 +258,14 @@ public class IntentoFragment extends Fragment {
         vehicleSelector.setOnClickListener(v -> spinnerCars.performClick());
 
         View.OnClickListener lockClickListener = v -> toggleLockAndNotify(prefs);
+
+        // SOLO el contenedor clicable (zona grande)
         flLock.setOnClickListener(lockClickListener);
-        ivLock.setOnClickListener(lockClickListener);
+
+        // El icono NO clicable (evita disparo doble)
+        ivLock.setClickable(false);
+        ivLock.setFocusable(false);
+
 
         layoutCamaras.setOnClickListener(v ->
                 requireActivity()
@@ -362,13 +372,12 @@ public class IntentoFragment extends Fragment {
                         updateLockUi();
                         guardarLockEnPrefs(lockedNow);
 
-                        // Evitar duplicado si lo hizo la app
+                        // Si viene de la app, solo limpiamos el flag.
+                        // Si viene de fuera, NO notifiques (porque tú quieres notificación solo al pulsar)
                         if (expectedDoorFromApp != null && expectedDoorFromApp.equals(puerta)) {
                             expectedDoorFromApp = null;
-                        } else {
-                            if ("open".equals(puerta)) mostrarNotifPuertaAbierta();
-                            else mostrarNotifPuertaCerrada();
                         }
+
                     }
 
                     boolean hayImpacto = impacto != null && impacto;
@@ -420,57 +429,66 @@ public class IntentoFragment extends Fragment {
                 .add(evento);
     }
 
+    private void guardarLockEnPrefs(boolean locked) {
+        SharedPreferences prefs = getPrefs(requireContext());
+        prefs.edit()
+                .putBoolean(getLockPrefKeyForIndex(currentCarIndex), locked)
+                .apply();
+    }
+
+
     // =========================
     //      CANDADO
     // =========================
     private void toggleLockAndNotify(SharedPreferences prefs) {
 
-        if (currentCarIndex < 0 || currentCarIndex >= carIds.size()) {
-            isLocked = !isLocked;
-            updateLockUi();
-            return;
-        }
+        // Anti doble-tap (por si el usuario toca muy rápido)
+        long now = System.currentTimeMillis();
+        if (now - lastDoorClickMs < DOOR_CLICK_DEBOUNCE_MS) return;
+        lastDoorClickMs = now;
 
-        isLocked = !isLocked;
-        updateLockUi();
+        // Si ya hay una petición en curso, no lanzamos otra
+        if (doorUpdateInFlight) return;
 
-        prefs.edit()
-                .putBoolean(getLockPrefKeyForIndex(currentCarIndex), isLocked)
-                .apply();
+        if (currentCarIndex < 0 || currentCarIndex >= carIds.size()) return;
 
-        // Evitar duplicado: el listener no notificará si coincide con esto
-        String nuevoEstado = isLocked ? "closed" : "open";
+        // Estado deseado
+        boolean targetLocked = !isLocked;
+        String nuevoEstado = targetLocked ? "closed" : "open";
+
+        doorUpdateInFlight = true;
+
+        // Guardamos lo esperado para que el listener NO notifique ni se líe
         expectedDoorFromApp = nuevoEstado;
 
         String carId = carIds.get(currentCarIndex);
+
         firestore.collection("Coches")
                 .document(carId)
                 .collection("estado")
                 .document("actual")
-                .update("puerta", nuevoEstado);
-    }
+                .update("puerta", nuevoEstado)
+                .addOnSuccessListener(aVoid -> {
 
-    private void guardarLockEnPrefs(boolean locked) {
-        SharedPreferences prefs = getPrefs(requireContext());
-        prefs.edit().putBoolean(getLockPrefKeyForIndex(currentCarIndex), locked).apply();
-    }
+                    // Actualiza UI local (ya que tú quieres respuesta inmediata)
+                    isLocked = targetLocked;
+                    updateLockUi();
 
-    // =========================
-    //      NOTIFICACIONES
-    // =========================
-    private void mostrarNotifPuertaAbierta() {
-        if (!getPrefs(requireContext()).getBoolean("swPuertasAbiertas", true)) return;
+                    prefs.edit()
+                            .putBoolean(getLockPrefKeyForIndex(currentCarIndex), isLocked)
+                            .apply();
 
-        String titulo = getString(R.string.puertas_abiertas);
-        String mensaje = "Las puertas del coche se han desbloqueado correctamente.";
+                    // ✅ NOTIFICACIÓN SOLO AQUÍ (una vez)
+                    if (isLocked) mostrarNotifPuertaCerrada();
+                    else mostrarNotifPuertaAbierta();
 
-        notifyAndSave(
-                NOTIFICATION_ID_PUERTAS,
-                titulo,
-                mensaje,
-                R.drawable.ic_info,
-                "Puertas"
-        );
+                    doorUpdateInFlight = false;
+                })
+                .addOnFailureListener(e -> {
+                    // Si falla, no cambiamos UI y liberamos el bloqueo
+                    expectedDoorFromApp = null;
+                    doorUpdateInFlight = false;
+                });
     }
 
     private void mostrarNotifPuertaCerrada() {
@@ -762,6 +780,22 @@ public class IntentoFragment extends Fragment {
             tvLockState.setTextColor(ContextCompat.getColor(requireContext(), R.color.verdeoscuro));
         }
     }
+
+    private void mostrarNotifPuertaAbierta() {
+        if (!getPrefs(requireContext()).getBoolean("swPuertasAbiertas", true)) return;
+
+        String titulo = getString(R.string.puertas_abiertas);
+        String mensaje = "Las puertas del coche se han desbloqueado correctamente.";
+
+        notifyAndSave(
+                NOTIFICATION_ID_PUERTAS,
+                titulo,
+                mensaje,
+                R.drawable.ic_info,
+                "Puertas"
+        );
+    }
+
 
     // =========================
     //      NOTIFICATION CHANNEL
