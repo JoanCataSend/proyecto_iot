@@ -32,6 +32,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Proyecto_iot">
 
+        <!-- ✨ ChatbotActivity en el paquete utils -->
+        <activity
+            android:name=".utils.ChatbotActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
         <!-- Splash -->
         <activity
             android:name=".SplashActivity"

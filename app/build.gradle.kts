@@ -8,14 +8,37 @@ android {
     namespace = "com.example.proyecto_iot"
     compileSdk = 36
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.example.proyecto_iot"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "LLAMA_API_KEY", "\"${project.properties["sk-E4UtEEoBXzK-19NyohQZ3Q"]}\"")
+        buildConfigField("String", "LLAMA_ENDPOINT", "\"https://api.poligpt.upv.es\"")
+        buildConfigField("String", "LLAMA_MODEL", "\"llama3.2:3b\"")
+
+    }
+
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/INDEX.LIST",
+                "META-INF/io.netty.versions.properties",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt"
+            )
+        }
     }
 
     buildTypes {
@@ -48,6 +71,10 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.facebook.android:facebook-login:latest.release")
+    implementation("com.azure:azure-ai-openai:1.0.0-beta.12")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+
 
     implementation ("com.google.firebase:firebase-auth")
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
