@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp">
+    android:fillViewport="true"
+    android:background="?android:attr/colorBackground">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="?android:attr/colorBackground">
 
     <!-- Título -->
     <ImageView
         android:id="@+id/imageLogo"
-        android:layout_width="109dp"
-        android:layout_height="62dp"
-        android:layout_marginTop="64dp"
+        android:layout_width="206dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="16dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
-        android:src="@drawable/logop"
+        android:src="@drawable/logokova"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,7 +35,7 @@
         android:layout_marginTop="32dp"
         android:fontFamily="@font/montserrat_bold_ttf"
         android:text="Nombre de usuario"
-        android:textColor="@color/icono_normal"
+        android:textColor="?attr/android:textColorTertiary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imageLogo" />
 
@@ -58,7 +59,7 @@
         android:layout_marginTop="20dp"
         android:fontFamily="@font/montserrat_bold_ttf"
         android:text="Correo electrónico"
-        android:textColor="@color/icono_normal"
+        android:textColor="?attr/android:textColorTertiary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/nombreUsuario" />
 
@@ -82,7 +83,7 @@
         android:layout_marginTop="20dp"
         android:fontFamily="@font/montserrat_bold_ttf"
         android:text="Contraseña"
-        android:textColor="@color/icono_normal"
+        android:textColor="?attr/android:textColorTertiary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/email" />
 
@@ -114,7 +115,7 @@
             android:layout_marginEnd="12dp"
             android:contentDescription="Mostrar u ocultar contraseña"
             android:src="@drawable/ic_eye_closed"
-            android:tint="@color/icono_normal" />
+            app:tint="@color/icono_normal" />
     </RelativeLayout>
 
     <!-- Repetir contraseña -->
@@ -125,7 +126,7 @@
         android:layout_marginTop="20dp"
         android:fontFamily="@font/montserrat_bold_ttf"
         android:text="Repite la contraseña"
-        android:textColor="@color/icono_normal"
+        android:textColor="?attr/android:textColorTertiary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/passwordContainer" />
 
@@ -157,7 +158,7 @@
             android:layout_marginEnd="12dp"
             android:contentDescription="Mostrar u ocultar contraseña"
             android:src="@drawable/ic_eye_closed"
-            android:tint="@color/icono_normal" />
+            app:tint="@color/icono_normal" />
     </RelativeLayout>
 
     <!-- Botón Continuar -->
@@ -181,7 +182,7 @@
         android:backgroundTint="#00FAFAFA"
         android:fontFamily="@font/montserrat_bold_ttf"
         android:text="¿Ya tienes cuenta? Inicia sesión"
-        android:textColor="@color/icono_normal"
+        android:textColor="?attr/android:textColorTertiary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnContinuar" />

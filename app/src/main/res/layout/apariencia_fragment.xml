@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="?android:attr/colorBackground"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_vertical">
+        <!-- Título centrado -->
+        <TextView
+            android:id="@+id/titleSeguridad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Apariencia"
+            android:textColor="@color/icono_normal"
+            android:textSize="20sp"
+            android:fontFamily="@font/roboto_medium"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="Selecciona el tema de la aplicación"
+        android:textColor="?attr/colorOnBackground"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/radio_group_tema"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/radio_sistema"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Predeterminado por el sistema"
+            android:textSize="16sp"
+            android:paddingVertical="12dp"
+            android:textColor="@color/selector_color"/>
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/radio_claro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Claro"
+            android:textSize="16sp"
+            android:paddingVertical="12dp"
+            android:textColor="@color/selector_color"/>
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/radio_oscuro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Oscuro"
+            android:textSize="16sp"
+            android:paddingVertical="12dp"
+            android:textColor="@color/selector_color"/>
+
+    </RadioGroup>
+
+</LinearLayout>

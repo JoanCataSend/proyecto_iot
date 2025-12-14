@@ -48,7 +48,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/logokova"
-                app:tint="@color/icono_normal"/>
+                />
 
             <!-- Título -->
             <TextView
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:text="Registremos tu vehículo"
                 android:textSize="26sp"
-                android:textColor="@color/icono_normal"
+                android:textColor="?attr/android:textColorTertiary"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:layout_marginTop="16dp"/>
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:text="Necesitamos algunos datos antes de continuar"
                 android:textSize="15sp"
-                android:textColor="@color/texto_oscuro"
+                android:textColor="?attr/android:textColor"
                 android:gravity="center"
                 android:layout_marginTop="6dp"/>
 

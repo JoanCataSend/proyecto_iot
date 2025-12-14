@@ -13,7 +13,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:text="Coches Registrados"
-        android:textColor="@color/fondo_oscuro"
+        android:textColor="?attr/android:textColor"
         android:textSize="22sp"
         />
 

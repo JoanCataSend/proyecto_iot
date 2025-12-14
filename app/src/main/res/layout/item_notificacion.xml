@@ -7,24 +7,26 @@
     android:layout_marginHorizontal="12dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
-    android:background="@drawable/bg_card_soft">
+    android:background="?attr/colorPrimary"
+
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="12dp">
+        android:padding="12dp"
+        android:background="?attr/colorPrimary">
 
-        <!-- Ícono de la notificación -->
         <ImageView
             android:id="@+id/icono_notificacion"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="12dp"
-            app:tint="@color/fondo_oscuro"
+
+            app:tint="?attr/colorOnSurface"
             />
 
-        <!-- Contenido de texto -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -36,14 +38,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:textColor="@color/fondo_oscuro"
+
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/mensaje_notificacion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/texto_oscuro"
+
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="13sp"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="6dp" />
@@ -54,11 +58,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:textSize="12sp"
-                android:textColor="@color/texto_oscuro"
+
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:alpha="0.7"
                 android:layout_gravity="end"
                 android:gravity="end"/>
         </LinearLayout>
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

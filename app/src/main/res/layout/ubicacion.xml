@@ -22,7 +22,7 @@
             android:layout_marginTop="20dp"
             android:fontFamily="@font/montserrat_bold"
             android:text="@string/titulo_ubicacion"
-            android:textColor="@color/icono_normal"
+            android:textColor="?attr/android:textColorTertiary"
             android:textSize="20sp" />
 
         <!-- Descripción -->
@@ -36,7 +36,7 @@
             android:layout_marginTop="10dp"
             android:fontFamily="@font/roboto_regular"
             android:text="@string/descripcion_ubicacion"
-            android:textColor="@color/icono_normal" />
+            android:textColor="?attr/android:textColor" />
 
         <!-- Mapa con weight (ocupa todo el espacio libre disponible) -->
         <androidx.fragment.app.FragmentContainerView
@@ -86,7 +86,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/descripcion_mis_coches"
-            android:textColor="@color/icono_normal"
             style="@style/DescripciónActividad"
             android:layout_marginTop="8dp" />
 

@@ -3,12 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/fondo_claro"
+    android:background="?android:attr/colorBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingStart="20dp"
     android:paddingEnd="20dp"
-    tools:context=".SeguridadFragment">
+    tools:context=".SeguridadFragment"
+    >
 
     <!-- Barra superior: usamos RelativeLayout para centrar el título -->
     <RelativeLayout
@@ -36,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Configura las funciones de protección de tu coche y de tu cuenta"
-        android:textColor="@color/texto_oscuro"
+        android:textColor="?attr/android:textColor"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="8dp"
         android:textSize="14sp"
@@ -60,7 +61,7 @@
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dividerColor="@color/lavender_divider" />
+                app:dividerColor="?attr/colorSurface" />
 
             <!-- Opción: Sensor de puertas -->
             <CheckBox
@@ -68,77 +69,77 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Sensor de puertas\nAbre y cierra las puertas de forma remota"
-                android:textColor="@color/texto_oscuro"
+                android:textColor="?attr/android:textColor"
                 android:buttonTint="@color/boton_oscuro"
                 android:padding="12dp"
                 android:checked="true" />
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dividerColor="@color/lavender_divider" />
+                app:dividerColor="?attr/colorSurface" />
             <!-- Opción: Sensor de ventanas -->
             <CheckBox
                 android:id="@+id/checkVentanas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Sensor de ventanas\nDetecta la rotura de cristales"
-                android:textColor="@color/texto_oscuro"
+                android:textColor="?attr/android:textColor"
                 android:buttonTint="@color/boton_oscuro"
                 android:padding="12dp"
                 android:checked="true" />
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dividerColor="@color/lavender_divider" />
+                app:dividerColor="?attr/colorSurface" />
             <!-- Opción: Sensor de movimiento -->
             <CheckBox
                 android:id="@+id/checkMovimiento"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Sensor de movimiento\nDetecta si hay movimiento dentro del coche"
-                android:textColor="@color/texto_oscuro"
+                android:textColor="?attr/android:textColor"
                 android:buttonTint="@color/boton_oscuro"
                 android:padding="12dp"
                 android:checked="true" />
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dividerColor="@color/lavender_divider" />
+                app:dividerColor="?attr/colorSurface" />
             <!-- Opción: Alarma sonora -->
             <CheckBox
                 android:id="@+id/checkAlarma"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Alarma sonora\nActiva el sonido de la bocina"
-                android:textColor="@color/texto_oscuro"
+                android:textColor="?attr/android:textColor"
                 android:buttonTint="@color/boton_oscuro"
                 android:padding="12dp"
                 android:checked="true" />
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dividerColor="@color/lavender_divider" />
+                app:dividerColor="?attr/colorSurface" />
             <!-- Opción: Luces de aviso -->
             <CheckBox
                 android:id="@+id/checkLuces"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Luces de aviso\nActiva el parpadeo de los faros"
-                android:textColor="@color/texto_oscuro"
+                android:textColor="?attr/android:textColor"
                 android:buttonTint="@color/boton_oscuro"
                 android:padding="12dp"
                 android:checked="true" />
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dividerColor="@color/lavender_divider" />
+                app:dividerColor="?attr/colorSurface" />
             <!-- Opción: Bloqueo remoto -->
             <CheckBox
                 android:id="@+id/checkBloqueo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Bloqueo remoto\nBloquea las puertas de forma remota"
-                android:textColor="@color/texto_oscuro"
+                android:textColor="?attr/android:textColor"
                 android:buttonTint="@color/boton_oscuro"
                 android:padding="12dp"
                 android:checked="true" />

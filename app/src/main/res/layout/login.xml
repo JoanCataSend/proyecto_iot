@@ -14,16 +14,17 @@
     <!-- Título -->
     <ImageView
         android:id="@+id/imageLogo"
-        android:layout_width="129dp"
-        android:layout_height="94dp"
-        android:layout_marginTop="74dp"
+        android:layout_width="313dp"
+        android:layout_height="229dp"
+        android:layout_marginTop="8dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/app_name"
         android:scaleType="fitCenter"
-        android:src="@drawable/logop"
+        android:src="@drawable/logokova"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <!-- Label: correo -->
     <TextView
@@ -33,10 +34,9 @@
         android:fontFamily="@font/montserrat_bold_ttf"
         android:text="@string/correo"
         style="@style/TituloLabel"
-        android:textColor="@color/icono_normal"
         app:layout_constraintTop_toBottomOf="@id/imageLogo"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="64dp" />
+        android:layout_marginTop="0dp" />
 
     <!-- Campo: correo -->
     <EditText
@@ -95,7 +95,7 @@
             android:contentDescription="Mostrar u ocultar contraseña"
             android:focusable="true"
             android:src="@drawable/ic_eye_closed"
-            android:tint="@color/icono_normal" />
+             />
     </RelativeLayout>
 
     <!-- Botón: iniciar sesión -->
@@ -119,7 +119,7 @@
         android:background="#00FFFFFF"
         android:fontFamily="@font/roboto_regular"
         android:text="¿Aún no tienes cuenta? Regístrate"
-        android:textColor="@color/icono_normal"
+        android:textColor="?attr/android:textColorTertiary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button" />
@@ -133,7 +133,7 @@
         android:background="#00FFFFFF"
         android:fontFamily="@font/roboto_regular"
         android:text="He olvidado mi contraseña"
-        android:textColor="@color/icono_normal"
+        android:textColor="?attr/android:textColorTertiary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button2" />

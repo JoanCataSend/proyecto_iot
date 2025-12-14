@@ -7,19 +7,20 @@
     android:layout_height="match_parent">
 
     <!-- Título -->
+
+    <!-- Imagen perfil -->
     <TextView
         android:id="@+id/titulo"
         style="@style/Seccion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/cuenta_perfil"
-        android:textColor="@color/icono_normal"
+        android:textColor="?attr/android:textColorTertiary"
         android:textSize="20sp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Imagen perfil -->
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="wrap_content"
@@ -61,6 +62,7 @@
         android:layout_marginTop="8dp"
         android:inputType="text"
         app:layout_constraintTop_toBottomOf="@id/txtNombre"
+        android:textColor="?attr/android:textColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -84,6 +86,7 @@
         android:inputType="textEmailAddress"
         app:layout_constraintTop_toBottomOf="@id/txtCorreo"
         app:layout_constraintStart_toStartOf="parent"
+        android:textColor="?attr/android:textColor"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Contraseña -->
@@ -105,6 +108,7 @@
         android:layout_marginTop="8dp"
         android:inputType="textPassword"
         app:layout_constraintTop_toBottomOf="@id/txtContrasena"
+        android:textColor="?attr/android:textColor"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -126,10 +130,11 @@
         android:layout_width="310dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:backgroundTint="?attr/colorSecondary"
         android:text="Guardar cambios"
-        android:backgroundTint="@color/boton_oscuro"
-        app:layout_constraintTop_toBottomOf="@id/btnCerrarSesion"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/btnCerrarSesion" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

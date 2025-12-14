@@ -29,7 +29,7 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="32dp"
-                android:background="@drawable/bg_card_soft"
+                android:background="@drawable/bg_card_soft2"
                 android:clipToOutline="true"
                 android:elevation="2dp"
                 android:gravity="center_vertical"
@@ -86,7 +86,7 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="32dp"
-                android:backgroundTint="@color/boton_oscuro"
+                android:backgroundTint="?attr/colorSecondary"
                 android:text="Cerrar sesión"
                 android:textAllCaps="false" />
 
@@ -102,7 +102,7 @@
                     android:layout_height="1dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
-                    android:background="#DDDDDD" />
+                    android:background="?attr/colorSurface" />
 
                 <LinearLayout
                     android:id="@+id/cuenta_perfil"
@@ -116,18 +116,18 @@
                     android:paddingVertical="14dp">
 
                     <ImageView
-                        android:layout_width="22dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="22dp"
                         android:layout_marginEnd="12dp"
                         android:src="@drawable/ic_perfil1"
-                        app:tint="@color/icono_normal" />
+                        app:tint="?attr/colorSecondary" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Cuenta y perfil"
-                        android:textColor="@color/texto_oscuro"
+                        android:textColor="?attr/android:textColor"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -136,7 +136,7 @@
                     android:layout_height="1dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
-                    android:background="#DDDDDD" />
+                    android:background="?attr/colorSurface" />
 
                 <LinearLayout
                     android:id="@+id/coches_registrados"
@@ -154,14 +154,14 @@
                         android:layout_height="22dp"
                         android:layout_marginEnd="12dp"
                         android:src="@drawable/ic_coche_fino"
-                        app:tint="@color/icono_normal" />
+                        app:tint="?attr/colorSecondary" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Coches registrados"
-                        android:textColor="@color/texto_oscuro"
+                        android:textColor="?attr/android:textColor"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -170,7 +170,7 @@
                     android:layout_height="1dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
-                    android:background="#DDDDDD" />
+                    android:background="?attr/colorSurface" />
 
                 <LinearLayout
                     android:id="@+id/layout_notificaciones"
@@ -191,14 +191,14 @@
                         android:layout_height="22dp"
                         android:layout_marginEnd="12dp"
                         android:src="@drawable/ic_notificacion1_fina"
-                        app:tint="@color/icono_normal" />
+                        app:tint="?attr/colorSecondary" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Notificaciones"
-                        android:textColor="@color/texto_oscuro"
+                        android:textColor="?attr/android:textColor"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -207,7 +207,7 @@
                     android:layout_height="1dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
-                    android:background="#DDDDDD" />
+                    android:background="?attr/colorSurface" />
 
                 <LinearLayout
                     android:id="@+id/layoutSeguridad"
@@ -225,14 +225,14 @@
                         android:layout_height="22dp"
                         android:layout_marginEnd="12dp"
                         android:src="@drawable/ic_candado_cerrado"
-                        app:tint="@color/icono_normal" />
+                        app:tint="?attr/colorSecondary" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Seguridad"
-                        android:textColor="@color/texto_oscuro"
+                        android:textColor="?attr/android:textColor"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -241,9 +241,10 @@
                     android:layout_height="1dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
-                    android:background="#DDDDDD" />
+                    android:background="?attr/colorSurface" />
 
                 <LinearLayout
+                    android:id="@+id/btn_abrir_apariencia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="32dp"
@@ -251,21 +252,22 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingHorizontal="6dp"
-                    android:paddingVertical="14dp">
+                    android:paddingVertical="14dp"
+                    android:clickable="true">
 
                     <ImageView
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:layout_marginEnd="12dp"
                         android:src="@drawable/ic_editar"
-                        app:tint="@color/icono_normal" />
+                        app:tint="?attr/colorSecondary" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Apariencia"
-                        android:textColor="@color/texto_oscuro"
+                        android:textColor="?attr/android:textColor"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -274,7 +276,7 @@
                     android:layout_height="1dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
-                    android:background="#DDDDDD" />
+                    android:background="?attr/colorSurface" />
 
                 <LinearLayout
                     android:id="@+id/layoutAyudaySoporte"
@@ -292,14 +294,14 @@
                         android:layout_height="22dp"
                         android:layout_marginEnd="12dp"
                         android:src="@drawable/ic_config2"
-                        app:tint="@color/icono_normal" />
+                        app:tint="?attr/colorSecondary" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Ayuda y soporte"
-                        android:textColor="@color/texto_oscuro"
+                        android:textColor="?attr/android:textColor"
                         android:textSize="16sp" />
                 </LinearLayout>
             </LinearLayout>

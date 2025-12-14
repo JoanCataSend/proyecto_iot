@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_register_wizard">
+    android:background="?android:attr/colorBackground">
 
     <!-- Flecha atrás (más grande) -->
     <ImageButton
@@ -47,8 +47,7 @@
                 android:layout_marginTop="48dp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/logokova"
-                app:tint="@color/icono_normal" />
+                android:src="@drawable/logokova" />
 
             <!-- Indicador -->
             <TextView
@@ -56,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Paso 1 de 3"
-                android:textColor="@color/texto_oscuro"
+                android:textColor="?attr/android:textColor"
                 android:textSize="16sp"
                 android:layout_marginTop="24dp"/>
 
@@ -68,7 +67,7 @@
                 android:text="Vamos a crear tu cuenta"
                 android:textSize="26sp"
                 android:textStyle="bold"
-                android:textColor="@color/icono_normal"
+                android:textColor="?attr/android:textColorTertiary"
                 android:gravity="center"
                 android:layout_marginTop="12dp"/>
 
@@ -79,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:text="Te haremos unas preguntas rápidas"
                 android:textSize="15sp"
-                android:textColor="@color/texto_oscuro"
+                android:textColor="?attr/android:textColor"
                 android:gravity="center"
                 android:layout_marginTop="6dp"/>
 
@@ -102,7 +101,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:background="?android:attr/colorPrimary">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -110,14 +110,14 @@
                         android:text="¿Cómo te llamas?"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:textColor="@color/icono_normal"/>
+                        android:textColor="?attr/android:textColorTertiary"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Este será el nombre que mostraremos en la app."
                         android:textSize="15sp"
-                        android:textColor="@color/texto_oscuro"
+                        android:textColor="?attr/android:textColor"
                         android:layout_marginTop="6dp"/>
 
                     <EditText
@@ -235,11 +235,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ya tengo cuenta"
-        android:textColor="@color/texto_oscuro"
+        android:textColor="?attr/android:textColor"
         android:textSize="15sp"
         android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

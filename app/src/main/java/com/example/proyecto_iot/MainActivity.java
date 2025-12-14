@@ -22,8 +22,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         // Referencias del navbar
         navHome = findViewById(R.id.nav_home);
@@ -81,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** Animación sutil de presión y rebote en íconos */
-    private void attachIconTouchAnimation(ImageButton btn) {
+    /** Animación sutil de presión y rebote en íconos */private void attachIconTouchAnimation(ImageButton btn) {
         btn.setOnTouchListener((v, event) -> {
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:

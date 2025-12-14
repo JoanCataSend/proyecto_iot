@@ -2,13 +2,15 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="25dp">
+    android:padding="25dp"
+    android:background="?android:attr/colorBackground">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:background="?android:attr/colorBackground">
 
         <!-- Título -->
         <TextView
@@ -19,7 +21,7 @@
             android:layout_marginTop="32dp"
             android:fontFamily="@font/montserrat_bold"
             android:text="Editar coche"
-            android:textColor="@color/icono_normal"
+            android:textColor="?attr/android:textColorTertiary"
             android:textSize="20sp" />
 
         <!-- Descripcion -->
@@ -48,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nombre"
-                android:textColor="@color/icono_normal"
+                android:textColor="?attr/android:textColorTertiary"
                 android:fontFamily="@font/roboto_regular"
                 android:layout_marginBottom="5dp"/>
 
@@ -65,10 +67,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Marca"
                 android:layout_marginTop="15dp"
-                android:textColor="@color/icono_normal"
-                android:fontFamily="@font/roboto_regular"/>
+                android:fontFamily="@font/roboto_regular"
+                android:text="Marca"
+                android:textColor="?attr/android:textColorTertiary" />
 
             <EditText
                 android:id="@+id/edtMarca"
@@ -85,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:text="Modelo"
-                android:textColor="@color/icono_normal"
+                android:textColor="?attr/android:textColorTertiary"
                 android:fontFamily="@font/roboto_regular"/>
 
             <EditText
@@ -103,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:text="Matrícula"
-                android:textColor="@color/icono_normal"
+                android:textColor="?attr/android:textColorTertiary"
                 android:fontFamily="@font/roboto_regular"/>
 
             <EditText
