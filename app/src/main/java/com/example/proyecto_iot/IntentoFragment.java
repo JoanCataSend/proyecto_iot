@@ -54,7 +54,6 @@ public class IntentoFragment extends Fragment {
     private static final String CHANNEL_ID = "alertas_vehiculo";
 
     private static final int NOTIFICATION_ID_PUERTAS = 1001;
-    private static final int NOTIFICATION_ID_PUERTAS_CERRADAS = 1002;
     private static final int NOTIFICATION_ID_IMPACTO = 1003;
     private static final int NOTIFICATION_ID_SENALES = 1004;
 
@@ -63,9 +62,7 @@ public class IntentoFragment extends Fragment {
     private static final String PREF_KEY_SELECTED_CAR = "vehiculo_seleccionado";
 
     private static final long SIGNALS_DURATION_MS = 5_000;
-    private boolean doorUpdateInFlight = false;
-    private long lastDoorClickMs = 0L;
-    private static final long DOOR_CLICK_DEBOUNCE_MS = 600;
+
 
 
     // =========================
@@ -102,8 +99,6 @@ public class IntentoFragment extends Fragment {
     private String ultimaPuerta = null;
     private boolean ultimoImpacto = false;
 
-    // Para NO duplicar notificaciones cuando tú cambias desde la app
-    private String expectedDoorFromApp = null;
 
     // =========================
     //      SEÑALES
@@ -151,6 +146,9 @@ public class IntentoFragment extends Fragment {
 
         // Cargar coches + escuchar el seleccionado
         loadCarsFromFirestore(savedPosition, (ArrayAdapter<String>) spinnerCars.getAdapter());
+
+        NotificationManagerCompat nm = NotificationManagerCompat.from(requireContext());
+
     }
 
     @Override
@@ -362,32 +360,25 @@ public class IntentoFragment extends Fragment {
                     String puerta = doc.getString("puerta");
                     Boolean impacto = doc.getBoolean("impacto");
 
+                    if (puerta != null) {
+                        puerta = puerta.trim().toLowerCase(Locale.ROOT);
+                    }
+
                     if (puerta != null && !puerta.equals(ultimaPuerta)) {
                         ultimaPuerta = puerta;
-
-                        guardarEventoPuerta(carId, puerta);
 
                         boolean lockedNow = !"open".equals(puerta);
                         isLocked = lockedNow;
                         updateLockUi();
                         guardarLockEnPrefs(lockedNow);
 
-                        // Si viene de la app, solo limpiamos el flag.
-                        // Si viene de fuera, NO notifiques (porque tú quieres notificación solo al pulsar)
-                        if (expectedDoorFromApp != null && expectedDoorFromApp.equals(puerta)) {
-                            expectedDoorFromApp = null;
+                        if (lockedNow) {
+                            mostrarNotifPuertaCerrada();
+                        } else {
+                            mostrarNotifPuertaAbierta();
                         }
-
                     }
 
-                    boolean hayImpacto = impacto != null && impacto;
-
-                    if (hayImpacto && !ultimoImpacto) {
-                        ultimoImpacto = true;
-                        verificarImpactoReciente(carId);
-                    } else if (!hayImpacto) {
-                        ultimoImpacto = false;
-                    }
                 });
     }
 
@@ -441,25 +432,10 @@ public class IntentoFragment extends Fragment {
     //      CANDADO
     // =========================
     private void toggleLockAndNotify(SharedPreferences prefs) {
-
-        // Anti doble-tap (por si el usuario toca muy rápido)
-        long now = System.currentTimeMillis();
-        if (now - lastDoorClickMs < DOOR_CLICK_DEBOUNCE_MS) return;
-        lastDoorClickMs = now;
-
-        // Si ya hay una petición en curso, no lanzamos otra
-        if (doorUpdateInFlight) return;
-
         if (currentCarIndex < 0 || currentCarIndex >= carIds.size()) return;
 
-        // Estado deseado
         boolean targetLocked = !isLocked;
         String nuevoEstado = targetLocked ? "closed" : "open";
-
-        doorUpdateInFlight = true;
-
-        // Guardamos lo esperado para que el listener NO notifique ni se líe
-        expectedDoorFromApp = nuevoEstado;
 
         String carId = carIds.get(currentCarIndex);
 
@@ -467,28 +443,7 @@ public class IntentoFragment extends Fragment {
                 .document(carId)
                 .collection("estado")
                 .document("actual")
-                .update("puerta", nuevoEstado)
-                .addOnSuccessListener(aVoid -> {
-
-                    // Actualiza UI local (ya que tú quieres respuesta inmediata)
-                    isLocked = targetLocked;
-                    updateLockUi();
-
-                    prefs.edit()
-                            .putBoolean(getLockPrefKeyForIndex(currentCarIndex), isLocked)
-                            .apply();
-
-                    // ✅ NOTIFICACIÓN SOLO AQUÍ (una vez)
-                    if (isLocked) mostrarNotifPuertaCerrada();
-                    else mostrarNotifPuertaAbierta();
-
-                    doorUpdateInFlight = false;
-                })
-                .addOnFailureListener(e -> {
-                    // Si falla, no cambiamos UI y liberamos el bloqueo
-                    expectedDoorFromApp = null;
-                    doorUpdateInFlight = false;
-                });
+                .update("puerta", nuevoEstado);
     }
 
     private void mostrarNotifPuertaCerrada() {
@@ -498,7 +453,7 @@ public class IntentoFragment extends Fragment {
         String mensaje = "Las puertas del coche se han bloqueado correctamente.";
 
         notifyAndSave(
-                NOTIFICATION_ID_PUERTAS_CERRADAS,
+                NOTIFICATION_ID_PUERTAS,
                 titulo,
                 mensaje,
                 R.drawable.ic_info,
