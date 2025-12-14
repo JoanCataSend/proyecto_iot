@@ -13,7 +13,6 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -47,16 +46,19 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
     private static final int REQUEST_LOCATION_PERMISSION = 1;
 
-    private BottomSheetBehavior<View> bottomSheetBehavior;
     private GoogleMap mMap;
-
-    public GoogleMap getMapa() {
-        return mMap;
-    }
+    private BottomSheetBehavior<View> bottomSheetBehavior;
 
     private final ArrayList<CocheMapa> listaCoches = new ArrayList<>();
     private FirebaseFirestore db;
     private FirebaseAuth auth;
+
+    // =========================
+    //   GETTER PARA ADAPTER
+    // =========================
+    public GoogleMap getMapa() {
+        return mMap;
+    }
 
     @Nullable
     @Override
@@ -66,12 +68,11 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
         View view = inflater.inflate(R.layout.ubicacion, container, false);
 
-        // Ocultar flecha
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).setBackButtonVisible(false);
         }
 
-        // PANEL DESPLEGABLE
+        // ---------- BottomSheet ----------
         View panel = view.findViewById(R.id.panel_desplegable);
         bottomSheetBehavior = BottomSheetBehavior.from(panel);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -79,25 +80,22 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
         DisplayMetrics dm = new DisplayMetrics();
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int maxHeight = (int) (dm.heightPixels * 0.60f);
-        panel.getLayoutParams().height = maxHeight;
+        panel.getLayoutParams().height = (int) (dm.heightPixels * 0.6f);
 
-        // BOTÓN AÑADIR COCHE
+        // ---------- Botón añadir ----------
         view.findViewById(R.id.btnAnadirCoche)
                 .setOnClickListener(v ->
-                        startActivity(new Intent(getActivity(), AnadirCoche.class))
-                );
+                        startActivity(new Intent(getActivity(), AnadirCoche.class)));
 
-        // RECYCLER VIEW
+        // ---------- Recycler ----------
         RecyclerView recycler = view.findViewById(R.id.recyclerCoches);
         recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
         CocheMapaAdapter adapter = new CocheMapaAdapter(listaCoches, this);
         recycler.setAdapter(adapter);
 
-        // FIREBASE
+        // ---------- Firebase ----------
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
-
         FirebaseUser user = auth.getCurrentUser();
 
         if (user != null) {
@@ -112,11 +110,10 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
                             Double lat = doc.getDouble("lat");
                             Double lng = doc.getDouble("lng");
-                            String fotoUrl = doc.getString("Foto");
 
                             String direccion = "";
                             if (lat != null && lng != null && lat != 0 && lng != 0) {
-                                direccion = obtenerDireccionDesdeLatLng(lat, lng);
+                                direccion = obtenerDireccion(lat, lng);
                             }
 
                             listaCoches.add(new CocheMapa(
@@ -125,9 +122,9 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                                     doc.getString("Marca"),
                                     doc.getString("Modelo"),
                                     doc.getString("Matrícula"),
-                                    lat != null ? lat : 0.0,
-                                    lng != null ? lng : 0.0,
-                                    fotoUrl,
+                                    lat != null ? lat : 0,
+                                    lng != null ? lng : 0,
+                                    doc.getString("Foto"),
                                     direccion
                             ));
                         }
@@ -137,42 +134,80 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                     })
                     .addOnFailureListener(e ->
                             Toast.makeText(requireContext(),
-                                    "Error al cargar coches: " + e.getMessage(),
-                                    Toast.LENGTH_SHORT).show());
+                                    e.getMessage(), Toast.LENGTH_SHORT).show());
         }
 
-        // MAPA
         SupportMapFragment mapFragment =
-                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+                (SupportMapFragment) getChildFragmentManager()
+                        .findFragmentById(R.id.map);
 
-        if (mapFragment != null) mapFragment.getMapAsync(this);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
 
         solicitarPermisoUbicacionSiEsNecesario();
-
         return view;
     }
 
-    // ==================================================================
-    //      OBTENER DIRECCIÓN REAL DESDE LATITUD/LONGITUD
-    // ==================================================================
-    private String obtenerDireccionDesdeLatLng(double lat, double lng) {
+    // =========================
+    private String obtenerDireccion(double lat, double lng) {
         try {
-            Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
-            List<Address> direcciones =
-                    geocoder.getFromLocation(lat, lng, 1);
-
-            if (direcciones != null && !direcciones.isEmpty()) {
-                return direcciones.get(0).getAddressLine(0);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+            Geocoder g = new Geocoder(requireContext(), Locale.getDefault());
+            List<Address> list = g.getFromLocation(lat, lng, 1);
+            if (!list.isEmpty()) return list.get(0).getAddressLine(0);
+        } catch (Exception ignored) {}
         return "Ubicación desconocida";
     }
 
-    // ==================================================================
+    // =========================
+    private void actualizarMarcadores() {
+        if (mMap == null) return;
+        mMap.clear();
+
+        for (CocheMapa c : listaCoches) {
+            if (c.lat == 0 || c.lng == 0) continue;
+
+            LatLng pos = new LatLng(c.lat, c.lng);
+
+            if (c.fotoUrl != null && !c.fotoUrl.isEmpty()) {
+                cargarIconoPersonalizado(pos, c.fotoUrl, c.nombre);
+            } else {
+                mMap.addMarker(new MarkerOptions()
+                        .position(pos)
+                        .title(c.nombre));
+            }
+        }
+    }
+
+    private void cargarIconoPersonalizado(LatLng pos, String url, String nombre) {
+        Glide.with(requireContext())
+                .asBitmap()
+                .load(url)
+                .override(120, 120)
+                .centerInside()
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap bitmap,
+                                                @Nullable Transition<? super Bitmap> transition) {
+
+                        Bitmap out = Bitmap.createBitmap(
+                                bitmap.getWidth() + 20,
+                                bitmap.getHeight() + 20,
+                                Bitmap.Config.ARGB_8888
+                        );
+                        Canvas c = new Canvas(out);
+                        c.drawBitmap(bitmap, 10, 10, null);
+
+                        mMap.addMarker(new MarkerOptions()
+                                .position(pos)
+                                .title(nombre)
+                                .icon(BitmapDescriptorFactory.fromBitmap(out)));
+                    }
+
+                    @Override public void onLoadCleared(@Nullable Drawable placeholder) {}
+                });
+    }
+
     private void solicitarPermisoUbicacionSiEsNecesario() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -183,109 +218,18 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_LOCATION_PERMISSION
             );
-
-        } else {
-            habilitarMiUbicacionEnMapa();
         }
-    }
-
-    private void habilitarMiUbicacionEnMapa() {
-        if (mMap == null) return;
-
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-
-            mMap.setMyLocationEnabled(true);
-        }
-    }
-
-    // ==================================================================
-    //                   MARCADORES DEL MAPA
-    // ==================================================================
-    private void actualizarMarcadores() {
-        if (mMap == null) return;
-
-        mMap.clear();
-
-        for (CocheMapa coche : listaCoches) {
-
-            if (coche.lat == 0.0 && coche.lng == 0.0) continue;
-
-            LatLng pos = new LatLng(coche.lat, coche.lng);
-
-            if (coche.fotoUrl != null && !coche.fotoUrl.isEmpty()) {
-
-                cargarIconoPersonalizado(pos, coche.fotoUrl, coche.nombre);
-
-            } else {
-
-                mMap.addMarker(new MarkerOptions()
-                        .position(pos)
-                        .title(coche.nombre));
-            }
-        }
-
-        // Mover cámara al primer coche
-        for (CocheMapa c : listaCoches) {
-            if (c.lat != 0 && c.lng != 0) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(c.lat, c.lng), 14f
-                ));
-                break;
-            }
-        }
-    }
-
-    // ÍCONO PERSONALIZADO DEL COCHE SIN RECORTE
-    private void cargarIconoPersonalizado(LatLng pos, String url, String nombre) {
-
-        Glide.with(requireContext())
-                .asBitmap()
-                .load(url)
-                .override(120, 120)
-                .centerInside()
-                .into(new CustomTarget<Bitmap>() {
-
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap bitmap,
-                                                @Nullable Transition<? super Bitmap> transition) {
-
-                        Bitmap bmpConPadding = agregarPadding(bitmap, 10);
-
-                        mMap.addMarker(new MarkerOptions()
-                                .position(pos)
-                                .title(nombre)
-                                .icon(BitmapDescriptorFactory.fromBitmap(bmpConPadding)));
-                    }
-
-                    @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) { }
-                });
-    }
-
-    private Bitmap agregarPadding(Bitmap bmp, int p) {
-        Bitmap out = Bitmap.createBitmap(
-                bmp.getWidth() + p * 2,
-                bmp.getHeight() + p * 2,
-                Bitmap.Config.ARGB_8888
-        );
-        Canvas c = new Canvas(out);
-        c.drawBitmap(bmp, p, p, null);
-        return out;
     }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         actualizarMarcadores();
-        habilitarMiUbicacionEnMapa();
     }
 
-    // ==================================================================
-    //                          MODELO COCHE
-    // ==================================================================
+    // =========================
+    //      MODELO
+    // =========================
     public static class CocheMapa {
         public String id, nombre, marca, modelo, matricula, fotoUrl, direccion;
         public double lat, lng;
@@ -293,7 +237,6 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
         public CocheMapa(String id, String nombre, String marca, String modelo,
                          String matricula, double lat, double lng,
                          String fotoUrl, String direccion) {
-
             this.id = id;
             this.nombre = nombre;
             this.marca = marca;

@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         attachIconTouchAnimation(navNotifications);
         attachIconTouchAnimation(navSettings);
 
+        // Clicks del navbar → siempre sin backstack
         navHome.setOnClickListener(v -> {
             updateNavbarSelection(R.id.nav_home);
             replaceFragment(new IntentoFragment(), false);
@@ -52,18 +53,19 @@ public class MainActivity extends AppCompatActivity {
         navCar.setOnClickListener(v -> {
             updateNavbarSelection(R.id.nav_car);
             replaceFragment(new UbicacionFragment(), true);
+            replaceFragment(new UbicacionFragment(), false);
             setBackButtonVisible(false);
         });
 
         navNotifications.setOnClickListener(v -> {
             updateNavbarSelection(R.id.nav_notifications);
-            replaceFragment(new NotificacionesFragment(), true);
+            replaceFragment(new NotificacionesFragment(), false);
             setBackButtonVisible(false);
         });
 
         navSettings.setOnClickListener(v -> {
             updateNavbarSelection(R.id.nav_settings);
-            replaceFragment(new ConfigFragment(), true);
+            replaceFragment(new ConfigFragment(), false);
             setBackButtonVisible(false);
         });
 
@@ -100,10 +102,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void replaceFragment(Fragment fragment, boolean addToBackstack) {
+    public void replaceFragment(Fragment fragment, boolean addToBackstack) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, fragment);
         if (addToBackstack) ft.addToBackStack(null);
+
         ft.commit();
     }
 
@@ -115,15 +118,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setBackButtonVisible(boolean visible) {
-        btnBack.setVisibility(visible ? View.VISIBLE : View.GONE);
+        if (btnBack != null) {
+            btnBack.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
     }
 
+    /** BOTÓN ATRÁS CENTRALIZADO */
     private void handleBack() {
+
+        // 1️⃣ Si hay algo en el backstack (pantallas como ConfigNotificacionesFragment) → volver atrás
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
-        } else {
-            finish();
+
+            // Actualizar visibilidad del botón según nuevo fragment
+            Fragment newCurrent = getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_container);
+
+            if (newCurrent instanceof IntentoFragment ||
+                    newCurrent instanceof UbicacionFragment ||
+                    newCurrent instanceof NotificacionesFragment ||
+                    newCurrent instanceof ConfigFragment) {
+                setBackButtonVisible(false);
+            } else {
+                setBackButtonVisible(true);
+            }
+            return;
         }
+
+        // 2️⃣ Sin backstack: estamos en uno de los fragments "raíz" del navbar
+        Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+
+        // Si no estamos en Home → ir a Home
+        if (!(current instanceof IntentoFragment)) {
+            updateNavbarSelection(R.id.nav_home);
+            replaceFragment(new IntentoFragment(), false);
+            setBackButtonVisible(false);
+            return;
+        }
+
+        // 3️⃣ Ya estamos en Home → cerrar app
+        finish();
     }
 
     @Override

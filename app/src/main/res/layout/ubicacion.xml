@@ -2,8 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:textAlignment="center">
+    android:layout_height="match_parent">
 
     <!-- CONTENIDO PRINCIPAL -->
     <LinearLayout
@@ -12,7 +11,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- TÍTULO -->
+        <!-- TÍTULO SUPERIOR -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
@@ -21,11 +20,11 @@
             android:gravity="center_vertical">
 
             <TextView
-                android:id="@+id/titleSeguridad"
+                android:id="@+id/title_ubicacion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Informacion de tus coches"
+                android:text="Información de tus coches"
                 android:textColor="@color/icono_normal"
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_medium"
@@ -50,12 +49,13 @@
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="570dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="20dp"
             android:layout_marginEnd="30dp"
-            android:layout_marginBottom="40dp"
-            android:layout_weight="1"/>
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="40dp" />
+
     </LinearLayout>
 
     <!-- PANEL DESPLEGABLE -->
@@ -65,13 +65,12 @@
         android:layout_height="wrap_content"
         android:background="@drawable/desplegable_navbar"
         android:orientation="vertical"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
-        android:paddingBottom="0dp"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
         android:maxHeight="460dp"
-        android:translationY="5dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
+        <!-- HANDLE -->
         <View
             android:layout_width="95dp"
             android:layout_height="3dp"
@@ -79,46 +78,58 @@
             android:layout_marginTop="15dp"
             android:background="@color/boton_oscuro" />
 
-        <!-- TÍTULO PANEL -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/titleSeguridad"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="Mis coches registrados"
-                android:textColor="@color/icono_normal"
-                android:textSize="20sp"
-                android:fontFamily="@font/roboto_medium"
-                android:textStyle="bold" />
-        </RelativeLayout>
-
-        <!-- DESCRIPCIÓN PANEL -->
-        <TextView
-            android:id="@+id/panel_descrip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/descripcion_mis_coches"
-            android:textColor="@color/icono_normal"
-            style="@style/DescripciónActividad"
-            android:layout_marginTop="8dp" />
-
-        <!-- LISTA DE COCHES (RECYCLER) -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerCoches"
+        <!-- ================= CONTENIDO SCROLL ================= -->
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="10dp"
             android:layout_weight="1"
-            android:overScrollMode="never"/>
+            android:overScrollMode="never">
 
-        <!-- BOTÓN AÑADIR COCHE -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- TÍTULO -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Mis coches registrados"
+                        android:textColor="@color/icono_normal"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/roboto_medium"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <!-- DESCRIPCIÓN -->
+                <TextView
+                    android:id="@+id/panel_descrip"
+                    style="@style/DescripciónActividad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/descripcion_mis_coches"
+                    android:textColor="@color/icono_normal"
+                    android:layout_marginTop="8dp" />
+
+                <!-- LISTA -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerCoches"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:overScrollMode="never"
+                    android:nestedScrollingEnabled="false"/>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- ================= BOTÓN FIJO ================= -->
         <LinearLayout
             android:id="@+id/btnAnadirCoche"
             android:layout_width="match_parent"
@@ -145,6 +156,7 @@
                 android:layout_marginStart="10dp"
                 android:fontFamily="@font/montserrat_bold"/>
         </LinearLayout>
+
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

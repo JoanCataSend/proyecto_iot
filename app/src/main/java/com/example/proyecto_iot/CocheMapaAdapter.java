@@ -29,9 +29,9 @@ public class CocheMapaAdapter extends RecyclerView.Adapter<CocheMapaAdapter.Coch
     @NonNull
     @Override
     public CocheHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
+        View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_coche, parent, false);
-        return new CocheHolder(itemView);
+        return new CocheHolder(v);
     }
 
     @Override
@@ -42,25 +42,20 @@ public class CocheMapaAdapter extends RecyclerView.Adapter<CocheMapaAdapter.Coch
         holder.nombre.setText(coche.nombre);
         holder.ubicacion.setText(coche.direccion != null ? coche.direccion : "");
 
-        // ===============================================
-        //   CUANDO PULSAS EL ITEM → MOVER MAPA
-        // ===============================================
+        // Click item → mover mapa
         holder.itemView.setOnClickListener(v -> {
-            if (fragmentPadre.getMapa() != null) {
-
-                LatLng destino = new LatLng(coche.lat, coche.lng);
-
+            if (fragmentPadre.getMapa() != null && coche.lat != 0 && coche.lng != 0) {
                 fragmentPadre.getMapa().animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(destino, 16f)
+                        CameraUpdateFactory.newLatLngZoom(
+                                new LatLng(coche.lat, coche.lng), 16f
+                        )
                 );
             }
         });
 
-        // ================= Abrir EDITAR coche ==================
+        // Botón editar
         holder.btnEditar.setOnClickListener(v -> {
-
             EditarCocheFragment fragment = new EditarCocheFragment();
-
             Bundle args = new Bundle();
             args.putString("cocheId", coche.id);
             fragment.setArguments(args);
@@ -79,13 +74,12 @@ public class CocheMapaAdapter extends RecyclerView.Adapter<CocheMapaAdapter.Coch
         return coches.size();
     }
 
-    // ------------------- HOLDER -------------------
     static class CocheHolder extends RecyclerView.ViewHolder {
 
         TextView nombre, ubicacion;
         ImageButton btnEditar;
 
-        public CocheHolder(@NonNull View itemView) {
+        CocheHolder(@NonNull View itemView) {
             super(itemView);
             nombre = itemView.findViewById(R.id.nombre_coche);
             ubicacion = itemView.findViewById(R.id.ubicacion_coche);

@@ -65,13 +65,13 @@ public class PrimerCocheActivity extends AppCompatActivity {
         }
 
         if (!esMatriculaValida(matricula)) {
-            etMatricula.setError("Formato inválido. Debe ser 4 números y 3 letras (ej. 1234 DKB)");
+            etMatricula.setError("Formato inválido. Ejemplo: 1234 DKB");
             etMatricula.requestFocus();
             return;
         }
 
         if (nombre.isEmpty()) {
-            etNombreCoche.setError("El campo Nombre del coche es obligatorio");
+            etNombreCoche.setError("Debes darle un nombre al coche");
             etNombreCoche.requestFocus();
             return;
         }
@@ -85,25 +85,45 @@ public class PrimerCocheActivity extends AppCompatActivity {
             return;
         }
 
-        // ===== CREAR OBJETO =====
-        Map<String, Object> coche = new HashMap<>();
-        coche.put("Marca", marca);
-        coche.put("Modelo", modelo);
-        coche.put("Matrícula", matricula);
-        coche.put("Nombre", nombre);
-        coche.put("Propietario", Collections.singletonList(userId));
-
-        // ===== GUARDAR EN FIRESTORE =====
+        // ===== VALIDAR MATRÍCULA ÚNICA =====
+        String finalMatricula = matricula;
         db.collection("Coches")
-                .add(coche)
-                .addOnSuccessListener(documentReference -> {
-                    CustomToast.success(this, "Coche registrado correctamente");
-                    irAPaginaPrincipal();
+                .whereEqualTo("Matrícula", finalMatricula)
+                .get()
+                .addOnSuccessListener(query -> {
+
+                    if (!query.isEmpty()) {
+                        // YA EXISTE UN COCHE CON ESA MATRÍCULA
+                        etMatricula.setError("Esta matrícula ya está registrada");
+                        etMatricula.requestFocus();
+                        CustomToast.error(this, "La matrícula ya está en uso");
+                        return;
+                    }
+
+                    // Si no existe, seguimos creando el coche
+
+                    Map<String, Object> coche = new HashMap<>();
+                    coche.put("Marca", marca);
+                    coche.put("Modelo", modelo);
+                    coche.put("Matrícula", finalMatricula);
+                    coche.put("Nombre", nombre);
+                    coche.put("Propietario", Collections.singletonList(userId));
+
+                    db.collection("Coches")
+                            .add(coche)
+                            .addOnSuccessListener(doc -> {
+                                CustomToast.success(this, "Coche registrado correctamente");
+                                irAPaginaPrincipal();
+                            })
+                            .addOnFailureListener(e ->
+                                    CustomToast.error(this, "Error al registrar coche: " + e.getMessage())
+                            );
                 })
                 .addOnFailureListener(e ->
-                        CustomToast.error(this, "Error al registrar coche: " + e.getMessage())
+                        CustomToast.error(this, "Error comprobando matrícula: " + e.getMessage())
                 );
     }
+
 
 
     private void irAPaginaPrincipal() {
