@@ -8,6 +8,18 @@
     android:background="@color/fondo_claro"
     tools:context=".CameraFragment">
 
+    <!-- TABS -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabCamera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/fondo_claro"
+        app:tabIndicatorColor="@color/icono_normal"
+        app:tabTextColor="@color/icono_normal"
+        app:tabSelectedTextColor="@color/icono_normal"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- SCROLL -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollCamera"
         android:layout_width="0dp"
@@ -16,7 +28,7 @@
         android:paddingEnd="20dp"
         android:paddingTop="16dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabCamera"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -27,92 +39,116 @@
             android:orientation="vertical"
             android:paddingBottom="120dp">
 
-            <!-- TÍTULO (FUERA DE LA CARD) -->
-            <TextView
-                android:id="@+id/tvCameraInfo"
+            <!-- ============================= -->
+            <!-- STREAMING -->
+            <!-- ============================= -->
+            <LinearLayout
+                android:id="@+id/layoutStreaming"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cámaras"
-                android:textAlignment="center"
-                android:textColor="@color/icono_normal"
-                android:textSize="22sp"
-                android:layout_marginTop="16dp"
-                android:padding="8dp"
-                android:textStyle="bold" />
+                android:orientation="vertical">
 
-            <!-- CARD con las cámaras -->
+                <LinearLayout
+                    android:id="@+id/cameraCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_card_soft"
+                    android:padding="20dp"
+                    android:layout_marginTop="12dp"
+                    android:elevation="6dp">
+
+                    <!-- Cámara Delantera -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cámara Delantera"
+                        android:textStyle="bold"
+                        android:textColor="@color/icono_normal" />
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/hqdefault"
+                        android:elevation="6dp"
+                        android:clipToOutline="true">
+
+                        <WebView
+                            android:id="@+id/webCamView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                    </FrameLayout>
+
+                    <!-- Cámara Interior -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cámara Interior"
+                        android:layout_marginTop="18dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/icono_normal" />
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/hpdefault2"
+                        android:elevation="6dp"
+                        android:clipToOutline="true">
+
+                        <WebView
+                            android:id="@+id/webCamView2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                    </FrameLayout>
+
+                </LinearLayout>
+
+                <!-- BOTÓN HACER FOTO -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGuardarFoto"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="26dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/hacer_foto"
+                    app:cornerRadius="8dp"
+                    android:background="@drawable/bg_boton_rojo"/>
+            </LinearLayout>
+
+            <!-- ============================= -->
+            <!-- CAPTURAS -->
+            <!-- ============================= -->
             <LinearLayout
-                android:id="@+id/cameraCard"
+                android:id="@+id/layoutCapturas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/bg_card_soft"
-                android:padding="20dp"
-                android:layout_marginTop="12dp"
-                android:elevation="6dp">
+                android:visibility="gone">
 
-                <!-- Cámara Delantera -->
+                <!-- MENSAJE SIN CAPTURAS -->
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/txtSinCapturas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Cámara Delantera"
-                    android:textStyle="bold"
-                    android:textColor="@color/icono_normal" />
+                    android:text="Aún no hay capturas disponibles"
+                    android:textAlignment="center"
+                    android:textSize="16sp"
+                    android:textColor="@color/icono_normal"
+                    android:padding="24dp"
+                    android:visibility="gone"/>
 
-                <FrameLayout
-                    android:id="@+id/cameraPreviewContainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/hqdefault"
-                    android:elevation="6dp"
-                    android:clipToOutline="true">
-
-                    <WebView
-                        android:id="@+id/webCamView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
-                </FrameLayout>
-
-                <!-- Cámara Interior -->
-                <TextView
-                    android:id="@+id/textView9"
+                <!-- LISTA -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerCapturas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Cámara Interior"
-                    android:layout_marginTop="18dp"
-                    android:textStyle="bold"
-                    android:textColor="@color/icono_normal" />
-
-                <FrameLayout
-                    android:id="@+id/cameraPreviewContainer2"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/hpdefault2"
-                    android:elevation="6dp"
-                    android:clipToOutline="true">
-
-                    <WebView
-                        android:id="@+id/webCamView2"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
-                </FrameLayout>
+                    android:layout_marginTop="12dp"
+                    android:overScrollMode="never"/>
 
             </LinearLayout>
-
-            <!-- BOTÓN HACER FOTO (FUERA DE LA CARD) -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnGuardarFoto"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="26dp"
-                android:layout_marginBottom="16dp"
-                android:text="@string/hacer_foto"
-                app:cornerRadius="8dp"
-                android:background="@drawable/bg_boton_rojo"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
