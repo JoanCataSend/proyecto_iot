@@ -63,9 +63,9 @@
     <string name="titulo_ayuda">Ayuda y soporte</string>
     <string name="descripcion_ayuda">¿Necesitas ayuda o tienes dudas? Aquí puedes encontrar toda la información.</string>
     <string name="preguntas_frecuentes">Preguntas frecuentes</string>
-    <string name="como_añadir_coche">¿Cómo añadir un coche?</string>
-    <string name="como_activar_sensores">¿Cómo activar los sensores?</string>
-    <string name="que_hacer_si_pierdo_coche">¿Qué hacer si pierdo el coche?</string>
+    <string name="como_añadir_coche"><a href="https://www.google.com">¿Cómo añadir un coche?</a></string>
+    <string name="como_activar_sensores"><a href="https://www.google.com">¿Cómo activar los sensores?</a>></string>
+    <string name="que_hacer_si_pierdo_coche"><a href="https://www.google.com">¿Qué hacer si pierdo el coche?</a></string>
     <string name="contactar_soporte">Contacta con el soporte</string>
     <string name="correo_soporte">support@carsecureapp.com</string>
     <string name="terminos_privacidad">Términos y privacidad</string>
@@ -79,7 +79,7 @@
     <string name="bloqueado">Bloquear</string>
     <string name="señales">Señales</string>
     <string name="batería">Batería</string>
-    <string name="calle">C/de Legazpi, 7, 46730 Gandia,Valencia</string>
+    <string name="calle">C/ Paranimf, 1, 46730 Gandia, Valencia</string>
     <string name="champon">EL CHAMPON ESTA CERRADO</string>
     <string name="wifi">Sistema activo y vigilando</string>
 
@@ -103,12 +103,13 @@
 
     <string name="guardar_cambios">Guardar</string>
     <string name="apertura_vehiculo">Apertura vehiculo</string>
+    <string name="google_maps_key">AIzaSyCvjpWVS9xG6Wg7l6qY0bvWM0-d-b6QVFA</string>
     <string name="cambiar_contrasena">Cambiar contraseña</string>
-
 
     <string-array name="lista_coches">
         <item>El Champon</item>
         <item>Speedy Azul</item>
+        <item>Roadster Negro</item>
     </string-array>
 
 

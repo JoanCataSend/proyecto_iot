@@ -63,9 +63,9 @@
     <string name="titulo_ayuda">Ayuda y soporte</string>
     <string name="descripcion_ayuda">¿Necesitas ayuda o tienes dudas? Aquí puedes encontrar toda la información.</string>
     <string name="preguntas_frecuentes">Preguntas frecuentes</string>
-    <string name="como_añadir_coche">¿Cómo añadir un coche?</string>
-    <string name="como_activar_sensores">¿Cómo activar los sensores?</string>
-    <string name="que_hacer_si_pierdo_coche">¿Qué hacer si pierdo el coche?</string>
+    <string name="como_añadir_coche"><a href="https://www.google.com">¿Cómo añadir un coche?</a></string>
+    <string name="como_activar_sensores"><a href="https://www.google.com">¿Cómo activar los sensores?</a>></string>
+    <string name="que_hacer_si_pierdo_coche"><a href="https://www.google.com">¿Qué hacer si pierdo el coche?</a></string>
     <string name="contactar_soporte">Contacta con el soporte</string>
     <string name="correo_soporte">support@carsecureapp.com</string>
     <string name="terminos_privacidad">Términos y privacidad</string>
