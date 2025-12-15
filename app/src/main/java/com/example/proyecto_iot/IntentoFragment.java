@@ -646,7 +646,7 @@ public class IntentoFragment extends Fragment {
      * Merge-safe: si tu clase Notificacion tiene constructor "rico" (7 params), lo usa.
      * Si solo tiene el "simple" (4 params), cae al simple.
      * Así NO perdemos funcionalidad en proyectos donde exista el modelo avanzado,
-     * y tampoco rompemos compilación en proyectos antiguos.
+     * y tampoco rompemos cmpilación en proyectos antiguos.
      */
     private void safeAddNotificacion(String titulo,
                                      String mensaje,
