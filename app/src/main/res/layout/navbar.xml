@@ -11,7 +11,8 @@
     android:elevation="12dp"
     android:paddingHorizontal="12dp"
     android:paddingVertical="6dp"
-    android:background="@color/nav_background_light">
+    android:background="?android:attr/statusBarColor"
+    >
 
     <!-- HOME -->
     <LinearLayout
@@ -40,7 +41,7 @@
             android:scaleType="centerInside"
             android:clickable="true"
             android:focusable="true"
-            app:tint="@color/nav_icon_dark_inactive" />
+            app:tint="?attr/colorTertiary" />
     </LinearLayout>
 
     <!-- CAR -->
@@ -70,7 +71,7 @@
             android:scaleType="centerInside"
             android:clickable="true"
             android:focusable="true"
-            app:tint="@color/nav_icon_dark_inactive" />
+            app:tint="?attr/colorTertiary" />
     </LinearLayout>
 
     <!-- NOTIFICATIONS -->
@@ -100,7 +101,7 @@
             android:scaleType="centerInside"
             android:clickable="true"
             android:focusable="true"
-            app:tint="@color/nav_icon_dark_inactive" />
+            app:tint="?attr/colorTertiary" />
     </LinearLayout>
 
     <!-- SETTINGS -->
@@ -130,7 +131,7 @@
             android:scaleType="centerInside"
             android:clickable="true"
             android:focusable="true"
-            app:tint="@color/nav_icon_dark_inactive" />
+            app:tint="?attr/colorTertiary" />
     </LinearLayout>
 
 </LinearLayout>

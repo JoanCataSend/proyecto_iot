@@ -20,6 +20,8 @@
         app:layout_constraintBottom_toTopOf="@+id/btnGuardar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
+    android:padding="25dp"
+    android:background="?android:attr/colorBackground">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,16 +29,19 @@
             android:orientation="vertical"
             android:gravity="center_horizontal"
             android:paddingTop="16dp"
-            android:paddingBottom="80dp">
+            android:paddingBottom="80dp"
+            android:background="?android:attr/colorBackground">
+            >
 
             <!-- TITULO -->
             <TextView
                 android:id="@+id/tvTitleEditar"
+                style="@style/Seccion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Editar vehículo"
                 android:textSize="26sp"
-                android:textColor="@color/icono_normal"
+                android:textColor="?attr/android:textColorTertiary"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:layout_marginTop="20dp"/>

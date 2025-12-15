@@ -3,47 +3,41 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingHorizontal="20dp">
+    android:layout_height="match_parent">
 
-    <!-- Flecha atrás -->
+    <!-- BOTÓN BACK -->
     <ImageButton
         android:id="@+id/btnBack"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="10dp"
         android:src="@drawable/ic_flecha_atras"
-        app:layout_constraintStart_toStartOf="@+id/scrollContent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/icono_normal" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Texto OMIRIR arriba a la derecha -->
+    <!-- SKIP -->
     <TextView
         android:id="@+id/tvSkip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/transparent"
-        android:clickable="true"
-        android:focusable="true"
-        android:fontFamily="@font/roboto_regular"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
         android:padding="8dp"
         android:text="Omitir"
-        android:textColor="@color/icono_normal"
         android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="@+id/scrollContent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- CONTENIDO SCROLLEABLE -->
+    <!-- CONTENIDO -->
     <ScrollView
         android:id="@+id/scrollContent"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@+id/btnBack"
-        app:layout_constraintBottom_toTopOf="@+id/llButtons"
+        app:layout_constraintTop_toBottomOf="@id/btnBack"
+        app:layout_constraintBottom_toTopOf="@id/llButtons"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -51,237 +45,104 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center_horizontal">
+            android:padding="24dp">
 
-            <!-- Logo -->
-            <ImageView
-                android:id="@+id/ivLogo"
-                android:layout_width="138dp"
-                android:layout_height="108dp"
-                android:layout_marginTop="40dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/logokova" />
-
-            <!-- Indicador de paso -->
-            <TextView
-                android:id="@+id/tvStep"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Paso 1 de 3"
-                android:textColor="@color/texto_oscuro"
-                android:textSize="14sp" />
-
-            <!-- Título -->
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Vamos a crear tu cuenta"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@color/icono_normal"
-                android:gravity="center" />
-
-            <!-- Subtítulo -->
-            <TextView
-                android:id="@+id/tvSubtitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Te haremos unas preguntas rápidas"
-                android:textSize="14sp"
-                android:textColor="@color/texto_oscuro"
-                android:gravity="center" />
-
-            <!-- Tarjeta de pasos -->
+            <!-- PASO 1 -->
             <LinearLayout
-                android:id="@+id/cardContainer"
+                android:id="@+id/stepNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="¿Cómo te llamas?"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <EditText
+                    android:id="@+id/etNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="Nombre y apellidos"/>
+            </LinearLayout>
+
+            <!-- PASO 2 -->
+            <LinearLayout
+                android:id="@+id/stepEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/bg_card_rounded"
-                android:backgroundTint="@color/morado_claro"
-                android:layout_marginTop="28dp"
-                android:layout_marginBottom="28dp"
-                android:padding="24dp"
-                android:elevation="6dp"
-                android:gravity="center_horizontal">
+                android:visibility="gone">
 
-                <!-- PASO 1: Nombre -->
-                <LinearLayout
-                    android:id="@+id/stepNombre"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="¿Cuál es tu correo?"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <EditText
+                    android:id="@+id/etEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_marginTop="12dp"
+                    android:inputType="textEmailAddress"
+                    android:hint="correo@ejemplo.com"/>
+            </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="¿Cómo te llamas?"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/icono_normal" />
+            <!-- PASO 3 -->
+            <LinearLayout
+                android:id="@+id/stepPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Este será el nombre que mostraremos en la app."
-                        android:textSize="14sp"
-                        android:textColor="@color/texto_oscuro" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Crea tu contraseña"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
 
-                    <EditText
-                        android:id="@+id/etNombre"
-                        style="@style/EditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:hint="Nombre y apellidos" />
-                </LinearLayout>
-
-                <!-- PASO 2: Email -->
-                <LinearLayout
-                    android:id="@+id/stepEmail"
+                <EditText
+                    android:id="@+id/etPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
+                    android:layout_marginTop="12dp"
+                    android:inputType="textPassword"
+                    android:hint="Contraseña"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="¿Cuál es tu correo?"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/icono_normal" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Lo usaremos para avisarte de eventos importantes."
-                        android:textSize="14sp"
-                        android:textColor="@color/texto_oscuro" />
-
-                    <EditText
-                        android:id="@+id/etEmail"
-                        style="@style/EditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:inputType="textEmailAddress"
-                        android:hint="tucorreo@ejemplo.com" />
-                </LinearLayout>
-
-                <!-- PASO 3: Contraseña -->
-                <LinearLayout
-                    android:id="@+id/stepPassword"
+                <EditText
+                    android:id="@+id/etRepeatPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Crea tu contraseña"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/icono_normal" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Debe tener mínimo 6 caracteres."
-                        android:textSize="14sp"
-                        android:textColor="@color/texto_oscuro" />
-
-                    <EditText
-                        android:id="@+id/etPassword"
-                        style="@style/EditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:inputType="textPassword"
-                        android:hint="Contraseña" />
-
-                    <EditText
-                        android:id="@+id/etRepeatPassword"
-                        style="@style/EditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:inputType="textPassword"
-                        android:hint="Repite la contraseña" />
-                </LinearLayout>
-
+                    android:layout_marginTop="8dp"
+                    android:inputType="textPassword"
+                    android:hint="Repite la contraseña"/>
             </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
 
-    <!-- Zona inferior con botones -->
+    <!-- BOTÓN INFERIOR -->
     <LinearLayout
         android:id="@+id/llButtons"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="8dp"
-        android:paddingBottom="24dp"
+        android:padding="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPrimary"
-            style="@style/BotonPrincipal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Siguiente"
-            android:textAllCaps="false"
-            android:letterSpacing="0.03"
-            android:minHeight="48dp"
-            android:paddingVertical="12dp" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvSecondaryAction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="¿Ya tienes cuenta? Inicia sesión"
-            android:textColor="@color/texto_oscuro"
-            android:textSize="14sp"
-            android:layout_marginTop="12dp"
-            android:layout_gravity="center_horizontal"
-            android:fontFamily="@font/roboto_regular"
-            android:letterSpacing="0.02"/>
+            android:text="Siguiente"/>
     </LinearLayout>
-
-    <!-- Overlay de carga con fondo semitransparente -->
-    <FrameLayout
-        android:id="@+id/loadingOverlay"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="#66000000"
-        android:visibility="gone"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_gravity="center"
-            android:indeterminate="true" />
-
-    </FrameLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

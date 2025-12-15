@@ -21,11 +21,12 @@
 
             <TextView
                 android:id="@+id/title_ubicacion"
+                style="@style/Seccion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="Información de tus coches"
-                android:textColor="@color/icono_normal"
+                android:textColor="?attr/android:textColorTertiary"
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_medium"
                 android:textStyle="bold" />
@@ -42,7 +43,7 @@
             android:layout_marginTop="10dp"
             android:fontFamily="@font/roboto_regular"
             android:text="@string/descripcion_ubicacion"
-            android:textColor="@color/icono_normal" />
+            android:textColor="?attr/android:textColor" />
 
         <!-- MAPA -->
         <androidx.fragment.app.FragmentContainerView

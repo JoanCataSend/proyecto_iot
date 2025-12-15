@@ -154,6 +154,18 @@ public class ConfigFragment extends Fragment {
             });
         }
 
+        // =========================
+        // NAVEGACIÓN: APARIENCIA (NUEVO)
+        // =========================
+        LinearLayout btnApariencia = view.findViewById(R.id.btn_abrir_apariencia);
+        if (btnApariencia != null) {
+            btnApariencia.setOnClickListener(v -> {
+                replaceFragment(new AparienciaFragment());
+                ((MainActivity) requireActivity()).setBackButtonVisible(true);
+            });
+        }
+
+
 
         // =========================
         // CARGAR DATOS DEL USUARIO (Firestore)
@@ -170,7 +182,7 @@ public class ConfigFragment extends Fragment {
                 .addOnSuccessListener(doc -> {
                     if (doc.exists()) {
 
-                        String nombre = doc.getString("Usuario");
+                                String nombre = doc.getString("Usuario");
                         String correo = doc.getString("Correo");
                         String imagenUrl = doc.getString("Imagen");
 
@@ -206,6 +218,7 @@ public class ConfigFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> tvName.setText("Error al cargar"));
     }
+
 
 
     // =========================

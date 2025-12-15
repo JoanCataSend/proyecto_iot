@@ -1,6 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Proyecto_iot" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Tema principal oscuro -->
+
+    <!-- Tema principal -->
+    <style name="Theme.Proyecto_iot" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Colores -->
+        <item name="colorPrimary">@color/pill_darkmode</item>
+        <item name="colorOnPrimary">@color/texto_claro</item>
+        <item name="colorSecondary">@color/icono_normal_darkmode</item>
+        <item name="colorTertiary">@color/texto_claro</item>
+        <item name="colorSurface">@color/linea_finita_darkmode</item>
+        <item name="colorOnSecondary">@color/pill_darkmode</item>
+
+
+        <!-- Fondo y barra de estado -->
+        <item name="android:colorBackground">@color/fondo_oscuro</item>
+        <item name="android:statusBarColor">@color/fondo_oscuro </item>
+
+        <!-- Tipografía -->
+        <item name="fontFamily">@font/roboto_regular_ttf</item>
+        <item name="android:fontFamily">@font/roboto_regular_ttf</item>
+        <item name="android:textColor">@color/texto_claro</item>
+        <item name="android:textColorSecondary">@color/texto_secundario_darkmode</item>
+        <item name="android:textColorTertiary">@color/icono_normal_darkmode</item>
+
+        <!-- Botones personalizados -->
+        <item name="buttonStyle">@style/Boton.Proyecto_iot</item>
     </style>
+
+    <!-- Botón personalizado -->
+    <style name="Boton.Proyecto_iot" parent="Widget.Material3.Button">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/texto_claro</item>
+        <item name="android:background">@drawable/boton_principal_selector</item>
+        <item name="android:fontFamily">@font/montserrat_bold_ttf</item>
+    </style>
+
 </resources>

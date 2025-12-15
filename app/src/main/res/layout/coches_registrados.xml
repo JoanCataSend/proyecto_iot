@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="Coches registrados"
-            android:textColor="@color/icono_normal"
+            android:textColor="?attr/android:textColor"
             android:textSize="20sp"
             android:fontFamily="@font/roboto_medium"
             android:textStyle="bold" />

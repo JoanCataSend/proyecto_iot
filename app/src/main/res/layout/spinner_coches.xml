@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:paddingVertical="12dp"
     android:paddingHorizontal="20dp"
-    android:textColor="@color/texto_oscuro"
+    android:textColor="?attr/android:textColor"
     android:textSize="16sp"
     android:gravity="center_vertical"
-    android:background="?attr/selectableItemBackground"
+    android:background="@drawable/bg_card_soft"
     android:fontFamily="@font/montserrat_bold_ttf" />

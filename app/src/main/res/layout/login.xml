@@ -29,9 +29,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/correo"
-        android:textColor="@color/icono_normal"
         app:layout_constraintTop_toBottomOf="@id/imageLogo"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <!-- Campo correo -->
     <EditText
@@ -110,9 +110,8 @@
         android:background="#00FFFFFF"
         android:fontFamily="@font/roboto_regular"
         android:text="¿Aún no tienes cuenta? Regístrate"
-        android:textColor="@color/icono_normal"
+        android:textColor="?attr/android:textColorTertiary"
         android:layout_marginTop="6dp"
-        app:layout_constraintTop_toBottomOf="@id/button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -124,9 +123,8 @@
         android:background="#00FFFFFF"
         android:fontFamily="@font/roboto_regular"
         android:text="He olvidado mi contraseña"
-        android:textColor="@color/icono_normal"
         android:layout_marginTop="4dp"
-        app:layout_constraintTop_toBottomOf="@id/button2"
+        android:textColor="?attr/android:textColorTertiary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -207,3 +205,4 @@
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -6,14 +6,15 @@
     android:padding="12dp"
     android:background="@drawable/bg_card_soft"
     android:gravity="center_vertical"
-    android:layout_marginBottom="20dp">
+    android:layout_marginBottom="20dp"
+    >
 
     <ImageView
         android:id="@+id/icono_coche"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:src="@drawable/ic_coche"
-        app:tint="@color/icono_normal"
+        app:tint="?attr/colorTertiary"
         android:layout_marginEnd="12dp" />
 
     <LinearLayout
@@ -27,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Nombre del coche"
-            android:textColor="@color/texto_oscuro"
+            android:textColor="?attr/android:textColor"
             android:fontFamily="@font/roboto_regular"
             android:textSize="14sp"
             />
@@ -37,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Calle Ejemplo 123"
-            android:textColor="@color/boton_oscuro"
+            android:textColor="?attr/android:textColorTertiary"
             android:textSize="12sp"/>
     </LinearLayout>
 
@@ -48,5 +49,6 @@
         android:src="@drawable/ic_editar"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Editar coche"
-        app:tint="@color/icono_normal"/>
+        app:tint="?attr/colorOnSecondary"
+        />
 </LinearLayout>

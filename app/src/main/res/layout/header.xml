@@ -8,7 +8,7 @@
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:paddingTop="16dp"
-    android:background="@color/fondo_claro">
+    android:background="?android:attr/colorBackground">
 
     <ImageButton
         android:id="@+id/btnBack"

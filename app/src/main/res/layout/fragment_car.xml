@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondo_claro">
+    android:background="?android:attr/colorBackground">
 
     <!-- Contenido futuro del fragment del coche -->
     <RelativeLayout
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="Informacion del coche"
-            android:textColor="@color/icono_normal"
+            android:textColor="?attr/android:textColor"
             android:textSize="20sp"
             android:fontFamily="@font/roboto_medium"
             android:textStyle="bold" />

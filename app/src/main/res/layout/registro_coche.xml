@@ -3,33 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground">
 
     <!-- Logo -->
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="110dp"
-        android:layout_height="66dp"
-        android:layout_marginTop="100dp"
+        android:layout_width="167dp"
+        android:layout_height="96dp"
+        android:layout_marginTop="64dp"
         android:contentDescription="Logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logop" />
+        app:srcCompat="@drawable/logokova" />
 
     <!-- Texto explicativo -->
+
+    <!-- Título: Marca -->
     <TextView
         android:id="@+id/txtExplicativo"
         android:layout_width="310dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="28dp"
         android:fontFamily="@font/roboto_regular"
         android:text="@string/mensaje_registro_coche"
         android:textSize="12sp"
+        android:textColor="?attr/android:textColor"
         app:layout_constraintStart_toStartOf="@+id/etMarcaEditar"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-    <!-- Título: Marca -->
     <TextView
         android:id="@+id/txtMarcaE"
         android:layout_width="wrap_content"
@@ -37,7 +40,7 @@
         android:layout_marginTop="16dp"
         android:fontFamily="@font/roboto_regular"
         android:text="@string/marca"
-        android:textColor="@color/icono_normal"
+        android:textColor="?attr/android:textColorTertiary"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@+id/etMarcaEditar"
         app:layout_constraintTop_toBottomOf="@+id/txtExplicativo" />
@@ -66,7 +69,7 @@
         android:layout_marginTop="15dp"
         android:fontFamily="@font/roboto_regular"
         android:text="@string/modelo"
-        android:textColor="@color/icono_normal"
+        android:textColor="?attr/android:textColorTertiary"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@+id/etModelo"
         app:layout_constraintTop_toBottomOf="@+id/etMarcaEditar"
@@ -95,7 +98,7 @@
         android:layout_marginTop="15dp"
         android:fontFamily="@font/roboto_regular"
         android:text="@string/matricula"
-        android:textColor="@color/icono_normal"
+        android:textColor="?attr/android:textColorTertiary"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@+id/etMatricula"
         app:layout_constraintTop_toBottomOf="@+id/etModelo" />
@@ -124,7 +127,7 @@
         android:layout_marginTop="15dp"
         android:fontFamily="@font/roboto_regular"
         android:text="@string/nombre_coche"
-        android:textColor="@color/icono_normal"
+        android:textColor="?attr/android:textColorTertiary"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@+id/etNombreCoche"
         app:layout_constraintTop_toBottomOf="@+id/etMatricula" />

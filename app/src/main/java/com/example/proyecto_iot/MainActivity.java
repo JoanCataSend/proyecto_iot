@@ -25,19 +25,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Referencias del navbar
         navHome = findViewById(R.id.nav_home);
         navCar = findViewById(R.id.nav_car);
         navNotifications = findViewById(R.id.nav_notifications);
         navSettings = findViewById(R.id.nav_settings);
 
+        // Indicadores
         indicatorHome = findViewById(R.id.indicator_home);
         indicatorCar = findViewById(R.id.indicator_car);
         indicatorNotifications = findViewById(R.id.indicator_notifications);
         indicatorSettings = findViewById(R.id.indicator_settings);
 
+        // Header
         btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> handleBack());
 
+        // Animación táctil en íconos
         attachIconTouchAnimation(navHome);
         attachIconTouchAnimation(navCar);
         attachIconTouchAnimation(navNotifications);
@@ -52,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         navCar.setOnClickListener(v -> {
             updateNavbarSelection(R.id.nav_car);
+            // Aquí abrimos el fragmento de ubicación con el mapa
             replaceFragment(new UbicacionFragment(), true);
             replaceFragment(new UbicacionFragment(), false);
             setBackButtonVisible(false);
@@ -69,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
             setBackButtonVisible(false);
         });
 
+        // Cargar fragment inicial solo una vez
         if (savedInstanceState == null) {
             updateNavbarSelection(R.id.nav_home);
             replaceFragment(new IntentoFragment(), false);

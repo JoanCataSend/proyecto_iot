@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondo_claro"
+    android:background="?android:attr/colorBackground"
     android:padding="20dp"
     tools:context=".AyudaySoporteFragment">
 
@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="@string/titulo_ayuda"
-                android:textColor="@color/icono_normal"
+                android:textColor="?attr/android:textColorTertiary"
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_medium"
                 android:textStyle="bold" />
@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/descripcion_ayuda"
-            android:textColor="@color/texto_oscuro"
+            android:textColor="?attr/android:textColor"
             android:textSize="14sp"
             android:fontFamily="@font/roboto_regular"
             android:layout_marginBottom="24dp" />
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:text="@string/preguntas_frecuentes"
             android:textStyle="bold"
-            android:textColor="@color/texto_oscuro"
+            android:textColor="?attr/android:textColor"
             android:textSize="15sp"
             android:fontFamily="@font/montserrat_bold"
             android:layout_marginBottom="8dp" />
@@ -72,23 +72,23 @@
             android:textSize="14sp"
             android:layout_marginBottom="6dp" />
 
+        <!--Contacto soporte -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
             android:autoLink="web"
-            android:textColorLink="@color/icono_normal"
-            android:text="@string/que_hacer_si_pierdo_coche"
             android:fontFamily="@font/roboto_regular"
-            android:textSize="14sp"
-            android:layout_marginBottom="24dp" />
+            android:text="@string/que_hacer_si_pierdo_coche"
+            android:textColorLink="@color/icono_normal"
+            android:textSize="14sp" />
 
-        <!--Contacto soporte -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/contactar_soporte"
             android:textStyle="bold"
-            android:textColor="@color/texto_oscuro"
+            android:textColor="?attr/android:textColor"
             android:textSize="15sp"
             android:fontFamily="@font/montserrat_bold"
             android:layout_marginBottom="4dp" />
@@ -109,7 +109,7 @@
             android:layout_height="wrap_content"
             android:text="@string/terminos_privacidad"
             android:textStyle="bold"
-            android:textColor="@color/texto_oscuro"
+            android:textColor="?attr/android:textColor"
             android:textSize="15sp"
             android:fontFamily="@font/montserrat_bold"
             android:layout_marginBottom="4dp" />

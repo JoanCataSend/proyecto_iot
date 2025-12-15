@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fondo_claro"
+    android:background="?android:attr/colorBackground"
     tools:context=".ConfigNotificacionesFragment">
 
     <!-- 🔹 Contenido principal sin header ni navbar -->
@@ -38,7 +38,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:text="Notificaciones"
-                    android:textColor="@color/icono_normal"
+                    android:textColor="?attr/android:textColorTertiary"
                     android:textSize="20sp"
                     android:fontFamily="@font/roboto_medium"
                     android:textStyle="bold" />
@@ -52,12 +52,13 @@
                 android:textSize="14sp"
                 android:lineSpacingExtra="2dp"
                 android:paddingBottom="8dp"
-                android:textColor="@color/texto_oscuro" />
+                android:textColor="?attr/android:textColor" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dividerColor="@color/lavender_divider" />
+                app:dividerColor="?attr/colorSurface"
+                />
 
             <!-- 🔹 Fila 1: Ventana rota -->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -70,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/ventana_rota"
                     android:textSize="16sp"
-                    android:textColor="@color/texto_oscuro"
+                    android:textColor="?attr/android:textColor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/swVentanaRota"
                     app:layout_constraintTop_toTopOf="parent"
@@ -90,7 +91,8 @@
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dividerColor="@color/lavender_divider" />
+                app:dividerColor="?attr/colorSurface"
+                />
 
             <!-- 🔹 Fila 2: Puertas abiertas -->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -103,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/puertas_abiertas"
                     android:textSize="16sp"
-                    android:textColor="@color/texto_oscuro"
+                    android:textColor="?attr/android:textColor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/swPuertasAbiertas"
                     app:layout_constraintTop_toTopOf="parent"
@@ -123,7 +125,7 @@
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dividerColor="@color/lavender_divider" />
+                app:dividerColor="?attr/colorSurface" />
             <!-- 🔹 Fila 3: Cámara activada -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -135,7 +137,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/camara_activada"
                     android:textSize="16sp"
-                    android:textColor="@color/texto_oscuro"
+                    android:textColor="?attr/android:textColor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/swCamara"
                     app:layout_constraintTop_toTopOf="parent"
@@ -154,7 +156,7 @@
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dividerColor="@color/lavender_divider" />
+                app:dividerColor="?attr/colorSurface" />
             <!-- 🔹 Fila 4: Movimiento detectado -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -166,7 +168,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/movimiento_detectado"
                     android:textSize="16sp"
-                    android:textColor="@color/texto_oscuro"
+                    android:textColor="?attr/android:textColor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/swMovimiento"
                     app:layout_constraintTop_toTopOf="parent"
@@ -185,7 +187,7 @@
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dividerColor="@color/lavender_divider" />
+                app:dividerColor="?attr/colorSurface" />
             <!-- 🔹 Fila 5: Sonido o luces -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -197,7 +199,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/sonido_o_luces"
                     android:textSize="16sp"
-                    android:textColor="@color/texto_oscuro"
+                    android:textColor="?attr/android:textColor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/swSonido"
                     app:layout_constraintTop_toTopOf="parent"
@@ -216,7 +218,7 @@
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dividerColor="@color/lavender_divider" />
+                app:dividerColor="?attr/colorSurface" />
             <!-- 🔹 Fila 6: Cambios de ubicación -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -228,7 +230,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/cambios_ubicacion"
                     android:textSize="16sp"
-                    android:textColor="@color/texto_oscuro"
+                    android:textColor="?attr/android:textColor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/swUbicacion"
                     app:layout_constraintTop_toTopOf="parent"
@@ -247,7 +249,7 @@
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dividerColor="@color/lavender_divider" />
+                app:dividerColor="?attr/colorSurface"/>
             <!-- 🔹 Fila 7: Apertura del vehículo -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -259,7 +261,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/apertura_vehiculo"
                     android:textSize="16sp"
-                    android:textColor="@color/texto_oscuro"
+                    android:textColor="?attr/android:textColor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/swApertura"
                     app:layout_constraintTop_toTopOf="parent"
