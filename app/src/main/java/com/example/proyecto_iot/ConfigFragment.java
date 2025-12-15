@@ -156,7 +156,7 @@ public class ConfigFragment extends Fragment {
 
 
         // =========================
-        // CARGAR DATOS DEL USUARIO (Firestore)
+        // CARGAR DATOS DEL USUARIOo (Firestore)
         // =========================
 
         TextView tvName = view.findViewById(R.id.tv_name);
