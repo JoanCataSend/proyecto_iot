@@ -103,8 +103,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:clickable="true"
-                    android:focusable="true"
+                    android:clickable="false"
+                    android:focusable="false"
                     android:foreground="?attr/selectableItemBackgroundBorderless">
 
                     <FrameLayout
@@ -113,6 +113,8 @@
                         android:layout_height="64dp"
                         android:background="@drawable/bg_card_soft"
                         android:clipToOutline="true"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:elevation="4dp">
 
                         <ImageView

@@ -19,10 +19,14 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
         this.listaNotificaciones = listaNotificaciones;
     }
 
+    public void setListaNotificaciones(List<Notificacion> nuevas) {
+        this.listaNotificaciones = nuevas;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Infla el layout XML del ítem
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_notificacion, parent, false);
         return new ViewHolder(view);
@@ -30,21 +34,36 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // Asigna los datos del modelo a las vistas
         Notificacion notif = listaNotificaciones.get(position);
         holder.titulo.setText(notif.getTitulo());
         holder.mensaje.setText(notif.getMensaje());
         holder.fecha.setText(notif.getFecha());
         holder.icono.setImageResource(notif.getIcono());
+
+        String fechaActual = extraerDia(notif.getFecha());
+
+        if (position == 0) {
+            holder.headerDia.setVisibility(View.VISIBLE);
+            holder.headerDia.setText(fechaActual);
+        } else {
+            String fechaAnterior = extraerDia(listaNotificaciones.get(position - 1).getFecha());
+
+            if (!fechaActual.equals(fechaAnterior)) {
+                holder.headerDia.setVisibility(View.VISIBLE);
+                holder.headerDia.setText(fechaActual);
+            } else {
+                holder.headerDia.setVisibility(View.GONE);
+            }
+        }
     }
 
     @Override
     public int getItemCount() {
-        return listaNotificaciones.size();
+        return listaNotificaciones != null ? listaNotificaciones.size() : 0;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView titulo, mensaje, fecha;
+        TextView titulo, mensaje, fecha, headerDia;
         ImageView icono;
 
         public ViewHolder(@NonNull View itemView) {
@@ -53,7 +72,14 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
             mensaje = itemView.findViewById(R.id.mensaje_notificacion);
             fecha = itemView.findViewById(R.id.fecha_notificacion);
             icono = itemView.findViewById(R.id.icono_notificacion);
+            headerDia = itemView.findViewById(R.id.header_dia);
         }
     }
-}
 
+    private String extraerDia(String fechaCompleta) {
+        if (fechaCompleta == null) return "";
+        String[] partes = fechaCompleta.trim().split("\\s+");
+        if (partes.length >= 2) return partes[1];
+        return fechaCompleta.trim();
+    }
+}
