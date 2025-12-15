@@ -105,6 +105,8 @@ public class IntentoFragment extends Fragment {
     //      ESTADO
     // =========================
     private boolean puertasHabilitadas = true;
+    private boolean alarmaHabilitada = true;
+
 
     private boolean isLocked = true;
     private int currentCarIndex = 0;
@@ -679,6 +681,7 @@ public class IntentoFragment extends Fragment {
     private void handleSignalsClick(Context context,
                                     SharedPreferences prefs,
                                     ImageView ivSignals) {
+        if (!alarmaHabilitada) return;
 
         boolean sonidoEnabled = prefs.getBoolean("swSonido", true);
 
@@ -983,22 +986,52 @@ public class IntentoFragment extends Fragment {
 
                     if (!isAdded()) return;
 
-                    Map<String, Object> seguridad = (Map<String, Object>) doc.get("seguridad");
+                    Map<String, Object> seguridad =
+                            (Map<String, Object>) doc.get("seguridad");
 
-                    if (seguridad == null || !(seguridad.get("puertas") instanceof Boolean)) {
+                    if (seguridad == null) {
                         puertasHabilitadas = true;
+                        alarmaHabilitada = true;
                     } else {
-                        puertasHabilitadas = (Boolean) seguridad.get("puertas");
+                        puertasHabilitadas = getBool(seguridad, "puertas");
+                        alarmaHabilitada  = getBool(seguridad, "alarma");
                     }
 
                     actualizarUiPuertas();
-                })
-                .addOnFailureListener(e -> {
-                    if (!isAdded()) return;
-                    puertasHabilitadas = true;
-                    actualizarUiPuertas();
+                    actualizarUiAlarmas(); // 👈 NUEVO
                 });
     }
+
+    private void actualizarUiAlarmas() {
+
+        if (flSignals == null || ivSignals == null) return;
+
+        if (!alarmaHabilitada) {
+
+            flSignals.setEnabled(false);
+            ivSignals.setEnabled(false);
+
+            ivSignals.setImageTintList(
+                    ContextCompat.getColorStateList(
+                            requireContext(),
+                            R.color.texto_desactivado
+                    )
+            );
+
+        } else {
+
+            flSignals.setEnabled(true);
+            ivSignals.setEnabled(true);
+
+            ivSignals.setImageTintList(
+                    ContextCompat.getColorStateList(
+                            requireContext(),
+                            R.color.texto_oscuro
+                    )
+            );
+        }
+    }
+
 
     private void actualizarUiPuertas() {
 
@@ -1040,5 +1073,10 @@ public class IntentoFragment extends Fragment {
     private String getFechaActual() {
         return new SimpleDateFormat("HH:mm  dd/MM/yy", Locale.getDefault())
                 .format(new Date());
+    }
+
+    private boolean getBool(Map<String, Object> map, String key) {
+        Object v = map.get(key);
+        return v instanceof Boolean ? (Boolean) v : true;
     }
 }
