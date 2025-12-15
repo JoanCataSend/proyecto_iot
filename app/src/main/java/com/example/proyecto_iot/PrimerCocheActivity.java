@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +20,8 @@ public class PrimerCocheActivity extends AppCompatActivity {
 
     private EditText etMarca, etModelo, etMatricula, etNombreCoche;
     private Button btnRegistrar;
+    private ImageButton btnBack;
+
     private FirebaseFirestore db;
     private FirebaseAuth auth;
 
@@ -27,25 +30,50 @@ public class PrimerCocheActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro_coche_moderno);
 
+        // ===== UI =====
         etMarca = findViewById(R.id.etMarca);
         etModelo = findViewById(R.id.etModelo);
         etMatricula = findViewById(R.id.etMatricula);
         etNombreCoche = findViewById(R.id.etNombreCoche);
         btnRegistrar = findViewById(R.id.btnRegistrar);
+        btnBack = findViewById(R.id.btnBack);
 
+        // ===== Firebase =====
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
         btnRegistrar.setOnClickListener(v -> guardarPrimerCoche());
+
+        // 🔙 BACK → LOGIN
+        btnBack.setOnClickListener(v -> irALogin());
     }
 
+    @Override
+    public void onBackPressed() {
+        // BACK FÍSICO → LOGIN
+        irALogin();
+    }
+
+    // =========================
+    //        LOGIN
+    // =========================
+    private void irALogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    // =========================
+    //    REGISTRO COCHE
+    // =========================
     private void guardarPrimerCoche() {
+
         String marca = etMarca.getText().toString().trim();
         String modelo = etModelo.getText().toString().trim();
         String matricula = etMatricula.getText().toString().trim();
         String nombre = etNombreCoche.getText().toString().trim();
 
-        // ===== VALIDACIONES GENERALES =====
         if (marca.isEmpty()) {
             etMarca.setError("El campo Marca es obligatorio");
             etMarca.requestFocus();
@@ -76,31 +104,30 @@ public class PrimerCocheActivity extends AppCompatActivity {
             return;
         }
 
-        // Normalizar matrícula → 1234DKB
         matricula = matricula.replaceAll("\\s+", "").toUpperCase();
 
-        String userId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
+        String userId = auth.getCurrentUser() != null
+                ? auth.getCurrentUser().getUid()
+                : null;
+
         if (userId == null) {
-            CustomToast.error(this, "Error: usuario no autenticado");
+            CustomToast.error(this, "Usuario no autenticado");
             return;
         }
 
-        // ===== VALIDAR MATRÍCULA ÚNICA =====
         String finalMatricula = matricula;
+
         db.collection("Coches")
                 .whereEqualTo("Matrícula", finalMatricula)
                 .get()
                 .addOnSuccessListener(query -> {
 
                     if (!query.isEmpty()) {
-                        // YA EXISTE UN COCHE CON ESA MATRÍCULA
                         etMatricula.setError("Esta matrícula ya está registrada");
                         etMatricula.requestFocus();
-                        CustomToast.error(this, "La matrícula ya está en uso");
+                        CustomToast.error(this, "La matrícula ya existe");
                         return;
                     }
-
-                    // Si no existe, seguimos creando el coche
 
                     Map<String, Object> coche = new HashMap<>();
                     coche.put("Marca", marca);
@@ -116,15 +143,10 @@ public class PrimerCocheActivity extends AppCompatActivity {
                                 irAPaginaPrincipal();
                             })
                             .addOnFailureListener(e ->
-                                    CustomToast.error(this, "Error al registrar coche: " + e.getMessage())
-                            );
-                })
-                .addOnFailureListener(e ->
-                        CustomToast.error(this, "Error comprobando matrícula: " + e.getMessage())
-                );
+                                    CustomToast.error(this,
+                                            "Error al registrar coche: " + e.getMessage()));
+                });
     }
-
-
 
     private void irAPaginaPrincipal() {
         Intent intent = new Intent(this, MainActivity.class);
@@ -136,8 +158,6 @@ public class PrimerCocheActivity extends AppCompatActivity {
     private boolean esMatriculaValida(String mat) {
         if (mat == null || mat.isEmpty()) return false;
         mat = mat.trim().toUpperCase();
-        String patron = "^[0-9]{4}\\s?[A-Z]{3}$";
-        return mat.matches(patron);
+        return mat.matches("^[0-9]{4}\\s?[A-Z]{3}$");
     }
-
 }
