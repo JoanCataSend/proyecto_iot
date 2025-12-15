@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -19,24 +18,21 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-/**
- * Adapter simple que carga miniaturas en background y permite descargar.
- * No usa Glide/Picasso.
- */
 public class CapturasAdapter extends RecyclerView.Adapter<CapturasAdapter.ViewHolder> {
 
     private final List<CapturaItem> lista;
     private final Context context;
-    private final Executor executor = Executors.newFixedThreadPool(3);
+    private final Executor executor = Executors.newFixedThreadPool(5);
 
-    // Listener para delegar la descarga fuera del adapter
-    public interface OnDescargarListener {
+    // Interfaz para comunicar acciones al Fragment
+    public interface OnAccionesListener {
         void onDescargar(String url, String nombre);
+        void onEliminar(CapturaItem item);
     }
 
-    private OnDescargarListener listener;
+    private OnAccionesListener listener;
 
-    public void setOnDescargarListener(OnDescargarListener listener) {
+    public void setOnAccionesListener(OnAccionesListener listener) {
         this.listener = listener;
     }
 
@@ -57,9 +53,8 @@ public class CapturasAdapter extends RecyclerView.Adapter<CapturasAdapter.ViewHo
         CapturaItem item = lista.get(position);
 
         holder.imagen.setImageDrawable(null);
-        holder.btnDescargar.setText("Descargar");
 
-        // Cargar miniatura en background
+        // Cargar imagen en segundo plano
         executor.execute(() -> {
             try {
                 URL url = new URL(item.getUrl());
@@ -80,10 +75,17 @@ public class CapturasAdapter extends RecyclerView.Adapter<CapturasAdapter.ViewHo
             }
         });
 
-        // Delegar descarga al listener externo (fragment/activity)
-        holder.btnDescargar.setOnClickListener(v -> {
+        // Click en DESCARGAR
+        holder.btnDownloadIcon.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDescargar(item.getUrl(), item.getNombre());
+            }
+        });
+
+        // Click en ELIMINAR
+        holder.btnDeleteIcon.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onEliminar(item);
             }
         });
     }
@@ -95,12 +97,14 @@ public class CapturasAdapter extends RecyclerView.Adapter<CapturasAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imagen;
-        Button btnDescargar;
+        ImageView btnDownloadIcon;
+        ImageView btnDeleteIcon;
 
         public ViewHolder(@NonNull View v) {
             super(v);
             imagen = v.findViewById(R.id.imgMiniatura);
-            btnDescargar = v.findViewById(R.id.btnDescargar);
+            btnDownloadIcon = v.findViewById(R.id.btnDownloadIcon);
+            btnDeleteIcon = v.findViewById(R.id.btnDeleteIcon);
         }
     }
 }

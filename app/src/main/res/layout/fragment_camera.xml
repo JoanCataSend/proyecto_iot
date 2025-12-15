@@ -19,7 +19,7 @@
         app:tabSelectedTextColor="@color/icono_normal"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- SCROLL AREA -->
+    <!-- SCROLL -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollCamera"
         android:layout_width="0dp"
@@ -40,25 +40,13 @@
             android:paddingBottom="120dp">
 
             <!-- ============================= -->
-            <!-- SECCIÓN STREAMING -->
+            <!-- STREAMING -->
             <!-- ============================= -->
             <LinearLayout
                 android:id="@+id/layoutStreaming"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tvCameraInfo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Cámaras"
-                    android:textAlignment="center"
-                    android:textColor="@color/icono_normal"
-                    android:textSize="22sp"
-                    android:layout_marginTop="16dp"
-                    android:padding="8dp"
-                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/cameraCard"
@@ -131,7 +119,7 @@
             </LinearLayout>
 
             <!-- ============================= -->
-            <!-- SECCIÓN CAPTURAS -->
+            <!-- CAPTURAS -->
             <!-- ============================= -->
             <LinearLayout
                 android:id="@+id/layoutCapturas"
@@ -140,17 +128,7 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Capturas Guardadas"
-                    android:textSize="20sp"
-                    android:textAlignment="center"
-                    android:textColor="@color/icono_normal"
-                    android:textStyle="bold"
-                    android:layout_marginTop="16dp"/>
-
-                <!-- MENSAJE CUANDO NO HAY CAPTURAS -->
+                <!-- MENSAJE SIN CAPTURAS -->
                 <TextView
                     android:id="@+id/txtSinCapturas"
                     android:layout_width="match_parent"
@@ -159,14 +137,14 @@
                     android:textAlignment="center"
                     android:textSize="16sp"
                     android:textColor="@color/icono_normal"
-                    android:padding="16dp"
+                    android:padding="24dp"
                     android:visibility="gone"/>
 
-                <!-- RECYCLER -->
+                <!-- LISTA -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerCapturas"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:overScrollMode="never"/>
 

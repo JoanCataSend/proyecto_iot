@@ -40,17 +40,18 @@ import java.util.Map;
 
 public class CameraFragment extends Fragment {
 
+
     private static final String TAG = "CameraFragment";
 
     // ID DEL COCHE
     private final String cocheId = "ZkB10ikraHvc11ig0vD0";
 
     // STREAMS
-    private static final String STREAM_URL_ESP32 = "http://172.20.10.4:81/stream";
+    private static final String STREAM_URL_ESP32 = "http://172.20.10.5:81/stream";
     private static final String STREAM_URL_RPI   = "http://192.168.1.91:8080/?action=stream";
 
     // CAPTURA ESP32
-    private static final String CAPTURE_URL_ESP32 = "http://172.20.10.4/capture";
+    private static final String CAPTURE_URL_ESP32 = "http://172.20.10.5/capture";
 
     // UI
     private WebView webCamView, webCamView2;
@@ -106,8 +107,20 @@ public class CameraFragment extends Fragment {
         adapter = new CapturasAdapter(listaCapturas, getContext());
         recyclerCapturas.setAdapter(adapter);
 
-        // Listener DESCARGA
-        adapter.setOnDescargarListener(this::descargarConDownloadManager);
+        // LISTENER DE ACCIONES (DESCARGAR / ELIMINAR)
+
+        adapter.setOnAccionesListener(new CapturasAdapter.OnAccionesListener() {
+            @Override
+            public void onDescargar(String url, String nombre) {
+                descargarConDownloadManager(url, nombre);
+            }
+
+            @Override
+            public void onEliminar(CapturaItem item) {
+                // Confirmamos eliminación
+                eliminarCaptura(item);
+            }
+        });
 
         // Webcams
         configurarWebCam(webCamView, STREAM_URL_ESP32);
@@ -115,7 +128,7 @@ public class CameraFragment extends Fragment {
 
         setupTabs();
 
-        // 🔴 BOTÓN CAPTURAR (CLAVE)
+        // BOTÓN CAPTURAR
         btnGuardarFoto.setOnClickListener(v -> {
             btnGuardarFoto.setEnabled(false);
             Toast.makeText(getContext(), "Capturando...", Toast.LENGTH_SHORT).show();
@@ -266,6 +279,39 @@ public class CameraFragment extends Fragment {
                 })
                 .addOnFailureListener(e ->
                         Log.e(TAG, "Error cargando capturas", e));
+    }
+
+    // ---------------- ELIMINAR (NUEVO) ----------------
+    // Borra de Storage y luego busca el documento por nombre en Firestore para borrarlo
+    private void eliminarCaptura(CapturaItem item) {
+        Toast.makeText(getContext(), "Eliminando...", Toast.LENGTH_SHORT).show();
+
+        String nombreArchivo = item.getNombre();
+
+        // 1. Borrar imagen física en Storage
+        StorageReference refImagen = storageRef.child("capturas/" + cocheId + "/" + nombreArchivo);
+
+        refImagen.delete().addOnSuccessListener(aVoid -> {
+            // 2. Buscar en Firestore el documento que tiene ese nombre y borrarlo
+            db.collection("Coches")
+                    .document(cocheId)
+                    .collection("capturas")
+                    .whereEqualTo("nombre", nombreArchivo)
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshot) {
+                            doc.getReference().delete();
+                        }
+                        Toast.makeText(getContext(), "Eliminado correctamente", Toast.LENGTH_SHORT).show();
+                        cargarCapturas(); // Recargar lista
+                    })
+                    .addOnFailureListener(e ->
+                            Log.e(TAG, "Error buscando doc para borrar", e)
+                    );
+
+        }).addOnFailureListener(e -> {
+            Toast.makeText(getContext(), "Error al borrar imagen", Toast.LENGTH_SHORT).show();
+        });
     }
 
     // ---------------- DESCARGA ----------------
