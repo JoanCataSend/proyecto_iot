@@ -193,7 +193,7 @@ public class NotificacionesFragment extends Fragment {
             // Si en algún momento guardas eventos de puerta:
             // { tipo:"puerta", puerta:"open"/"closed", timestamp:... }
             case "puerta": {
-                String puerta = ev.getString("puerta");
+                String puerta = ev.getString("estado");
                 boolean open = "open".equals(puerta);
 
                 String titulo = open ? "Puertas abiertas" : "Puertas bloqueadas";

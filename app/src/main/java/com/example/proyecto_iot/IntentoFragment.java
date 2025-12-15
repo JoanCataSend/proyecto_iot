@@ -64,6 +64,13 @@ public class IntentoFragment extends Fragment {
     private static final long SIGNALS_DURATION_MS = 5_000;
 
 
+    private static final String PREF_LAST_DOOR_STATE = "last_door_state_";
+    private static final String PREF_LAST_DOOR_ANY_TS = "last_door_any_ts_";
+    private static final long DOOR_COOLDOWN_MS = 3000; // 3s (sube a 4-5s si tu hardware rebota mucho)
+    private String doorExpectedState = null;     // "open" o "closed"
+    private long doorExpectedUntilTs = 0L;
+    private boolean doorCommandInFlight = false;
+
 
     // =========================
     //      FIRESTORE / DATOS
@@ -354,6 +361,10 @@ public class IntentoFragment extends Fragment {
             primerSnapshotEstado = true;
             ultimaPuerta = null;
             ultimoCarIdListener = carId;
+
+            // reset de expected al cambiar de coche
+            doorExpectedState = null;
+            doorExpectedUntilTs = 0L;
         }
 
         estadoListener = firestore.collection("Coches")
@@ -365,76 +376,43 @@ public class IntentoFragment extends Fragment {
                     if (error != null || doc == null || !doc.exists()) return;
 
                     String puerta = doc.getString("puerta");
-
                     if (puerta != null) puerta = puerta.trim().toLowerCase(Locale.ROOT);
+                    if (puerta == null) return;
+
+                    boolean pending = doc.getMetadata().hasPendingWrites();
+                    long now = System.currentTimeMillis();
 
                     // ---- PRIMER SNAPSHOT: solo inicializa, NO notifiques ----
                     if (primerSnapshotEstado) {
                         primerSnapshotEstado = false;
                         ultimaPuerta = puerta;
 
-                        boolean lockedNow = !"open".equals(puerta);
-                        isLocked = lockedNow;
+                        boolean lockedNowInit = !"open".equals(puerta);
+                        isLocked = lockedNowInit;
                         updateLockUi();
-                        guardarLockEnPrefs(lockedNow);
+                        guardarLockEnPrefs(lockedNowInit);
                         return;
                     }
 
-                    // ---- A partir de aquí, ya es “cambio real” ----
-                    if (puerta != null && !puerta.equals(ultimaPuerta)) {
+                    // ✅ FILTRO ANTES DE HACER NADA:
+                    // si acabamos de pulsar y llega el estado contrario -> ignorar TOTALMENTE
+                    if (doorExpectedState != null && now < doorExpectedUntilTs) {
+                        if (!puerta.equals(doorExpectedState)) {
+                            return;
+                        }
+                    }
+
+                    // ---- UI rápido (ya filtrado) ----
+                    boolean lockedNow = !"open".equals(puerta);
+                    isLocked = lockedNow;
+                    updateLockUi();
+                    guardarLockEnPrefs(lockedNow);
+
+                    if (!pending) {
                         ultimaPuerta = puerta;
-
-                        boolean lockedNow = !"open".equals(puerta);
-                        isLocked = lockedNow;
-                        updateLockUi();
-                        guardarLockEnPrefs(lockedNow);
-
-                        // ✅ Guardar en Firestore para que salga en tu RecyclerView
-                        guardarEventoPuerta(carId, puerta);
-
-                        if (lockedNow) mostrarNotifPuertaCerrada();
-                        else mostrarNotifPuertaAbierta();
                     }
 
                 });
-    }
-
-//    private void verificarImpactoReciente(String carId) {
-//        firestore.collection("Coches")
-//                .document(carId)
-//                .collection("eventos")
-//                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
-//                .limit(1)
-//                .get()
-//                .addOnSuccessListener(snap -> {
-//                    if (snap.isEmpty()) return;
-//
-//                    QueryDocumentSnapshot doc = (QueryDocumentSnapshot) snap.getDocuments().get(0);
-//
-//                    String tipo = doc.getString("tipo");
-//                    Long ts = doc.getLong("timestamp");
-//
-//                    if (tipo == null || ts == null) return;
-//
-//                    long ahora = System.currentTimeMillis();
-//                    if (tipo.equals("impacto") && (ahora - ts) < 10_000) {
-//                        manejarImpacto();
-//                    }
-//                });
-//    }
-
-    private void guardarEventoPuerta(String carId, String puerta) {
-        if (firestore == null || carId == null) return;
-
-        HashMap<String, Object> evento = new HashMap<>();
-        evento.put("tipo", "puerta");
-        evento.put("puerta", "open".equals(puerta) ? "open" : "closed");
-        evento.put("timestamp", System.currentTimeMillis());
-
-        firestore.collection("Coches")
-                .document(carId)
-                .collection("eventos")
-                .add(evento);
     }
 
     private void guardarLockEnPrefs(boolean locked) {
@@ -451,16 +429,35 @@ public class IntentoFragment extends Fragment {
     private void toggleLockAndNotify(SharedPreferences prefs) {
         if (currentCarIndex < 0 || currentCarIndex >= carIds.size()) return;
 
-        boolean targetLocked = !isLocked;
-        String nuevoEstado = targetLocked ? "closed" : "open";
+        if (doorCommandInFlight) return;
+        doorCommandInFlight = true;
+        flLock.setEnabled(false);
 
+        boolean targetLocked = !isLocked;
+        String nuevoEstado = targetLocked ? "close" : "open";
         String carId = carIds.get(currentCarIndex);
 
         firestore.collection("Coches")
                 .document(carId)
                 .collection("estado")
                 .document("actual")
-                .update("puerta", nuevoEstado);
+                .update("puerta", nuevoEstado)
+                .addOnSuccessListener(v -> {
+
+                    // 🔔 Notificación SOLO local (NO Firestore)
+                    if ("close".equals(nuevoEstado)) {
+                        mostrarNotifPuertaCerrada();
+                    } else {
+                        mostrarNotifPuertaAbierta();
+                    }
+
+                    doorCommandInFlight = false;
+                    flLock.setEnabled(true);
+                })
+                .addOnFailureListener(e -> {
+                    doorCommandInFlight = false;
+                    flLock.setEnabled(true);
+                });
     }
 
     private void mostrarNotifPuertaCerrada() {
@@ -477,28 +474,6 @@ public class IntentoFragment extends Fragment {
                 "Puertas"
         );
     }
-
-//    private void manejarImpacto() {
-//        vibrateOnce(700);
-//
-//        String titulo = "Impacto detectado";
-//        String mensaje = "Tu vehículo ha recibido un impacto";
-//
-//        notifyAndSave(
-//                NOTIFICATION_ID_IMPACTO,
-//                titulo,
-//                mensaje,
-//                R.drawable.ic_info,
-//                "Impacto"
-//        );
-//
-//        requireActivity()
-//                .getSupportFragmentManager()
-//                .beginTransaction()
-//                .replace(R.id.fragment_container, new CameraFragment())
-//                .addToBackStack(null)
-//                .commit();
-//    }
 
     private void notifyAndSave(int notifId,
                                String titulo,
@@ -642,18 +617,6 @@ public class IntentoFragment extends Fragment {
         } catch (Exception ignored) { }
     }
 
-    private void vibrateOnce(long ms) {
-        Context ctx = requireContext();
-        vibrator = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
-        if (vibrator == null) return;
-
-        if (Build.VERSION.SDK_INT >= 26) {
-            vibrator.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE));
-        } else {
-            vibrator.vibrate(ms);
-        }
-    }
-
     private void stopBlinkAnimation() {
         if (signalsBlinkAnimator != null) {
             signalsBlinkAnimator.cancel();
@@ -767,7 +730,6 @@ public class IntentoFragment extends Fragment {
                 "Puertas"
         );
     }
-
 
     // =========================
     //      NOTIFICATION CHANNEL
