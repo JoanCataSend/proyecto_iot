@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -53,8 +52,11 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
     private FirebaseFirestore db;
     private FirebaseAuth auth;
 
+    // 🔐 Guardar targets Glide para poder cancelarlos
+    private final List<CustomTarget<Bitmap>> glideTargets = new ArrayList<>();
+
     // =========================
-    //   GETTER PARA ADAPTER
+    //   GETTER PARA EL ADAPTER
     // =========================
     public GoogleMap getMapa() {
         return mMap;
@@ -72,7 +74,6 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
             ((MainActivity) getActivity()).setBackButtonVisible(false);
         }
 
-        // ---------- BottomSheet ----------
         View panel = view.findViewById(R.id.panel_desplegable);
         bottomSheetBehavior = BottomSheetBehavior.from(panel);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -82,18 +83,15 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
         requireActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
         panel.getLayoutParams().height = (int) (dm.heightPixels * 0.6f);
 
-        // ---------- Botón añadir ----------
         view.findViewById(R.id.btnAnadirCoche)
                 .setOnClickListener(v ->
                         startActivity(new Intent(getActivity(), AnadirCoche.class)));
 
-        // ---------- Recycler ----------
         RecyclerView recycler = view.findViewById(R.id.recyclerCoches);
-        recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         CocheMapaAdapter adapter = new CocheMapaAdapter(listaCoches, this);
         recycler.setAdapter(adapter);
 
-        // ---------- Firebase ----------
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
@@ -103,6 +101,8 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                     .whereArrayContains("Propietario", user.getUid())
                     .get()
                     .addOnSuccessListener(query -> {
+
+                        if (!isAdded()) return;
 
                         listaCoches.clear();
 
@@ -132,9 +132,11 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                         adapter.notifyDataSetChanged();
                         actualizarMarcadores();
                     })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(requireContext(),
-                                    e.getMessage(), Toast.LENGTH_SHORT).show());
+                    .addOnFailureListener(e -> {
+                        if (!isAdded()) return;
+                        Toast.makeText(getContext(),
+                                e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
         }
 
         SupportMapFragment mapFragment =
@@ -149,19 +151,32 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
         return view;
     }
 
-    // =========================
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        for (CustomTarget<Bitmap> t : glideTargets) {
+            Glide.with(this).clear(t);
+        }
+        glideTargets.clear();
+
+        mMap = null;
+    }
+
     private String obtenerDireccion(double lat, double lng) {
+        if (!isAdded()) return "Ubicación desconocida";
+
         try {
-            Geocoder g = new Geocoder(requireContext(), Locale.getDefault());
+            Geocoder g = new Geocoder(getContext(), Locale.getDefault());
             List<Address> list = g.getFromLocation(lat, lng, 1);
             if (!list.isEmpty()) return list.get(0).getAddressLine(0);
         } catch (Exception ignored) {}
         return "Ubicación desconocida";
     }
 
-    // =========================
     private void actualizarMarcadores() {
-        if (mMap == null) return;
+        if (!isAdded() || mMap == null) return;
+
         mMap.clear();
 
         for (CocheMapa c : listaCoches) {
@@ -180,37 +195,48 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void cargarIconoPersonalizado(LatLng pos, String url, String nombre) {
-        Glide.with(requireContext())
+        if (!isAdded() || mMap == null) return;
+
+        CustomTarget<Bitmap> target = new CustomTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(@NonNull Bitmap bitmap,
+                                        @Nullable Transition<? super Bitmap> transition) {
+
+                if (!isAdded() || mMap == null) return;
+
+                Bitmap out = Bitmap.createBitmap(
+                        bitmap.getWidth() + 20,
+                        bitmap.getHeight() + 20,
+                        Bitmap.Config.ARGB_8888
+                );
+                Canvas c = new Canvas(out);
+                c.drawBitmap(bitmap, 10, 10, null);
+
+                mMap.addMarker(new MarkerOptions()
+                        .position(pos)
+                        .title(nombre)
+                        .icon(BitmapDescriptorFactory.fromBitmap(out)));
+            }
+
+            @Override
+            public void onLoadCleared(@Nullable Drawable placeholder) {}
+        };
+
+        glideTargets.add(target);
+
+        Glide.with(this)
                 .asBitmap()
                 .load(url)
                 .override(120, 120)
                 .centerInside()
-                .into(new CustomTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap bitmap,
-                                                @Nullable Transition<? super Bitmap> transition) {
-
-                        Bitmap out = Bitmap.createBitmap(
-                                bitmap.getWidth() + 20,
-                                bitmap.getHeight() + 20,
-                                Bitmap.Config.ARGB_8888
-                        );
-                        Canvas c = new Canvas(out);
-                        c.drawBitmap(bitmap, 10, 10, null);
-
-                        mMap.addMarker(new MarkerOptions()
-                                .position(pos)
-                                .title(nombre)
-                                .icon(BitmapDescriptorFactory.fromBitmap(out)));
-                    }
-
-                    @Override public void onLoadCleared(@Nullable Drawable placeholder) {}
-                });
+                .into(target);
     }
 
     private void solicitarPermisoUbicacionSiEsNecesario() {
+        if (!isAdded()) return;
+
         if (ContextCompat.checkSelfPermission(
-                requireContext(),
+                getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
