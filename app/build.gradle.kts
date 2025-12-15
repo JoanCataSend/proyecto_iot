@@ -21,9 +21,12 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "LLAMA_API_KEY", "\"${project.properties["sk-E4UtEEoBXzK-19NyohQZ3Q"]}\"")
+        val poligptKey = (project.findProperty("POLIGPT_API_KEY") as String?) ?: ""
+
+        buildConfigField("String", "POLIGPT_API_KEY", "\"$poligptKey\"")
         buildConfigField("String", "LLAMA_ENDPOINT", "\"https://api.poligpt.upv.es\"")
-        buildConfigField("String", "LLAMA_MODEL", "\"llama3.2:3b\"")
+        buildConfigField("String", "LLAMA_MODEL", "\"llama3.3:70b\"")
+
 
     }
 
@@ -73,7 +76,7 @@ dependencies {
     implementation("com.facebook.android:facebook-login:latest.release")
     implementation("com.azure:azure-ai-openai:1.0.0-beta.12")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-
+    implementation("com.google.code.gson:gson:2.11.0")
 
 
     implementation ("com.google.firebase:firebase-auth")

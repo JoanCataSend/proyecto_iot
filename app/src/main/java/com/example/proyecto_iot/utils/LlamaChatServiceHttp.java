@@ -1,13 +1,9 @@
 package com.example.proyecto_iot.utils;
 
-import com.example.proyecto_iot.BuildConfig;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,72 +16,95 @@ import okhttp3.Response;
 public class LlamaChatServiceHttp {
 
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
-    private final OkHttpClient http = new OkHttpClient();
 
-    private final String endpoint = BuildConfig.LLAMA_ENDPOINT;     // https://api.poligpt.upv.es
-    private final String apiKey = BuildConfig.LLAMA_API_KEY;
-    private final String deployment = BuildConfig.LLAMA_MODEL;      // ej: llama3.3:70b
+    private final OkHttpClient client;
+    private final Gson gson = new Gson();
 
-    // si da 404, probamos otro api-version luego
-    private final String apiVersion = "2024-02-15-preview";
+    private final String endpointBase; // ej: https://api.poligpt.upv.es
+    private final String apiKey;       // tu clave
+    private final String model;        // ej: vrain-llama3.3:70b
 
-    private final List<JSONObject> history = new ArrayList<>();
+    private final List<Message> history = new ArrayList<>();
 
-    public LlamaChatServiceHttp(String systemPrompt) {
-        history.add(msg("system", systemPrompt));
+    public LlamaChatServiceHttp(String endpointBase, String apiKey, String model, String systemPrompt) {
+        this.endpointBase = endpointBase.endsWith("/") ? endpointBase.substring(0, endpointBase.length() - 1) : endpointBase;
+        this.apiKey = apiKey;
+        this.model = model;
+
+        // timeouts más generosos (la primera respuesta puede tardar)
+        this.client = new OkHttpClient.Builder()
+                .callTimeout(java.time.Duration.ofSeconds(60))
+                .connectTimeout(java.time.Duration.ofSeconds(20))
+                .readTimeout(java.time.Duration.ofSeconds(60))
+                .writeTimeout(java.time.Duration.ofSeconds(30))
+                .build();
+
+        history.add(new Message("system", systemPrompt));
     }
 
-    public synchronized String ask(String userText) throws IOException {
-        try {
-            history.add(msg("user", userText));
+    /** Añade mensaje de usuario y devuelve respuesta del asistente */
+    public String ask(String userText) throws IOException {
+        history.add(new Message("user", userText));
 
-            JSONObject body = new JSONObject();
-            body.put("messages", new JSONArray(history));
-            body.put("temperature", 0.4);
+        ChatRequest payload = new ChatRequest(model, history);
 
-            String depEnc = URLEncoder.encode(deployment, StandardCharsets.UTF_8);
-            String url = endpoint + "/openai/deployments/" + depEnc
-                    + "/chat/completions?api-version=" + apiVersion;
+        String url = endpointBase + "/v1/chat/completions"; // si tu uni usa otra ruta, te digo abajo cómo cambiarlo
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + apiKey)
+                .addHeader("Content-Type", "application/json")
+                .post(RequestBody.create(gson.toJson(payload), JSON))
+                .build();
 
-            Request request = new Request.Builder()
-                    .url(url)
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("api-key", apiKey)
-                    .post(RequestBody.create(body.toString(), JSON))
-                    .build();
-
-            try (Response response = http.newCall(request).execute()) {
-                String raw = response.body() != null ? response.body().string() : "";
-
-                if (!response.isSuccessful()) {
-                    throw new IOException("HTTP " + response.code() + " -> " + raw);
-                }
-
-                JSONObject json = new JSONObject(raw);
-                String assistant = json.getJSONArray("choices")
-                        .getJSONObject(0)
-                        .getJSONObject("message")
-                        .getString("content");
-
-                history.add(msg("assistant", assistant));
-                return assistant;
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                String body = response.body() != null ? response.body().string() : "";
+                throw new IOException("HTTP " + response.code() + " " + response.message() + " :: " + body);
             }
 
-        } catch (Exception e) {
-            // Convertimos cualquier JSONException en IOException
-            throw new IOException("JSON error: " + e.getMessage(), e);
+            String body = response.body() != null ? response.body().string() : "";
+            ChatResponse parsed = gson.fromJson(body, ChatResponse.class);
+
+            String assistant = (parsed != null
+                    && parsed.choices != null
+                    && !parsed.choices.isEmpty()
+                    && parsed.choices.get(0).message != null)
+                    ? parsed.choices.get(0).message.content
+                    : "";
+
+            if (assistant == null) assistant = "";
+            history.add(new Message("assistant", assistant));
+            return assistant.trim();
         }
     }
 
-    private static JSONObject msg(String role, String content) {
-        try {
-            JSONObject o = new JSONObject();
-            o.put("role", role);
-            o.put("content", content);
-            return o;
-        } catch (Exception e) {
-            // Esto NO debería pasar nunca, pero Java obliga
-            throw new RuntimeException("Error creando JSON message", e);
+    // ====== DTOs ======
+
+    static class ChatRequest {
+        final String model;
+        final List<Message> messages;
+        ChatRequest(String model, List<Message> messages) {
+            this.model = model;
+            this.messages = messages;
         }
+    }
+
+    static class Message {
+        final String role;
+        final String content;
+        Message(String role, String content) {
+            this.role = role;
+            this.content = content;
+        }
+    }
+
+    static class ChatResponse {
+        List<Choice> choices;
+    }
+
+    static class Choice {
+        Message message;
+        @SerializedName("finish_reason")
+        String finishReason;
     }
 }

@@ -12,12 +12,18 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import androidx.core.widget.NestedScrollView;
 import android.widget.TextView;
+import com.example.proyecto_iot.BuildConfig;
+import com.example.proyecto_iot.utils.LlamaChatServiceHttp;
+
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.example.proyecto_iot.BuildConfig;
 import com.example.proyecto_iot.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,7 +57,16 @@ public class ChatbotActivity extends AppCompatActivity {
         scrollView = findViewById(R.id.scrollView);
         etMessage = findViewById(R.id.etMessage);
         com.google.android.material.button.MaterialButton btnSend = findViewById(R.id.btnSend);
+        btnSend.setEnabled(false);
         ImageButton btnClose = findViewById(R.id.btnClose);
+
+
+        btnClose.setOnClickListener(v -> finish());
+        View topBar = findViewById(R.id.topBar);
+        topBar.setClickable(false);
+        topBar.setFocusable(false);
+
+
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -100,9 +115,15 @@ public class ChatbotActivity extends AppCompatActivity {
                                 "Dirígete al usuario por su nombre: " + userName + ". " +
                                 (TextUtils.isEmpty(gpsContext) ? "" : ("Contexto de ubicación actual: " + gpsContext + ". "));
 
-                llamaService = new LlamaChatServiceHttp(systemPrompt);
-
+                llamaService = new LlamaChatServiceHttp(
+                        BuildConfig.LLAMA_ENDPOINT,
+                        BuildConfig.POLIGPT_API_KEY,
+                        BuildConfig.LLAMA_MODEL,
+                        systemPrompt
+                );
+                btnSend.setEnabled(true);
                 addBotMessage("Hola " + userName + ", soy tu asistente. Pregúntame cualquier duda sobre la app o seguridad.");
+
             });
         });
 
@@ -183,18 +204,25 @@ public class ChatbotActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> onDone.run());
     }
+    private String formatLocation(Location location) {
+        if (location == null) return "";
+        return "lat=" + location.getLatitude() + ", lon=" + location.getLongitude();
+    }
     /*private void cargarGpsContext(Runnable onDone) {
-        try {
-            // tu código actual
-        } catch (Exception e) {
-            onDone.run();
-        }
-    }*/
+    int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+    if (status != ConnectionResult.SUCCESS) {
+        // No hay GMS correcto → saltamos GPS y seguimos con el chatbot
+        onDone.run();
+        return;
+    }
+
+    // ... tu código actual de permisos + getLastLocation()
+}
 
 
     private String formatLocation(Location loc) {
         return "lat=" + loc.getLatitude() + ", lon=" + loc.getLongitude();
-    }
+    }*/
 
     // =======================
     // UI: mensajes
@@ -221,7 +249,6 @@ public class ChatbotActivity extends AppCompatActivity {
     private void addBotMessage(String text) {
         addBotMessageReturn("IA: " + text);
     }
-
     private TextView addBotMessageReturn(String text) {
         TextView tv = new TextView(this);
         tv.setText(text);
@@ -251,4 +278,9 @@ public class ChatbotActivity extends AppCompatActivity {
         super.onDestroy();
         executor.shutdownNow();
     }
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
 }
