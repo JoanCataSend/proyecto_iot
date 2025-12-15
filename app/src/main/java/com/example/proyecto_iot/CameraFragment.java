@@ -14,6 +14,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,7 +29,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -42,28 +42,32 @@ public class CameraFragment extends Fragment {
 
     private static final String TAG = "CameraFragment";
 
+    // ID DEL COCHE
     private final String cocheId = "ZkB10ikraHvc11ig0vD0";
 
-    private WebView webCamView;
-    private WebView webCamView2;
+    // STREAMS
+    private static final String STREAM_URL_ESP32 = "http://172.20.10.4:81/stream";
+    private static final String STREAM_URL_RPI   = "http://192.168.1.91:8080/?action=stream";
 
+    // CAPTURA ESP32
+    private static final String CAPTURE_URL_ESP32 = "http://172.20.10.4/capture";
+
+    // UI
+    private WebView webCamView, webCamView2;
     private TabLayout tabCamera;
-    private LinearLayout layoutStreaming;
-    private LinearLayout layoutCapturas;
+    private LinearLayout layoutStreaming, layoutCapturas;
     private Button btnGuardarFoto;
 
     private RecyclerView recyclerCapturas;
+    private TextView txtVacio;
+
+    // LISTA
     private CapturasAdapter adapter;
     private final ArrayList<CapturaItem> listaCapturas = new ArrayList<>();
 
+    // FIREBASE
     private FirebaseFirestore db;
     private StorageReference storageRef;
-
-    private static final String STREAM_URL_ESP32 = "http://192.168.0.117:81/stream";
-    private static final String STREAM_URL_RPI   = "http://192.168.1.91:8080/?action=stream";
-    private static final String CAPTURE_URL_ESP32 = "http://192.168.0.117/capture";
-
-    public CameraFragment() {}
 
     @Nullable
     @Override
@@ -76,11 +80,12 @@ public class CameraFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
 
+        // Firebase
         db = FirebaseFirestore.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
 
+        // Views
         webCamView = view.findViewById(R.id.webCamView);
         webCamView2 = view.findViewById(R.id.webCamView2);
 
@@ -89,30 +94,38 @@ public class CameraFragment extends Fragment {
         layoutCapturas = view.findViewById(R.id.layoutCapturas);
         btnGuardarFoto = view.findViewById(R.id.btnGuardarFoto);
 
+        // Recycler
         recyclerCapturas = view.findViewById(R.id.recyclerCapturas);
         recyclerCapturas.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        txtVacio = new TextView(getContext());
+        txtVacio.setText("No hay capturas guardadas");
+        txtVacio.setPadding(20, 40, 20, 40);
+        layoutCapturas.addView(txtVacio);
 
         adapter = new CapturasAdapter(listaCapturas, getContext());
         recyclerCapturas.setAdapter(adapter);
 
-        // 🔥 CONECTAR ADAPTER CON DESCARGA (antes faltaba)
-        adapter.setOnDescargarListener((url, nombre) -> {
-            descargarConDownloadManager(url, nombre);
-        });
+        // Listener DESCARGA
+        adapter.setOnDescargarListener(this::descargarConDownloadManager);
 
+        // Webcams
         configurarWebCam(webCamView, STREAM_URL_ESP32);
         configurarWebCam(webCamView2, STREAM_URL_RPI);
 
         setupTabs();
 
+        // 🔴 BOTÓN CAPTURAR (CLAVE)
         btnGuardarFoto.setOnClickListener(v -> {
             btnGuardarFoto.setEnabled(false);
-            mostrarToast("Capturando...");
+            Toast.makeText(getContext(), "Capturando...", Toast.LENGTH_SHORT).show();
             capturarFotoDesdeESP32();
         });
 
         cargarCapturas();
     }
+
+    // ---------------- TABS ----------------
 
     private void setupTabs() {
         if (tabCamera.getTabCount() == 0) {
@@ -121,122 +134,114 @@ public class CameraFragment extends Fragment {
         }
 
         tabCamera.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
-                    layoutStreaming.setVisibility(View.VISIBLE);
-                    layoutCapturas.setVisibility(View.GONE);
-                } else {
-                    layoutStreaming.setVisibility(View.GONE);
-                    layoutCapturas.setVisibility(View.VISIBLE);
-                    cargarCapturas();
-                }
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                layoutStreaming.setVisibility(tab.getPosition() == 0 ? View.VISIBLE : View.GONE);
+                layoutCapturas.setVisibility(tab.getPosition() == 1 ? View.VISIBLE : View.GONE);
+                if (tab.getPosition() == 1) cargarCapturas();
             }
 
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
-
-        layoutStreaming.setVisibility(View.VISIBLE);
-        layoutCapturas.setVisibility(View.GONE);
     }
+
+    // ---------------- WEBCAM ----------------
 
     private void configurarWebCam(WebView webView, String url) {
         WebSettings ws = webView.getSettings();
         ws.setJavaScriptEnabled(true);
-        ws.setDomStorageEnabled(true);
-        ws.setLoadWithOverviewMode(true);
-        ws.setUseWideViewPort(true);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(url);
     }
+
+    // ---------------- CAPTURA ----------------
 
     private void capturarFotoDesdeESP32() {
         new Thread(() -> {
             try {
                 URL url = new URL(CAPTURE_URL_ESP32);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setConnectTimeout(6000);
-                connection.setReadTimeout(10000);
-                connection.connect();
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setReadTimeout(8000);
+                conn.connect();
 
-                int code = connection.getResponseCode();
-                if (code != HttpURLConnection.HTTP_OK) {
-                    runOnUiThreadSafe(() -> {
-                        mostrarToast("No se pudo capturar (HTTP " + code + ")");
-                        btnGuardarFoto.setEnabled(true);
-                    });
-                    return;
+                if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                    throw new Exception("ESP32 no responde");
                 }
 
-                InputStream is = new BufferedInputStream(connection.getInputStream());
+                InputStream is = conn.getInputStream();
+                File temp = File.createTempFile("captura_", ".jpg",
+                        requireContext().getCacheDir());
 
-                File temp = File.createTempFile("capture_", ".jpg", requireContext().getCacheDir());
                 FileOutputStream fos = new FileOutputStream(temp);
                 byte[] buffer = new byte[8192];
                 int len;
-                while ((len = is.read(buffer)) != -1) fos.write(buffer, 0, len);
+                while ((len = is.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len);
+                }
+
                 fos.close();
                 is.close();
-                connection.disconnect();
+                conn.disconnect();
 
                 subirAFirebase(temp);
 
             } catch (Exception e) {
-                runOnUiThreadSafe(() -> {
-                    mostrarToast("Error capturando imagen");
+                Log.e(TAG, "Error capturando", e);
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(getContext(),
+                            "Error capturando imagen",
+                            Toast.LENGTH_SHORT).show();
                     btnGuardarFoto.setEnabled(true);
                 });
             }
         }).start();
     }
 
-    private void subirAFirebase(File archivoLocal) {
-        try {
-            String filename = "captura_" + System.currentTimeMillis() + ".jpg";
-            StorageReference fileRef =
-                    storageRef.child("capturas/" + cocheId + "/" + filename);
+    // ---------------- SUBIDA ----------------
 
-            Uri uri = Uri.fromFile(archivoLocal);
-            fileRef.putFile(uri)
-                    .addOnSuccessListener(t -> fileRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
-                        guardarEnFirestore(downloadUri.toString(), filename);
-                        archivoLocal.delete();
-                        runOnUiThreadSafe(() -> {
-                            mostrarToast("Foto subida");
-                            btnGuardarFoto.setEnabled(true);
-                            TabLayout.Tab tab = tabCamera.getTabAt(1);
-                            if (tab != null) tab.select();
-                        });
-                    }))
-                    .addOnFailureListener(e ->
-                            runOnUiThreadSafe(() -> {
-                                mostrarToast("Error subiendo foto");
+    private void subirAFirebase(File archivo) {
+        String nombre = "captura_" + System.currentTimeMillis() + ".jpg";
+        StorageReference ref =
+                storageRef.child("capturas/" + cocheId + "/" + nombre);
+
+        ref.putFile(Uri.fromFile(archivo))
+                .addOnSuccessListener(t ->
+                        ref.getDownloadUrl().addOnSuccessListener(uri -> {
+
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("url", uri.toString());
+                            data.put("nombre", nombre);
+                            data.put("fecha", System.currentTimeMillis());
+
+                            db.collection("Coches")
+                                    .document(cocheId)
+                                    .collection("capturas")
+                                    .add(data);
+
+                            archivo.delete();
+
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(),
+                                        "Foto guardada",
+                                        Toast.LENGTH_SHORT).show();
                                 btnGuardarFoto.setEnabled(true);
-                            })
-                    );
-
-        } catch (Exception e) {
-            runOnUiThreadSafe(() -> {
-                mostrarToast("Error subiendo foto");
-                btnGuardarFoto.setEnabled(true);
-            });
-        }
+                                tabCamera.getTabAt(1).select();
+                            });
+                        })
+                )
+                .addOnFailureListener(e ->
+                        requireActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(),
+                                    "Error subiendo foto",
+                                    Toast.LENGTH_SHORT).show();
+                            btnGuardarFoto.setEnabled(true);
+                        })
+                );
     }
 
-    private void guardarEnFirestore(String url, String nombre) {
-        Map<String, Object> data = new HashMap<>();
-        data.put("url", url);
-        data.put("nombre", nombre);
-        data.put("fecha", System.currentTimeMillis());
-
-        db.collection("Coches")
-                .document(cocheId)
-                .collection("capturas")
-                .document()
-                .set(data)
-                .addOnSuccessListener(a -> cargarCapturas())
-                .addOnFailureListener(e -> Log.e(TAG, "Error guardando metadata", e));
-    }
+    // ---------------- LISTADO ----------------
 
     private void cargarCapturas() {
         db.collection("Coches")
@@ -249,69 +254,47 @@ public class CameraFragment extends Fragment {
                     qs.forEach(doc -> {
                         String url = doc.getString("url");
                         String nombre = doc.getString("nombre");
-                        if (url != null) listaCapturas.add(new CapturaItem(url, nombre));
+                        if (url != null && nombre != null) {
+                            listaCapturas.add(new CapturaItem(url, nombre));
+                        }
                     });
+
+                    txtVacio.setVisibility(listaCapturas.isEmpty() ? View.VISIBLE : View.GONE);
+                    recyclerCapturas.setVisibility(listaCapturas.isEmpty() ? View.GONE : View.VISIBLE);
+
                     adapter.notifyDataSetChanged();
-                });
+                })
+                .addOnFailureListener(e ->
+                        Log.e(TAG, "Error cargando capturas", e));
     }
 
-    public void descargarConDownloadManager(String url, String nombreArchivo) {
+    // ---------------- DESCARGA ----------------
+
+    public void descargarConDownloadManager(String url, String nombre) {
         try {
-            DownloadManager dm = (DownloadManager) requireContext().getSystemService(Context.DOWNLOAD_SERVICE);
-            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+            DownloadManager dm =
+                    (DownloadManager) requireContext()
+                            .getSystemService(Context.DOWNLOAD_SERVICE);
 
-            request.setTitle(nombreArchivo);
-            request.setDescription("Descargando captura");
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
+            req.setTitle(nombre);
+            req.setNotificationVisibility(
+                    DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-            File destFolder = new File(Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_PICTURES), "Proyecto_IoT");
-
-            if (!destFolder.exists()) destFolder.mkdirs();
-
-            request.setDestinationInExternalPublicDir(
+            req.setDestinationInExternalPublicDir(
                     Environment.DIRECTORY_PICTURES,
-                    "Proyecto_IoT/" + nombreArchivo
+                    "Proyecto_IoT/" + nombre
             );
 
-            dm.enqueue(request);
-
-            mostrarToast("Descarga iniciada");
+            dm.enqueue(req);
+            Toast.makeText(getContext(),
+                    "Descarga iniciada",
+                    Toast.LENGTH_SHORT).show();
 
         } catch (Exception e) {
-            mostrarToast("Error iniciando descarga");
+            Toast.makeText(getContext(),
+                    "Error al descargar",
+                    Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void mostrarToast(String msg) {
-        if (getActivity() == null) return;
-        requireActivity().runOnUiThread(() ->
-                Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show());
-    }
-
-    private void runOnUiThreadSafe(Runnable r) {
-        if (getActivity() == null) return;
-        requireActivity().runOnUiThread(r);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (webCamView != null) webCamView.onPause();
-        if (webCamView2 != null) webCamView2.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (webCamView != null) webCamView.onResume();
-        if (webCamView2 != null) webCamView2.onResume();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (webCamView != null) webCamView.destroy();
-        if (webCamView2 != null) webCamView2.destroy();
     }
 }

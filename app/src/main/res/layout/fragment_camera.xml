@@ -40,7 +40,7 @@
             android:paddingBottom="120dp">
 
             <!-- ============================= -->
-            <!-- SECCIÓN STREAMING (VISIBLE) -->
+            <!-- SECCIÓN STREAMING -->
             <!-- ============================= -->
             <LinearLayout
                 android:id="@+id/layoutStreaming"
@@ -72,7 +72,6 @@
 
                     <!-- Cámara Delantera -->
                     <TextView
-                        android:id="@+id/textView8"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Cámara Delantera"
@@ -80,7 +79,6 @@
                         android:textColor="@color/icono_normal" />
 
                     <FrameLayout
-                        android:id="@+id/cameraPreviewContainer"
                         android:layout_width="match_parent"
                         android:layout_height="250dp"
                         android:layout_marginTop="6dp"
@@ -96,7 +94,6 @@
 
                     <!-- Cámara Interior -->
                     <TextView
-                        android:id="@+id/textView9"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Cámara Interior"
@@ -105,7 +102,6 @@
                         android:textColor="@color/icono_normal" />
 
                     <FrameLayout
-                        android:id="@+id/cameraPreviewContainer2"
                         android:layout_width="match_parent"
                         android:layout_height="250dp"
                         android:layout_marginTop="6dp"
@@ -135,7 +131,7 @@
             </LinearLayout>
 
             <!-- ============================= -->
-            <!-- SECCIÓN CAPTURAS (INICIALMENTE OCULTA) -->
+            <!-- SECCIÓN CAPTURAS -->
             <!-- ============================= -->
             <LinearLayout
                 android:id="@+id/layoutCapturas"
@@ -154,11 +150,26 @@
                     android:textStyle="bold"
                     android:layout_marginTop="16dp"/>
 
+                <!-- MENSAJE CUANDO NO HAY CAPTURAS -->
+                <TextView
+                    android:id="@+id/txtSinCapturas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Aún no hay capturas disponibles"
+                    android:textAlignment="center"
+                    android:textSize="16sp"
+                    android:textColor="@color/icono_normal"
+                    android:padding="16dp"
+                    android:visibility="gone"/>
+
+                <!-- RECYCLER -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerCapturas"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"/>
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="12dp"
+                    android:overScrollMode="never"/>
+
             </LinearLayout>
 
         </LinearLayout>
