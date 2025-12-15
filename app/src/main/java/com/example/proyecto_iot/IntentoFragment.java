@@ -664,7 +664,7 @@ public class IntentoFragment extends Fragment {
         } catch (Exception ignored) { }
 
         try {
-            // Fallback constructor simple: (String, String, String, int)
+            // Fallback constructor simple: (String, String, String,, int)
             Constructor<?> c2 = Notificacion.class.getConstructor(
                     String.class, String.class, String.class, int.class
             );
