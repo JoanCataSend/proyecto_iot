@@ -2,6 +2,8 @@ package com.example.proyecto_iot;
 
 import android.content.Intent;
 import android.os.Bundle;
+import com.example.proyecto_iot.utils.ChatbotActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -154,6 +156,16 @@ public class ConfigFragment extends Fragment {
             });
         }
 
+        // =========================
+        // CHATBOT DE SEGURIDAD
+        // =========================
+        FloatingActionButton fabChatbot = view.findViewById(R.id.fabChatbot);
+        if (fabChatbot != null) {
+            fabChatbot.setOnClickListener(v -> {
+                Intent intent = new Intent(requireContext(), ChatbotActivity.class);
+                startActivity(intent);
+            });
+        }
 
         // =========================
         // CARGAR DATOS DEL USUARIOo (Firestore)
