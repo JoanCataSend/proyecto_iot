@@ -93,11 +93,12 @@ public class IntentoFragment extends Fragment {
     // =========================
     private boolean isLocked = true;
     private int currentCarIndex = 0;
-
     private boolean spinnerInicializado = false;
-
     private String ultimaPuerta = null;
-    private boolean ultimoImpacto = false;
+    private boolean primerSnapshotEstado = true;
+    private boolean primerSnapshotPorCoche = true;
+    private String ultimoCarIdListener = null;
+
 
 
     // =========================
@@ -349,6 +350,12 @@ public class IntentoFragment extends Fragment {
             estadoListener = null;
         }
 
+        if (ultimoCarIdListener == null || !ultimoCarIdListener.equals(carId)) {
+            primerSnapshotEstado = true;
+            ultimaPuerta = null;
+            ultimoCarIdListener = carId;
+        }
+
         estadoListener = firestore.collection("Coches")
                 .document(carId)
                 .collection("estado")
@@ -358,12 +365,22 @@ public class IntentoFragment extends Fragment {
                     if (error != null || doc == null || !doc.exists()) return;
 
                     String puerta = doc.getString("puerta");
-                    Boolean impacto = doc.getBoolean("impacto");
 
-                    if (puerta != null) {
-                        puerta = puerta.trim().toLowerCase(Locale.ROOT);
+                    if (puerta != null) puerta = puerta.trim().toLowerCase(Locale.ROOT);
+
+                    // ---- PRIMER SNAPSHOT: solo inicializa, NO notifiques ----
+                    if (primerSnapshotEstado) {
+                        primerSnapshotEstado = false;
+                        ultimaPuerta = puerta;
+
+                        boolean lockedNow = !"open".equals(puerta);
+                        isLocked = lockedNow;
+                        updateLockUi();
+                        guardarLockEnPrefs(lockedNow);
+                        return;
                     }
 
+                    // ---- A partir de aquí, ya es “cambio real” ----
                     if (puerta != null && !puerta.equals(ultimaPuerta)) {
                         ultimaPuerta = puerta;
 
@@ -372,39 +389,39 @@ public class IntentoFragment extends Fragment {
                         updateLockUi();
                         guardarLockEnPrefs(lockedNow);
 
-                        if (lockedNow) {
-                            mostrarNotifPuertaCerrada();
-                        } else {
-                            mostrarNotifPuertaAbierta();
-                        }
+                        // ✅ Guardar en Firestore para que salga en tu RecyclerView
+                        guardarEventoPuerta(carId, puerta);
+
+                        if (lockedNow) mostrarNotifPuertaCerrada();
+                        else mostrarNotifPuertaAbierta();
                     }
 
                 });
     }
 
-    private void verificarImpactoReciente(String carId) {
-        firestore.collection("Coches")
-                .document(carId)
-                .collection("eventos")
-                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
-                .limit(1)
-                .get()
-                .addOnSuccessListener(snap -> {
-                    if (snap.isEmpty()) return;
-
-                    QueryDocumentSnapshot doc = (QueryDocumentSnapshot) snap.getDocuments().get(0);
-
-                    String tipo = doc.getString("tipo");
-                    Long ts = doc.getLong("timestamp");
-
-                    if (tipo == null || ts == null) return;
-
-                    long ahora = System.currentTimeMillis();
-                    if (tipo.equals("impacto") && (ahora - ts) < 10_000) {
-                        manejarImpacto();
-                    }
-                });
-    }
+//    private void verificarImpactoReciente(String carId) {
+//        firestore.collection("Coches")
+//                .document(carId)
+//                .collection("eventos")
+//                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+//                .limit(1)
+//                .get()
+//                .addOnSuccessListener(snap -> {
+//                    if (snap.isEmpty()) return;
+//
+//                    QueryDocumentSnapshot doc = (QueryDocumentSnapshot) snap.getDocuments().get(0);
+//
+//                    String tipo = doc.getString("tipo");
+//                    Long ts = doc.getLong("timestamp");
+//
+//                    if (tipo == null || ts == null) return;
+//
+//                    long ahora = System.currentTimeMillis();
+//                    if (tipo.equals("impacto") && (ahora - ts) < 10_000) {
+//                        manejarImpacto();
+//                    }
+//                });
+//    }
 
     private void guardarEventoPuerta(String carId, String puerta) {
         if (firestore == null || carId == null) return;
@@ -461,27 +478,27 @@ public class IntentoFragment extends Fragment {
         );
     }
 
-    private void manejarImpacto() {
-        vibrateOnce(700);
-
-        String titulo = "Impacto detectado";
-        String mensaje = "Tu vehículo ha recibido un impacto";
-
-        notifyAndSave(
-                NOTIFICATION_ID_IMPACTO,
-                titulo,
-                mensaje,
-                R.drawable.ic_info,
-                "Impacto"
-        );
-
-        requireActivity()
-                .getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, new CameraFragment())
-                .addToBackStack(null)
-                .commit();
-    }
+//    private void manejarImpacto() {
+//        vibrateOnce(700);
+//
+//        String titulo = "Impacto detectado";
+//        String mensaje = "Tu vehículo ha recibido un impacto";
+//
+//        notifyAndSave(
+//                NOTIFICATION_ID_IMPACTO,
+//                titulo,
+//                mensaje,
+//                R.drawable.ic_info,
+//                "Impacto"
+//        );
+//
+//        requireActivity()
+//                .getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.fragment_container, new CameraFragment())
+//                .addToBackStack(null)
+//                .commit();
+//    }
 
     private void notifyAndSave(int notifId,
                                String titulo,
