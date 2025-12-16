@@ -11,15 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <!-- Barra superior -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:gravity="center_vertical">
-            <!-- Título centrado -->
+
             <TextView
-                android:id="@+id/titleSeguridad"
+                android:id="@+id/titleAyuda"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -28,7 +30,6 @@
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_medium"
                 android:textStyle="bold" />
-
         </RelativeLayout>
 
         <!-- Descripción -->
@@ -52,37 +53,43 @@
             android:fontFamily="@font/montserrat_bold"
             android:layout_marginBottom="8dp" />
 
+        <!-- LINK 1 -->
         <TextView
+            android:id="@+id/linkAddCar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autoLink="web"
-            android:textColorLink="@color/icono_normal"
             android:text="@string/como_añadir_coche"
+            android:textColor="@color/texto_oscuro"
+            android:textColorLink="@color/icono_normal"
             android:fontFamily="@font/roboto_regular"
             android:textSize="14sp"
             android:layout_marginBottom="6dp" />
 
+        <!-- LINK 2 -->
         <TextView
+            android:id="@+id/linkActivarSensores"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autoLink="web"
-            android:textColorLink="@color/icono_normal"
             android:text="@string/como_activar_sensores"
+            android:textColor="@color/texto_oscuro"
+            android:textColorLink="@color/icono_normal"
             android:fontFamily="@font/roboto_regular"
             android:textSize="14sp"
             android:layout_marginBottom="6dp" />
 
+        <!-- LINK 3 -->
         <TextView
+            android:id="@+id/linkPerderCoche"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autoLink="web"
-            android:textColorLink="@color/icono_normal"
             android:text="@string/que_hacer_si_pierdo_coche"
+            android:textColor="@color/texto_oscuro"
+            android:textColorLink="@color/icono_normal"
             android:fontFamily="@font/roboto_regular"
             android:textSize="14sp"
             android:layout_marginBottom="24dp" />
 
-        <!--Contacto soporte -->
+        <!-- Contacto soporte -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -97,13 +104,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="email"
-            android:textColorLink="@color/icono_normal"
             android:text="@string/correo_soporte"
+            android:textColorLink="@color/icono_normal"
             android:fontFamily="@font/roboto_regular"
             android:textSize="14sp"
             android:layout_marginBottom="24dp" />
 
-        <!--  Términos y privacidad -->
+        <!-- Términos y privacidad -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -115,11 +122,12 @@
             android:layout_marginBottom="4dp" />
 
         <TextView
+            android:id="@+id/linkTerminos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autoLink="web"
-            android:textColorLink="@color/icono_normal"
             android:text="@string/descripcion_terminos"
+            android:textColor="@color/texto_oscuro"
+            android:textColorLink="@color/icono_normal"
             android:fontFamily="@font/roboto_regular"
             android:textSize="14sp"
             android:layout_marginBottom="40dp" />

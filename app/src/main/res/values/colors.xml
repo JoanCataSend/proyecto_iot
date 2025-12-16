@@ -8,6 +8,7 @@
     <color name="texto_claro">#F9F9F9</color>
     <color name="texto_oscuro">#2E2E2E</color>
     <color name="texto_secundario">#2DD6E1</color>
+    <color name="texto_desactivado">#C5C5C5</color>
 
     <!-- Estados / alertas -->
     <color name="error">#FF4E50</color>

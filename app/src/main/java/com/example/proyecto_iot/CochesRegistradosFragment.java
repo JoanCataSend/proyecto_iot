@@ -1,5 +1,6 @@
 package com.example.proyecto_iot;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import com.example.proyecto_iot.utils.CustomToast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -121,7 +123,7 @@ public class CochesRegistradosFragment extends Fragment {
 
         // Botón eliminar definitivo (ID correcto: btnEliminarDef)
         dialogView.findViewById(R.id.btnEliminarDef).setOnClickListener(v -> {
-            eliminarCocheFirestore(position, coche, dialog);
+            eliminarCocheDeUsuario(coche.getId(), position, dialog);
         });
 
         dialog.show();
@@ -131,23 +133,42 @@ public class CochesRegistradosFragment extends Fragment {
     // ===============================================================
     // ELIMINAR EN FIRESTORE (solo después de confirmar)
     // ===============================================================
-    private void eliminarCocheFirestore(int position, Coche coche, androidx.appcompat.app.AlertDialog dialog) {
+    private void eliminarCocheDeUsuario(String cocheId, int position, androidx.appcompat.app.AlertDialog dialog) {
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("Coches")
-                .document(coche.getId())
-                .delete()
+                .document(cocheId)
+                .update("Propietario", FieldValue.arrayRemove(uid))
                 .addOnSuccessListener(aVoid -> {
+
+                    // Ahora comprobamos si el coche se ha quedado sin propietarios
+                    db.collection("Coches")
+                            .document(cocheId)
+                            .get()
+                            .addOnSuccessListener(doc -> {
+
+                                List<String> propietarios = (List<String>) doc.get("Propietario");
+
+                                if (propietarios == null || propietarios.isEmpty()) {
+                                    // NADIE MÁS TIENE EL COCHE → eliminar documento
+                                    db.collection("Coches").document(cocheId).delete();
+                                }
+                            });
+
                     dialog.dismiss();
-                    CustomToast.success(requireActivity(), "Coche eliminado");
+                    CustomToast.success(requireActivity(), "Coche eliminado de tu cuenta");
 
                     listaCoches.remove(position);
                     adapter.notifyItemRemoved(position);
-                    adapter.notifyItemRangeChanged(position, listaCoches.size() - position);
+                    adapter.notifyItemRangeChanged(position, listaCoches.size());
                 })
                 .addOnFailureListener(e ->
-                        CustomToast.error(requireActivity(),
-                                "Error al eliminar: " + e.getMessage()));
+                        CustomToast.error(requireActivity(), "Error eliminando coche: " + e.getMessage())
+                );
     }
+
 
 
     // ===============================================================

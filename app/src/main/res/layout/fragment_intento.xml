@@ -8,14 +8,14 @@
     android:background="@color/fondo_claro"
     tools:context=".MainActivity">
 
-    <!-- 🟦 CONTENEDOR PARA MOSTRAR FRAGMENTS (CÁMARAS, ETC) -->
+    <!-- 🟦 CONTENEDOR PARA MOSTRAR FRAGMENTS -->
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
 
-    <!-- 🟧 CONTENIDO PRINCIPAL SCROLLEABLE -->
+    <!-- 🟧 CONTENIDO PRINCIPAL -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
@@ -32,6 +32,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- TÍTULO SELECTOR -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -54,7 +55,6 @@
                 <ImageView
                     android:layout_width="22dp"
                     android:layout_height="22dp"
-                    android:contentDescription="@string/nombre_coche"
                     android:src="@drawable/ic_coche_fino"
                     app:tint="@color/icono_normal" />
 
@@ -72,7 +72,6 @@
                     android:layout_width="15dp"
                     android:layout_height="15dp"
                     android:src="@drawable/ic_flecha_abajo"
-                    android:contentDescription="@string/titulo_ubicacion"
                     app:tint="@color/icono_normal" />
             </LinearLayout>
 
@@ -81,15 +80,13 @@
                 android:id="@+id/ivCar"
                 android:layout_width="match_parent"
                 android:layout_height="240dp"
-                android:contentDescription="@string/nombre_coche"
                 android:layout_marginBottom="16dp"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"
                 android:padding="6dp"
                 android:src="@drawable/coche_julia" />
 
-
-            <!-- ACCIONES (LOCK, CAMARAS, SEÑALES, SEGURO) -->
+            <!-- ACCIONES -->
             <LinearLayout
                 android:id="@+id/actionsRow"
                 android:layout_width="match_parent"
@@ -124,7 +121,6 @@
                             android:id="@+id/ivLock"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="@string/bloqueado"
                             android:padding="16dp"
                             android:src="@drawable/ic_candado_abierto"
                             app:tint="@color/texto_oscuro" />
@@ -163,7 +159,6 @@
                             android:id="@+id/ivCameras"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="@string/camara_activada"
                             android:padding="16dp"
                             android:src="@drawable/ic_camara"
                             app:tint="@color/texto_oscuro" />
@@ -202,7 +197,6 @@
                             android:id="@+id/ivSignals"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="@string/senales"
                             android:padding="16dp"
                             android:src="@drawable/ic_sonido"
                             app:tint="@color/texto_oscuro" />
@@ -217,7 +211,7 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- MODO SEGURO -->
+                <!-- SEGURO -->
                 <LinearLayout
                     android:id="@+id/layoutSafeMode"
                     android:layout_width="0dp"
@@ -240,7 +234,6 @@
                             android:id="@+id/ivSafe"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="@string/modo_seguro_activado"
                             android:padding="16dp"
                             android:src="@drawable/ic_escudo"
                             app:tint="@color/texto_oscuro" />
@@ -257,11 +250,21 @@
 
             </LinearLayout>
 
-            <!-- UBICACIÓN -->
+            <!-- NUEVO TÍTULO UBICACIÓN -->
+            <TextView
+                android:id="@+id/tvAddressTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Su coche se encuentra en:"
+                android:textColor="#505050"
+                android:textSize="16sp"
+                android:layout_marginBottom="7dp"/>
+
+            <!-- UBICACIÓN (PILL) -->
             <LinearLayout
                 android:id="@+id/addressPill"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="50dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
@@ -272,7 +275,6 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:src="@drawable/ic_ubicacion"
-                    android:contentDescription="@string/titulo_ubicacion"
                     app:tint="@color/icono_normal" />
 
                 <TextView
@@ -281,7 +283,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="12dp"
-                    android:text="@string/calle"
+                    android:text="Ubicación registrada"
                     android:textColor="@color/texto_oscuro"
                     android:textSize="15sp" />
 
@@ -289,7 +291,6 @@
                     android:layout_width="15dp"
                     android:layout_height="15dp"
                     android:src="@drawable/ic_flecha_derecha"
-                    android:contentDescription="@string/titulo_ubicacion"
                     app:tint="@color/icono_normal" />
             </LinearLayout>
 
@@ -334,8 +335,7 @@
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:src="@drawable/ic_wifi"
-                        app:tint="@color/icono_normal"
-                        android:contentDescription="@string/titulo_ubicacion" />
+                        app:tint="@color/icono_normal" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -359,7 +359,6 @@
                             android:textColor="#7A7A7A"
                             android:textSize="14sp" />
                     </LinearLayout>
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -373,8 +372,7 @@
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:src="@drawable/ic_tiempo"
-                        app:tint="@color/icono_normal"
-                        android:contentDescription="Tiempo" />
+                        app:tint="@color/icono_normal" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -399,6 +397,7 @@
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

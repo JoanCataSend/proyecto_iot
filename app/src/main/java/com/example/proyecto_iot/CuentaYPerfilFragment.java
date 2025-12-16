@@ -115,8 +115,6 @@ public class CuentaYPerfilFragment extends Fragment {
     }
 
     // ======================================================
-    // OBTENER EXTENSIÓN REAL DE LA FOTO
-    // ======================================================
     private String getFileExtension(Uri uri) {
         String extension = null;
 
@@ -142,8 +140,6 @@ public class CuentaYPerfilFragment extends Fragment {
     }
 
     // ======================================================
-    // SUBIR FOTO SOLO A fotos_perfil/
-    // ======================================================
     private void subirFotoFirebase(Uri imageUri) {
 
         if (imageUri == null || user == null) return;
@@ -159,12 +155,12 @@ public class CuentaYPerfilFragment extends Fragment {
                     ref.getDownloadUrl()
                             .addOnSuccessListener(uri -> {
 
-                                // Cargar en la UI
                                 Glide.with(CuentaYPerfilFragment.this)
                                         .load(uri)
+                                        .placeholder(R.drawable.ic_perfil2)
+                                        .error(R.drawable.ic_perfil2)
                                         .into(fotoPerfil);
 
-                                // Guardar URL en Firestore
                                 db.collection("Usuarios")
                                         .document(user.getUid())
                                         .update("Imagen", uri.toString())
@@ -184,8 +180,6 @@ public class CuentaYPerfilFragment extends Fragment {
                 );
     }
 
-    // ======================================================
-    // CARGAR DATOS USUARIO
     // ======================================================
     private void cargarDatosUsuario() {
 
@@ -207,11 +201,15 @@ public class CuentaYPerfilFragment extends Fragment {
                         etNombre.setText(usuario);
                         etCorreo.setText(correo);
 
-                        if (imagenUrl != null && !imagenUrl.isEmpty()) {
+                        // CARGA SEGURA: evita errores y bloqueos UI
+                        if (imagenUrl != null && imagenUrl.startsWith("http")) {
                             Glide.with(this)
                                     .load(imagenUrl)
                                     .placeholder(R.drawable.ic_perfil2)
+                                    .error(R.drawable.ic_perfil2)
                                     .into(fotoPerfil);
+                        } else {
+                            fotoPerfil.setImageResource(R.drawable.ic_perfil2);  // fallback seguro
                         }
 
                     } else {

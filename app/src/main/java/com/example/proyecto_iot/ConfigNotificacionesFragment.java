@@ -1,5 +1,6 @@
 package com.example.proyecto_iot;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.proyecto_iot.utils.CustomToast;
@@ -31,11 +33,13 @@ public class ConfigNotificacionesFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_config_notificaciones, container, false);
 
-        // Header visible y flecha atrás activa
-        if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).setBackButtonVisible(true);
+        // Mostrar flecha atrás (si activity está attachada)
+        Activity act = getActivity();
+        if (act instanceof MainActivity) {
+            ((MainActivity) act).setBackButtonVisible(true);
         }
 
+        // Preferencias seguras
         prefs = requireActivity().getSharedPreferences("notificaciones_prefs", Context.MODE_PRIVATE);
 
         // Referencias
@@ -50,7 +54,7 @@ public class ConfigNotificacionesFragment extends Fragment {
 
         loadSwitchStates();
 
-        // Listener para detectar cambios
+        // Detectar cambios
         MaterialSwitch[] switches = {
                 swVentanaRota, swPuertasAbiertas, swCamara, swMovimiento,
                 swSonido, swUbicacion, swApertura
@@ -63,33 +67,30 @@ public class ConfigNotificacionesFragment extends Fragment {
             });
         }
 
-        // Guardar cambios
+        // Guardar
         btnGuardar.setOnClickListener(v -> {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            if (activity == null) return;  // <-- evita crash
+
             saveSwitchStates();
+
             cambiosPendientes = false;
             actualizarBotonGuardar();
-            CustomToast.success(requireActivity(), "Cambios guardados correctamente");
-            requireActivity().getSupportFragmentManager().popBackStack();
-        });
 
-        // Flecha atrás del header
-        View btnBack = requireActivity().findViewById(R.id.btnBack);
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v ->
-                    requireActivity().getSupportFragmentManager().popBackStack());
-        }
+            CustomToast.success(activity, "Cambios guardados correctamente");
+
+            activity.getSupportFragmentManager().popBackStack();
+        });
 
         return view;
     }
 
-    // ======================================================
     private void actualizarBotonGuardar() {
         if (btnGuardar == null) return;
         btnGuardar.setEnabled(cambiosPendientes);
         btnGuardar.setAlpha(cambiosPendientes ? 1f : 0.5f);
     }
 
-    // ======================================================
     private void saveSwitchStates() {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("swVentanaRota", swVentanaRota.isChecked());
@@ -102,7 +103,6 @@ public class ConfigNotificacionesFragment extends Fragment {
         editor.apply();
     }
 
-    // ======================================================
     private void loadSwitchStates() {
         swVentanaRota.setChecked(prefs.getBoolean("swVentanaRota", true));
         swPuertasAbiertas.setChecked(prefs.getBoolean("swPuertasAbiertas", true));

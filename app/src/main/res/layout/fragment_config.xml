@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -19,13 +20,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center_vertical">
-                <!-- Título centrado -->
+
                 <TextView
                     android:id="@+id/titleSeguridad"
                     android:layout_width="wrap_content"
@@ -38,6 +40,7 @@
                     android:textStyle="bold" />
 
             </RelativeLayout>
+
             <!-- TARJETA DEL PERFIL -->
             <LinearLayout
                 android:id="@+id/profile_card"
@@ -71,7 +74,6 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <!-- NOMBRE DEL USUARIO -->
                     <TextView
                         android:id="@+id/tv_name"
                         android:layout_width="wrap_content"
@@ -80,7 +82,6 @@
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
-                    <!-- EMAIL DEL USUARIO -->
                     <TextView
                         android:id="@+id/tv_email"
                         android:layout_width="wrap_content"
@@ -89,7 +90,6 @@
                         android:textColor="#777777"
                         android:textSize="14sp" />
 
-                    <!-- TIPO DE USUARIO + Nº DE COCHES -->
                     <TextView
                         android:id="@+id/tv_user_type"
                         android:layout_width="wrap_content"
@@ -98,6 +98,7 @@
                         android:textColor="#777777"
                         android:textSize="13sp" />
                 </LinearLayout>
+
             </LinearLayout>
 
             <!-- BOTÓN LOGOUT -->
@@ -303,5 +304,18 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <!-- 🌟 FAB DEL CHATBOT (bien colocado y sin romper nada) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabChatbot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="Chatbot de seguridad"
+        android:src="@drawable/ic_ia"
+        app:tint="@android:color/white"
+        app:backgroundTint="@color/boton_oscuro"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
