@@ -61,6 +61,11 @@ public class IntentoFragment extends Fragment {
     private static final int NOTIFICATION_ID_PUERTAS_CERRADAS = 1002;
     private static final int NOTIFICATION_ID_IMPACTO = 1003;
     private static final int NOTIFICATION_ID_SENALES = 1004;
+    private static final int NOTIFICATION_ID_SAFE_MODE = 1005;
+
+    private boolean primerSnapshotSafeMode = true;
+    private Boolean ultimoSafeModeNotificado = null;
+
 
     private static final String PREFS_NAME = "notificaciones_prefs";
     private static final String PREF_KEY_LOCKED = "lock_state_locked";
@@ -287,6 +292,8 @@ public class IntentoFragment extends Fragment {
                     updateCarLocation(carId);
                     leerSeguridadPuertas(carId);
                     listenEstadoActual(carId);
+                    primerSnapshotSafeMode = true;
+                    ultimoSafeModeNotificado = null;
                     listenSafeMode(carId);
                 } else {
                     updateCarImage(position);
@@ -401,6 +408,8 @@ public class IntentoFragment extends Fragment {
                         updateCarLocation(carId);
                         leerSeguridadPuertas(carId);
                         listenEstadoActual(carId);
+                        primerSnapshotSafeMode = true;
+                        ultimoSafeModeNotificado = null;
                         listenSafeMode(carId);
                     }
                 });
@@ -577,11 +586,8 @@ public class IntentoFragment extends Fragment {
 
         boolean targetLocked = !isLocked;
 
-        // ⚠️ En Código2 ponía "close" (ERROR típico). Firestore en tu proyecto usa "closed".
-        // String nuevoEstado = targetLocked ? "close" : "open"; // ORIGINAL (MAL)
-        String nuevoEstado = targetLocked ? "close" : "open";  // ✅ CORREGIDO
+        String nuevoEstado = targetLocked ? "close" : "open";
 
-        // Guardamos el estado esperado durante cooldown para filtrar rebotes (Código2)
         doorExpectedState = nuevoEstado;
         doorExpectedUntilTs = System.currentTimeMillis() + DOOR_COOLDOWN_MS;
 
@@ -1120,22 +1126,41 @@ public class IntentoFragment extends Fragment {
                     if (error != null || doc == null || !doc.exists()) return;
 
                     Boolean v = doc.getBoolean("safeMode");
-                    if (v == null) v = true; // por defecto ON si no existe
+                    if (v == null) v = true;
+
+                    // 1) Primer snapshot: solo inicializa, NO notificar
+                    if (primerSnapshotSafeMode) {
+                        primerSnapshotSafeMode = false;
+                        safeModeEnabled = v;
+                        ultimoSafeModeNotificado = v;
+
+                        actualizarUiSafeMode();
+                        actualizarUiPuertas();
+                        actualizarUiAlarmas();
+                        actualizarUiCamaras();
+                        return;
+                    }
+
+                    // 2) Si cambió respecto al último valor notificado → notifica
+                    if (ultimoSafeModeNotificado == null || !v.equals(ultimoSafeModeNotificado)) {
+                        mostrarNotifSafeMode(v);
+                        ultimoSafeModeNotificado = v;
+                    }
 
                     safeModeEnabled = v;
 
                     if (!safeModeEnabled) {
-                        stopSignalsEffects();           // para vibración/animación
-                        updateFirestoreAlerts(false);   // apaga alerta en Firestore
+                        stopSignalsEffects();
+                        updateFirestoreAlerts(false);
                     }
 
                     actualizarUiSafeMode();
-                    // Re-aplica la habilitación real de sensores (según permisos + safeMode)
                     actualizarUiPuertas();
                     actualizarUiAlarmas();
                     actualizarUiCamaras();
                 });
     }
+
 
     private void setSafeModeFirestore(String carId, boolean activar) {
 
@@ -1151,6 +1176,17 @@ public class IntentoFragment extends Fragment {
                 .document(carId)
                 .update(updates);
         // La UI se actualizará sola por el listener listenSafeMode()
+
+        // ✅ GUARDAR EVENTO PARA HISTORIAL
+        Map<String, Object> evento = new HashMap<>();
+        evento.put("tipo", "safe_mode");
+        evento.put("activar", activar ? 1 : 0);
+        evento.put("timestamp", System.currentTimeMillis());
+
+        firestore.collection("Coches")
+                .document(carId)
+                .collection("eventos")
+                .add(evento);
     }
 
     private void actualizarUiSafeMode() {
@@ -1173,5 +1209,19 @@ public class IntentoFragment extends Fragment {
         layoutCamarasRef.setEnabled(safeModeEnabled);
         layoutCamarasRef.setAlpha(safeModeEnabled ? 1f : 0.5f);
     }
+
+    private void mostrarNotifSafeMode(boolean activado) {
+        String titulo = "Modo seguro";
+        String mensaje = activado ? "Activado" : "Desactivado";
+
+        notifyAndSave(
+                NOTIFICATION_ID_SAFE_MODE,
+                titulo,
+                mensaje,
+                R.drawable.ic_escudo,   // usa tu icono del escudo
+                "Seguridad"
+        );
+    }
+
 
 }

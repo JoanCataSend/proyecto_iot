@@ -180,15 +180,28 @@ public class NotificacionesFragment extends Fragment {
             }
 
             case "alerta_sonido": {
-                Long activar = ev.getLong("activar"); // 1 o 0
+                Long activar = ev.getLong("activar");
                 boolean on = activar != null && activar == 1;
+                if (!on) return null; // IGNORA OFF
 
                 String titulo = "Alertas activadas";
                 String mensaje = "Se han activado las alertas luminosas y sonoras de " + carName + ".";
-
                 return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_sonido, carName, "Alarmas", ts);
-
             }
+
+
+            case "safe_mode": {
+                Long activar = ev.getLong("activar");
+                boolean on = activar != null && activar == 1;
+
+                String titulo = "Modo seguro";
+                String mensaje = on
+                        ? "Activado en " + carName + "."
+                        : "Desactivado en " + carName + ".";
+
+                return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_escudo, carName, "Seguridad", ts);
+            }
+
 
             // Si en algún momento guardas eventos de puerta:
             // { tipo:"puerta", puerta:"open"/"closed", timestamp:... }
@@ -283,6 +296,7 @@ public class NotificacionesFragment extends Fragment {
         types.add("Alarmas");
         types.add("Puertas");
         types.add("Impacto");
+        types.add("Seguridad");
 
         ArrayAdapter<String> carAdapter = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_spinner_item, cars);
