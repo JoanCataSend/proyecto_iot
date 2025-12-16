@@ -128,6 +128,17 @@ public class IntentoFragment extends Fragment {
     private Vibrator vibrator;
 
     // =========================
+    //      MODO SEGURO
+    // =========================
+    private LinearLayout layoutSafeMode;
+    private ImageView ivSafe;
+    private TextView tvSafeState;
+    private LinearLayout layoutCamarasRef; // para poder desactivar cámaras desde aquí
+    private boolean safeModeEnabled = true; // por defecto ON (cámbialo si quieres)
+    private ListenerRegistration safeModeListener;
+
+
+    // =========================
     //      LIFECYCLE
     // =========================
     @Override
@@ -158,6 +169,11 @@ public class IntentoFragment extends Fragment {
             vibrator.cancel();
             vibrator = null;
         }
+        if (safeModeListener != null) {
+            safeModeListener.remove();
+            safeModeListener = null;
+        }
+
     }
 
     @Override
@@ -203,6 +219,14 @@ public class IntentoFragment extends Fragment {
 
         tvAddress = view.findViewById(R.id.tvAddress);
         addressPillView = view.findViewById(R.id.addressPill);
+
+        layoutSafeMode = view.findViewById(R.id.layoutSafeMode);
+        ivSafe = view.findViewById(R.id.ivSafe);
+        tvSafeState = view.findViewById(R.id.tvSafeState);
+
+        // referencia para poder desactivar/activar cámaras
+        layoutCamarasRef = view.findViewById(R.id.layoutCamaras);
+
     }
 
     private void setupSpinner(Context context, SharedPreferences prefs) {
@@ -263,6 +287,7 @@ public class IntentoFragment extends Fragment {
                     updateCarLocation(carId);
                     leerSeguridadPuertas(carId);
                     listenEstadoActual(carId);
+                    listenSafeMode(carId);
                 } else {
                     updateCarImage(position);
                 }
@@ -304,6 +329,14 @@ public class IntentoFragment extends Fragment {
                         .addToBackStack(null)
                         .commit()
         );
+        layoutSafeMode.setOnClickListener(v -> {
+            if (currentCarIndex < 0 || currentCarIndex >= carIds.size()) return;
+            String carId = carIds.get(currentCarIndex);
+
+            boolean nuevoEstado = !safeModeEnabled;
+            setSafeModeFirestore(carId, nuevoEstado);
+        });
+
 
         // Señales: SOLO contenedor (Código2)
         View.OnClickListener signalsClick = v -> handleSignalsClick(context, prefs, ivSignals);
@@ -368,6 +401,7 @@ public class IntentoFragment extends Fragment {
                         updateCarLocation(carId);
                         leerSeguridadPuertas(carId);
                         listenEstadoActual(carId);
+                        listenSafeMode(carId);
                     }
                 });
     }
@@ -1006,29 +1040,21 @@ public class IntentoFragment extends Fragment {
 
         if (flSignals == null || ivSignals == null) return;
 
-        if (!alarmaHabilitada) {
-
+        if (!safeModeEnabled) {
             flSignals.setEnabled(false);
             ivSignals.setEnabled(false);
+            ivSignals.setImageTintList(ContextCompat.getColorStateList(requireContext(), R.color.texto_desactivado));
+            return;
+        }
 
-            ivSignals.setImageTintList(
-                    ContextCompat.getColorStateList(
-                            requireContext(),
-                            R.color.texto_desactivado
-                    )
-            );
-
+        if (!alarmaHabilitada) {
+            flSignals.setEnabled(false);
+            ivSignals.setEnabled(false);
+            ivSignals.setImageTintList(ContextCompat.getColorStateList(requireContext(), R.color.texto_desactivado));
         } else {
-
             flSignals.setEnabled(true);
             ivSignals.setEnabled(true);
-
-            ivSignals.setImageTintList(
-                    ContextCompat.getColorStateList(
-                            requireContext(),
-                            R.color.texto_oscuro
-                    )
-            );
+            ivSignals.setImageTintList(ContextCompat.getColorStateList(requireContext(), R.color.texto_oscuro));
         }
     }
 
@@ -1037,22 +1063,22 @@ public class IntentoFragment extends Fragment {
 
         if (flLock == null || ivLock == null || tvLockState == null) return;
 
-        if (!puertasHabilitadas) {
-
+        if (!safeModeEnabled) {
             flLock.setEnabled(false);
             ivLock.setEnabled(false);
-
-            ivLock.setImageTintList(
-                    ContextCompat.getColorStateList(requireContext(), R.color.texto_desactivado)
-            );
-
+            ivLock.setImageTintList(ContextCompat.getColorStateList(requireContext(), R.color.texto_desactivado));
             tvLockState.setText("Desactivado");
-            tvLockState.setTextColor(
-                    ContextCompat.getColor(requireContext(), R.color.texto_desactivado)
-            );
+            tvLockState.setTextColor(ContextCompat.getColor(requireContext(), R.color.texto_desactivado));
+            return;
+        }
 
+        if (!puertasHabilitadas) {
+            flLock.setEnabled(false);
+            ivLock.setEnabled(false);
+            ivLock.setImageTintList(ContextCompat.getColorStateList(requireContext(), R.color.texto_desactivado));
+            tvLockState.setText("Desactivado");
+            tvLockState.setTextColor(ContextCompat.getColor(requireContext(), R.color.texto_desactivado));
         } else {
-
             flLock.setEnabled(true);
             ivLock.setEnabled(true);
             updateLockUi();
@@ -1079,4 +1105,73 @@ public class IntentoFragment extends Fragment {
         Object v = map.get(key);
         return v instanceof Boolean ? (Boolean) v : true;
     }
+
+    private void listenSafeMode(String carId) {
+
+        if (safeModeListener != null) {
+            safeModeListener.remove();
+            safeModeListener = null;
+        }
+
+        safeModeListener = firestore.collection("Coches")
+                .document(carId)
+                .addSnapshotListener((doc, error) -> {
+                    if (!isAdded()) return;
+                    if (error != null || doc == null || !doc.exists()) return;
+
+                    Boolean v = doc.getBoolean("safeMode");
+                    if (v == null) v = true; // por defecto ON si no existe
+
+                    safeModeEnabled = v;
+
+                    if (!safeModeEnabled) {
+                        stopSignalsEffects();           // para vibración/animación
+                        updateFirestoreAlerts(false);   // apaga alerta en Firestore
+                    }
+
+                    actualizarUiSafeMode();
+                    // Re-aplica la habilitación real de sensores (según permisos + safeMode)
+                    actualizarUiPuertas();
+                    actualizarUiAlarmas();
+                    actualizarUiCamaras();
+                });
+    }
+
+    private void setSafeModeFirestore(String carId, boolean activar) {
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("safeMode", activar);
+
+        // Esto “activa/desactiva sensores” en tu estructura actual
+        // (tú ya lees seguridad.puertas y seguridad.alarma para habilitar UI)
+        updates.put("seguridad.puertas", activar);
+        updates.put("seguridad.alarma", activar);
+
+        firestore.collection("Coches")
+                .document(carId)
+                .update(updates);
+        // La UI se actualizará sola por el listener listenSafeMode()
+    }
+
+    private void actualizarUiSafeMode() {
+        if (ivSafe == null || tvSafeState == null) return;
+
+        if (safeModeEnabled) {
+            tvSafeState.setText("Seguro: ON");
+            ivSafe.setImageTintList(ContextCompat.getColorStateList(requireContext(), R.color.verdeoscuro));
+            ivSafe.setAlpha(1f);
+        } else {
+            tvSafeState.setText("Seguro: OFF");
+            ivSafe.setImageTintList(ContextCompat.getColorStateList(requireContext(), R.color.texto_desactivado));
+            ivSafe.setAlpha(0.7f);
+        }
+    }
+
+    private void actualizarUiCamaras() {
+        if (layoutCamarasRef == null) return;
+
+        layoutCamarasRef.setEnabled(safeModeEnabled);
+        layoutCamarasRef.setAlpha(safeModeEnabled ? 1f : 0.5f);
+    }
+
 }
