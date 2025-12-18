@@ -2,6 +2,7 @@ package com.example.proyecto_iot;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
@@ -20,17 +21,26 @@ public class MainActivity extends AppCompatActivity {
     private final AccelerateInterpolator inInterpolator = new AccelerateInterpolator();
     private final OvershootInterpolator outInterpolator = new OvershootInterpolator(2f);
 
-    // Tags para reutilizar fragments raíz y evitar recreación (evita “recarga” y crashes)
+    // ===== TAGS ROOT =====
     private static final String TAG_HOME = "root_home";
     private static final String TAG_CAR = "root_car";
     private static final String TAG_NOTIFICATIONS = "root_notifications";
     private static final String TAG_SETTINGS = "root_settings";
+
+    // ===== FRAGMENTS EN MEMORIA =====
+    private Fragment homeFragment;
+    private Fragment carFragment;
+    private Fragment notificationsFragment;
+    private Fragment settingsFragment;
+
+    private Fragment activeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // ===== UI =====
         navHome = findViewById(R.id.nav_home);
         navCar = findViewById(R.id.nav_car);
         navNotifications = findViewById(R.id.nav_notifications);
@@ -49,46 +59,78 @@ public class MainActivity extends AppCompatActivity {
         attachIconTouchAnimation(navNotifications);
         attachIconTouchAnimation(navSettings);
 
-        // Clicks del navbar → NO recargar si ya estás en el mismo fragment (evita crash por listeners duplicados)
+        FragmentManager fm = getSupportFragmentManager();
+
+        // ===== RESTAURAR FRAGMENTS SI EXISTEN =====
+        homeFragment = fm.findFragmentByTag(TAG_HOME);
+        carFragment = fm.findFragmentByTag(TAG_CAR);
+        notificationsFragment = fm.findFragmentByTag(TAG_NOTIFICATIONS);
+        settingsFragment = fm.findFragmentByTag(TAG_SETTINGS);
+
+        if (homeFragment == null) homeFragment = new IntentoFragment();
+        if (carFragment == null) carFragment = new UbicacionFragment();
+        if (notificationsFragment == null) notificationsFragment = new NotificacionesFragment();
+        if (settingsFragment == null) settingsFragment = new ConfigFragment();
+
+        if (savedInstanceState == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.fragment_container, homeFragment, TAG_HOME);
+            ft.add(R.id.fragment_container, carFragment, TAG_CAR).hide(carFragment);
+            ft.add(R.id.fragment_container, notificationsFragment, TAG_NOTIFICATIONS).hide(notificationsFragment);
+            ft.add(R.id.fragment_container, settingsFragment, TAG_SETTINGS).hide(settingsFragment);
+            ft.commit();
+
+            activeFragment = homeFragment;
+            updateNavbarSelection(R.id.nav_home);
+            setBackButtonVisible(false);
+        } else {
+            activeFragment = fm.findFragmentById(R.id.fragment_container);
+        }
+
+        // ===== NAVBAR =====
         navHome.setOnClickListener(v -> {
             updateNavbarSelection(R.id.nav_home);
-            showRootFragment(IntentoFragment.class, TAG_HOME, new IntentoFragment());
+            switchFragment(homeFragment);
             setBackButtonVisible(false);
         });
 
         navCar.setOnClickListener(v -> {
             updateNavbarSelection(R.id.nav_car);
-
-            /*
-             * ORIGINAL (comentado): hacía 2 replaces seguidos, provocando recargas dobles y riesgo de crash.
-             * replaceFragment(new UbicacionFragment(), true);
-             * replaceFragment(new UbicacionFragment(), false);
-             */
-
-            // Correcto: fragment raíz sin backstack y sin recrearlo si ya está visible
-            showRootFragment(UbicacionFragment.class, TAG_CAR, new UbicacionFragment());
+            switchFragment(carFragment);
             setBackButtonVisible(false);
         });
 
         navNotifications.setOnClickListener(v -> {
             updateNavbarSelection(R.id.nav_notifications);
-            showRootFragment(NotificacionesFragment.class, TAG_NOTIFICATIONS, new NotificacionesFragment());
+            switchFragment(notificationsFragment);
             setBackButtonVisible(false);
         });
 
         navSettings.setOnClickListener(v -> {
             updateNavbarSelection(R.id.nav_settings);
-            showRootFragment(ConfigFragment.class, TAG_SETTINGS, new ConfigFragment());
+            switchFragment(settingsFragment);
             setBackButtonVisible(false);
         });
-
-        if (savedInstanceState == null) {
-            updateNavbarSelection(R.id.nav_home);
-            showRootFragment(IntentoFragment.class, TAG_HOME, new IntentoFragment());
-            setBackButtonVisible(false);
-        }
     }
 
+    // =========================
+    //  CAMBIO DE FRAGMENT CACHE
+    // =========================
+    private void switchFragment(Fragment target) {
+        if (activeFragment == target) return;
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setReorderingAllowed(true);
+        ft.hide(activeFragment);
+        ft.show(target);
+        ft.commit();
+
+        activeFragment = target;
+    }
+
+    // =========================
+    //  ANIMACIÓN ICONOS
+    // =========================
     private void attachIconTouchAnimation(ImageButton btn) {
         btn.setOnTouchListener((v, event) -> {
             switch (event.getActionMasked()) {
@@ -115,10 +157,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Mantengo tu método público para no romper nada existente.
-     * (Otros fragments/pantallas pueden estar llamándolo).
-     */
+    // =========================
+    //  MÉTODO LEGACY (NO SE ROMPE)
+    // =========================
     public void replaceFragment(Fragment fragment, boolean addToBackstack) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_container, fragment);
@@ -126,34 +167,9 @@ public class MainActivity extends AppCompatActivity {
         ft.commit();
     }
 
-    /**
-     * ✅ Clave del fix:
-     * - Si el fragment actual YA ES del mismo tipo → no hacemos replace (no se recarga).
-     * - Si existe una instancia ya creada con tag → la reutilizamos (mantiene estado).
-     * - No se añade al backstack porque son “raíces” del navbar.
-     */
-    private void showRootFragment(Class<? extends Fragment> fragmentClass, String tag, Fragment newInstance) {
-        Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (current != null && fragmentClass.isInstance(current)) {
-            // Ya estás en este fragment → NO recargar datos
-            return;
-        }
-
-        Fragment existing = getSupportFragmentManager().findFragmentByTag(tag);
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.setReorderingAllowed(true); // optimiza transacciones y reduce efectos raros
-
-        if (existing != null) {
-            ft.replace(R.id.fragment_container, existing, tag);
-        } else {
-            ft.replace(R.id.fragment_container, newInstance, tag);
-        }
-
-        // Importante: raíz sin backstack
-        ft.commit();
-    }
-
+    // =========================
+    //  UI HELPERS
+    // =========================
     private void updateNavbarSelection(int selectedNavId) {
         indicatorHome.setVisibility(selectedNavId == R.id.nav_home ? View.VISIBLE : View.INVISIBLE);
         indicatorCar.setVisibility(selectedNavId == R.id.nav_car ? View.VISIBLE : View.INVISIBLE);
@@ -167,41 +183,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** BOTÓN ATRÁS CENTRALIZADO */
+    // =========================
+    //  BACK CENTRALIZADO
+    // =========================
     private void handleBack() {
 
-        // 1️⃣ Si hay algo en el backstack → volver atrás
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
-
-            // Asegura que el Fragment actual sea el correcto tras el pop
-            getSupportFragmentManager().executePendingTransactions();
-
-            Fragment newCurrent = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-
-            if (newCurrent instanceof IntentoFragment ||
-                    newCurrent instanceof UbicacionFragment ||
-                    newCurrent instanceof NotificacionesFragment ||
-                    newCurrent instanceof ConfigFragment) {
-                setBackButtonVisible(false);
-            } else {
-                setBackButtonVisible(true);
-            }
             return;
         }
 
-        // 2️⃣ Sin backstack: estamos en uno de los fragments "raíz" del navbar
-        Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-
-        // Si no estamos en Home → ir a Home (sin recrear si ya existe)
-        if (!(current instanceof IntentoFragment)) {
+        if (activeFragment != homeFragment) {
             updateNavbarSelection(R.id.nav_home);
-            showRootFragment(IntentoFragment.class, TAG_HOME, new IntentoFragment());
+            switchFragment(homeFragment);
             setBackButtonVisible(false);
             return;
         }
 
-        // 3️⃣ Ya estamos en Home → cerrar app
         finish();
     }
 
