@@ -35,10 +35,32 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Notificacion notif = listaNotificaciones.get(position);
+
         holder.titulo.setText(notif.getTitulo());
         holder.mensaje.setText(notif.getMensaje());
         holder.fecha.setText(notif.getFecha());
         holder.icono.setImageResource(notif.getIcono());
+
+        String full = notif.getMensaje() != null ? notif.getMensaje().trim() : "";
+
+        if (full.contains("\n")) {
+            String[] parts = full.split("\n");
+
+            StringBuilder msg = new StringBuilder();
+            for (int i = 0; i < parts.length - 1; i++) {
+                msg.append(parts[i]).append("\n");
+            }
+
+            holder.mensaje.setText(msg.toString().trim());
+            
+            holder.ubicacion.setText(parts[parts.length - 1].trim());
+            holder.ubicacion.setVisibility(View.VISIBLE);
+
+        } else {
+            holder.mensaje.setText(full);
+            holder.ubicacion.setVisibility(View.GONE);
+        }
+
 
         String fechaActual = extraerDia(notif.getFecha());
 
@@ -63,7 +85,7 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView titulo, mensaje, fecha, headerDia;
+        TextView titulo, mensaje, fecha, headerDia, ubicacion;
         ImageView icono;
 
         public ViewHolder(@NonNull View itemView) {
@@ -73,6 +95,7 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
             fecha = itemView.findViewById(R.id.fecha_notificacion);
             icono = itemView.findViewById(R.id.icono_notificacion);
             headerDia = itemView.findViewById(R.id.header_dia);
+            ubicacion = itemView.findViewById(R.id.tvUbicacion);
         }
     }
 

@@ -1,6 +1,9 @@
 package com.example.proyecto_iot;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -102,11 +105,19 @@ public class NotificacionesFragment extends Fragment {
                     }
 
                     HashMap<String, String> carIdToName = new HashMap<>();
+                    HashMap<String, String> carIdToLoc = new HashMap<>();
+
                     List<String> carIds = new ArrayList<>();
 
                     for (QueryDocumentSnapshot carDoc : carsSnap) {
                         String carId = carDoc.getId();
                         String nombre = carDoc.getString("Nombre");
+                        Double lat = carDoc.getDouble("lat");
+                        Double lng = carDoc.getDouble("lng");
+
+                        String loc = formatLoc(requireContext(), lat, lng);
+                        carIdToLoc.put(carId, loc);
+
                         carIds.add(carId);
                         carIdToName.put(carId, (nombre != null && !nombre.trim().isEmpty()) ? nombre.trim() : "Vehículo");
                     }
@@ -127,8 +138,10 @@ public class NotificacionesFragment extends Fragment {
                                         Long ts = ev.getLong("timestamp");
 
                                         String carName = carIdToName.get(carId);
+                                        String loc = carIdToLoc.get(carId);
 
-                                        Notificacion n = buildNotificacionFromEvento(tipo, ev, carName, ts);
+                                        Notificacion n = buildNotificacionFromEvento(tipo, ev, carName, loc, ts);
+
                                         if (n != null && ts != null) {
                                             temp.add(new ItemTemp(n, ts));
                                         }
@@ -137,6 +150,7 @@ public class NotificacionesFragment extends Fragment {
 
                         tasks.add(t);
                     }
+
 
                     Tasks.whenAllComplete(tasks)
                             .addOnSuccessListener(done -> {
@@ -165,7 +179,8 @@ public class NotificacionesFragment extends Fragment {
     private Notificacion buildNotificacionFromEvento(String tipo,
                                                      QueryDocumentSnapshot ev,
                                                      String carName,
-                                                     Long ts) {
+                                                     String loc,
+                                                     Long ts){
 
         if (tipo == null || ts == null) return null;
 
@@ -176,6 +191,8 @@ public class NotificacionesFragment extends Fragment {
             case "impacto": {
                 String titulo = "Impacto detectado";
                 String mensaje = "Tu vehículo " + carName + " ha recibido un impacto.";
+                if (loc != null && !loc.isEmpty()) mensaje += "\n " + loc;
+
                 return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info, carName, "Impacto", ts);
             }
 
@@ -186,6 +203,8 @@ public class NotificacionesFragment extends Fragment {
 
                 String titulo = "Alertas activadas";
                 String mensaje = "Se han activado las alertas luminosas y sonoras de " + carName + ".";
+                if (loc != null && !loc.isEmpty()) mensaje += "\n " + loc;
+
                 return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_sonido, carName, "Alarmas", ts);
             }
 
@@ -198,13 +217,18 @@ public class NotificacionesFragment extends Fragment {
                 String mensaje = on
                         ? "Activado en " + carName + "."
                         : "Desactivado en " + carName + ".";
+                if (loc != null && !loc.isEmpty()) mensaje += "\n " + loc;
 
                 return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_escudo, carName, "Seguridad", ts);
             }
+            case "movimiento": {
+                String titulo = "Movimiento detectado";
+                String mensaje = "El sensor de movimiento detectó actividad en " + carName + ".";
+                if (loc != null && !loc.isEmpty()) mensaje += "\n " + loc;
 
+                return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info, carName, "Movimiento", ts);
+            }
 
-            // Si en algún momento guardas eventos de puerta:
-            // { tipo:"puerta", puerta:"open"/"closed", timestamp:... }
             case "puerta": {
                 String puerta = ev.getString("estado");
                 boolean open = "open".equals(puerta);
@@ -213,14 +237,31 @@ public class NotificacionesFragment extends Fragment {
                 String mensaje = open
                         ? "El coche (" + carName + ") se ha desbloqueado."
                         : "El coche (" + carName + ") se ha bloqueado.";
+                if (loc != null && !loc.isEmpty()) mensaje += "\n " + loc;
 
                 return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info, carName, "Puertas", ts);
 
             }
 
+            case "rfid": {
+                Boolean autorizado = ev.getBoolean("autorizado");
+                boolean ok = autorizado != null && autorizado;
+
+                String titulo = ok ? "RFID: acceso permitido" : "RFID: acceso denegado";
+                String mensaje = ok
+                        ? "Se ha autorizado el acceso en " + carName + "."
+                        : "Se ha denegado el acceso en " + carName + ".";
+                if (loc != null && !loc.isEmpty()) mensaje += "\n " + loc;
+
+                return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info, carName, "RFID", ts);
+            }
+
+
             default: {
                 String titulo = "Evento: " + tipo;
                 String mensaje = "Notificación del coche (" + carName + ").";
+                if (loc != null && !loc.isEmpty()) mensaje += "\n " + loc;
+
                 return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info, carName, "Otros", ts);
             }
         }
@@ -297,6 +338,9 @@ public class NotificacionesFragment extends Fragment {
         types.add("Puertas");
         types.add("Impacto");
         types.add("Seguridad");
+        types.add("Movimiento");
+        types.add("RFID");
+
 
         ArrayAdapter<String> carAdapter = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_spinner_item, cars);
@@ -417,6 +461,40 @@ public class NotificacionesFragment extends Fragment {
         c.set(Calendar.MILLISECOND, 999);
         return c.getTimeInMillis();
     }
+
+    private String formatLoc(Context ctx, Double lat, Double lng) {
+        if (lat == null || lng == null) return "";
+
+        try {
+            Geocoder geocoder = new Geocoder(ctx, Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+
+            if (addresses != null && !addresses.isEmpty()) {
+                Address a = addresses.get(0);
+
+                String street = a.getThoroughfare();      // Calle
+                String number = a.getSubThoroughfare();   // Número
+                String city = a.getLocality();            // Ciudad
+
+                StringBuilder sb = new StringBuilder();
+
+                if (street != null) {
+                    sb.append(street);
+                    if (number != null) sb.append(" ").append(number);
+                }
+                if (city != null) {
+                    sb.append(", ").append(city);
+                }
+
+                return sb.toString();
+            }
+        } catch (Exception ignored) {}
+
+        // fallback si falla
+        return String.format(Locale.getDefault(), "%.5f, %.5f", lat, lng);
+    }
+
+
 
 
 }
