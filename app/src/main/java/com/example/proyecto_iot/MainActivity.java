@@ -35,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment activeFragment;
 
+    // ✅ FIX: listener para saber cuándo cambia el backstack y actualizar UI
+    private final FragmentManager.OnBackStackChangedListener backStackListener =
+            () -> setBackButtonVisible(getSupportFragmentManager().getBackStackEntryCount() > 0);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
 
+        // ✅ FIX: escuchar cambios en backstack para mostrar/ocultar flecha correctamente
+        fm.addOnBackStackChangedListener(backStackListener);
+
         // ===== RESTAURAR FRAGMENTS SI EXISTEN =====
         homeFragment = fm.findFragmentByTag(TAG_HOME);
         carFragment = fm.findFragmentByTag(TAG_CAR);
@@ -74,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             FragmentTransaction ft = fm.beginTransaction();
+            ft.setReorderingAllowed(true);
+
             ft.add(R.id.fragment_container, homeFragment, TAG_HOME);
             ft.add(R.id.fragment_container, carFragment, TAG_CAR).hide(carFragment);
             ft.add(R.id.fragment_container, notificationsFragment, TAG_NOTIFICATIONS).hide(notificationsFragment);
@@ -84,29 +93,47 @@ public class MainActivity extends AppCompatActivity {
             updateNavbarSelection(R.id.nav_home);
             setBackButtonVisible(false);
         } else {
-            activeFragment = fm.findFragmentById(R.id.fragment_container);
+            // ✅ FIX: en restauración, intenta recuperar el activeFragment de forma segura
+            activeFragment = fm.findFragmentByTag(TAG_HOME);
+            if (activeFragment == null) activeFragment = homeFragment;
+
+            // ✅ FIX: si ya hay backstack, mostrar flecha
+            setBackButtonVisible(fm.getBackStackEntryCount() > 0);
         }
 
         // ===== NAVBAR =====
         navHome.setOnClickListener(v -> {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                // ✅ FIX: si estás en una pantalla secundaria, limpiamos backstack al cambiar de tab
+                clearBackStack();
+            }
             updateNavbarSelection(R.id.nav_home);
             switchFragment(homeFragment);
             setBackButtonVisible(false);
         });
 
         navCar.setOnClickListener(v -> {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                clearBackStack();
+            }
             updateNavbarSelection(R.id.nav_car);
             switchFragment(carFragment);
             setBackButtonVisible(false);
         });
 
         navNotifications.setOnClickListener(v -> {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                clearBackStack();
+            }
             updateNavbarSelection(R.id.nav_notifications);
             switchFragment(notificationsFragment);
             setBackButtonVisible(false);
         });
 
         navSettings.setOnClickListener(v -> {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                clearBackStack();
+            }
             updateNavbarSelection(R.id.nav_settings);
             switchFragment(settingsFragment);
             setBackButtonVisible(false);
@@ -158,13 +185,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // =========================
-    //  MÉTODO LEGACY (NO SE ROMPE)
+    //  MÉTODO PARA ABRIR PANTALLAS "SECUNDARIAS"
     // =========================
     public void replaceFragment(Fragment fragment, boolean addToBackstack) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setReorderingAllowed(true);
         ft.replace(R.id.fragment_container, fragment);
-        if (addToBackstack) ft.addToBackStack(null);
+
+        if (addToBackstack) {
+            ft.addToBackStack(null);
+            // ✅ FIX: mostrar flecha al entrar a secundaria
+            setBackButtonVisible(true);
+        }
+
         ft.commit();
+    }
+
+    // ✅ FIX: limpiar el backstack cuando cambias de tab
+    private void clearBackStack() {
+        FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        // ✅ FIX: re-montar tabs (porque replace pudo haber quitado el root visual)
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.setReorderingAllowed(true);
+
+        // Asegura que están añadidos
+        if (fm.findFragmentByTag(TAG_HOME) == null) ft.add(R.id.fragment_container, homeFragment, TAG_HOME).hide(homeFragment);
+        if (fm.findFragmentByTag(TAG_CAR) == null) ft.add(R.id.fragment_container, carFragment, TAG_CAR).hide(carFragment);
+        if (fm.findFragmentByTag(TAG_NOTIFICATIONS) == null) ft.add(R.id.fragment_container, notificationsFragment, TAG_NOTIFICATIONS).hide(notificationsFragment);
+        if (fm.findFragmentByTag(TAG_SETTINGS) == null) ft.add(R.id.fragment_container, settingsFragment, TAG_SETTINGS).hide(settingsFragment);
+
+        // vuelve a dejar visible el activeFragment
+        ft.show(activeFragment);
+        ft.commit();
+
+        setBackButtonVisible(false);
     }
 
     // =========================
@@ -188,8 +244,11 @@ public class MainActivity extends AppCompatActivity {
     // =========================
     private void handleBack() {
 
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStack();
+        FragmentManager fm = getSupportFragmentManager();
+
+        if (fm.getBackStackEntryCount() > 0) {
+            fm.popBackStack();
+            // ✅ FIX: el listener se encarga de mostrar/ocultar la flecha
             return;
         }
 
@@ -206,5 +265,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         handleBack();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // ✅ FIX: evitar leaks
+        getSupportFragmentManager().removeOnBackStackChangedListener(backStackListener);
     }
 }
