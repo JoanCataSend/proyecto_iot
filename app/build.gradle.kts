@@ -77,8 +77,6 @@ dependencies {
     implementation("com.azure:azure-ai-openai:1.0.0-beta.12")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.google.code.gson:gson:2.11.0")
-
-
     implementation ("com.google.firebase:firebase-auth")
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
@@ -97,5 +95,6 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore:24.10.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("com.squareup.picasso:picasso:2.71828")
+    implementation("com.itextpdf:itext7-core:7.1.15")
 
 }
