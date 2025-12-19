@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:paddingHorizontal="20dp">
 
-    <!-- Flecha atrás -->
+    <!-- Flecha atsrás -->
     <ImageButton
         android:id="@+id/btnBack"
         android:layout_width="40dp"
