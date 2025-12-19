@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.proyecto_iot.utils.ImpactCaptureHelper;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -77,7 +78,8 @@ public class NotificacionesFragment extends Fragment {
     public View onCreateView(
             @NonNull LayoutInflater inflater,
             @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
+            @Nullable Bundle savedInstanceState
+    ) {
 
         View view = inflater.inflate(R.layout.fragment_notifications, container, false);
 
@@ -85,18 +87,27 @@ public class NotificacionesFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recycler_notificaciones);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         adapter = new NotificacionAdapter(notificaciones);
         recyclerView.setAdapter(adapter);
 
-        view.findViewById(R.id.btnFilter).setOnClickListener(v -> openFilterPopup());
+        View btnFilter = view.findViewById(R.id.btnFilter);
+        View btnDownload = view.findViewById(R.id.btnDownload);
 
-        view.findViewById(R.id.btnDownload).setOnClickListener(v -> {
+        btnFilter.setOnClickListener(v -> openFilterPopup());
+
+        btnDownload.setOnClickListener(v -> {
+            recyclerView.smoothScrollToPosition(0);
             if (notificaciones.isEmpty()) {
                 Toast.makeText(getContext(), "No hay datos para exportar", Toast.LENGTH_SHORT).show();
             } else {
                 generarPdfItext();
             }
         });
+
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).setBackButtonVisible(false);
+        }
 
         cargarHistorialFirestore();
         return view;
@@ -118,6 +129,7 @@ public class NotificacionesFragment extends Fragment {
 
                     if (carsSnap.isEmpty()) {
                         notificaciones.clear();
+                        allNotificaciones.clear();
                         adapter.notifyDataSetChanged();
                         return;
                     }
@@ -133,10 +145,13 @@ public class NotificacionesFragment extends Fragment {
                         Double lng = carDoc.getDouble("lng");
 
                         carIds.add(carId);
-                        carIdToName.put(carId,
+
+                        carIdToName.put(
+                                carId,
                                 (nombre != null && !nombre.trim().isEmpty())
                                         ? nombre.trim()
-                                        : "Vehículo");
+                                        : "Vehículo"
+                        );
 
                         carIdToLoc.put(carId, formatLoc(requireContext(), lat, lng));
                     }
@@ -145,41 +160,175 @@ public class NotificacionesFragment extends Fragment {
                     ArrayList<ItemTemp> temp = new ArrayList<>();
 
                     for (String carId : carIds) {
-                        tasks.add(
-                                firestore.collection("Coches")
-                                        .document(carId)
-                                        .collection("eventos")
-                                        .orderBy("timestamp", Query.Direction.DESCENDING)
-                                        .limit(300)
-                                        .get()
-                                        .addOnSuccessListener(events -> {
-                                            for (QueryDocumentSnapshot ev : events) {
-                                                Notificacion n = buildNotificacionFromEvento(
-                                                        ev.getString("tipo"),
-                                                        ev,
-                                                        carIdToName.get(carId),
-                                                        carIdToLoc.get(carId),
-                                                        ev.getLong("timestamp")
-                                                );
-                                                if (n != null) {
-                                                    temp.add(new ItemTemp(n, n.getTimestamp()));
-                                                }
-                                            }
-                                        })
-                        );
+
+                        Task<?> t = firestore.collection("Coches")
+                                .document(carId)
+                                .collection("eventos")
+                                .orderBy("timestamp", Query.Direction.DESCENDING)
+                                .limit(300)
+                                .get()
+                                .addOnSuccessListener(eventsSnap -> {
+
+                                    for (QueryDocumentSnapshot ev : eventsSnap) {
+
+                                        String tipo = ev.getString("tipo");
+                                        Long ts = ev.getLong("timestamp");
+
+                                        String carName = carIdToName.get(carId);
+                                        String loc = carIdToLoc.get(carId);
+
+                                        Notificacion n = buildNotificacionFromEvento(
+                                                tipo,
+                                                ev,
+                                                carName,
+                                                loc,
+                                                ts
+                                        );
+
+                                        if (n != null && ts != null) {
+                                            temp.add(new ItemTemp(n, ts));
+                                        }
+                                    }
+                                });
+
+                        tasks.add(t);
                     }
 
-                    Tasks.whenAllComplete(tasks).addOnSuccessListener(done -> {
-                        Collections.sort(temp, (a, b) -> Long.compare(b.ts, a.ts));
-                        allNotificaciones.clear();
-                        for (ItemTemp it : temp) allNotificaciones.add(it.notif);
-                        applyFilters();
-                    });
+                    Tasks.whenAllComplete(tasks)
+                            .addOnSuccessListener(done -> {
+                                Collections.sort(temp, (a, b) -> Long.compare(b.ts, a.ts));
+
+                                allNotificaciones.clear();
+                                for (ItemTemp it : temp) allNotificaciones.add(it.notif);
+
+                                applyFilters();
+                            })
+                            .addOnFailureListener(e -> {
+                                notificaciones.clear();
+                                allNotificaciones.clear();
+                                adapter.notifyDataSetChanged();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    notificaciones.clear();
+                    allNotificaciones.clear();
+                    adapter.notifyDataSetChanged();
                 });
     }
 
     // ======================================================
-    // ===================== FILTROsS ========================
+    // ===================== BUILD EVENT ====================
+    // ======================================================
+
+    private Notificacion buildNotificacionFromEvento(
+            String tipo,
+            QueryDocumentSnapshot ev,
+            String carName,
+            String loc,
+            Long ts
+    ) {
+
+        if (tipo == null || ts == null) return null;
+
+        if (carName == null || carName.trim().isEmpty()) carName = "Vehículo";
+        if (loc == null) loc = "";
+
+        String fecha = formatFecha(ts);
+
+        switch (tipo) {
+
+            case "impacto": {
+
+                // Mantener funcionalidad extra: captura sólo si el impacto es muy reciente
+                long ahora = System.currentTimeMillis();
+                if (ahora - ts < 10_000) {
+                    ImpactCaptureHelper.capture(requireContext(), carName);
+                }
+
+                String titulo = "Impacto detectado";
+                String mensaje = "Tu vehículo " + carName + " ha recibido un impacto.";
+                if (!loc.isEmpty()) mensaje += "\n" + loc;
+
+                return new Notificacion(
+                        titulo,
+                        mensaje,
+                        fecha,
+                        R.drawable.ic_info,
+                        carName,
+                        "Impacto",
+                        ts
+                );
+            }
+
+            case "alerta_sonido": {
+                Long activar = ev.getLong("activar");
+                boolean on = activar != null && activar == 1;
+                if (!on) return null; // IGNORA OFF
+
+                String titulo = "Alertas activadas";
+                String mensaje = "Se han activado las alertas luminosas y sonoras de " + carName + ".";
+                if (!loc.isEmpty()) mensaje += "\n" + loc;
+
+                return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_sonido, carName, "Alarmas", ts);
+            }
+
+            case "safe_mode": {
+                Long activar = ev.getLong("activar");
+                boolean on = activar != null && activar == 1;
+
+                String titulo = "Modo seguro";
+                String mensaje = on ? "Activado en " + carName + "." : "Desactivado en " + carName + ".";
+                if (!loc.isEmpty()) mensaje += "\n" + loc;
+
+                return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_escudo, carName, "Seguridad", ts);
+            }
+
+            case "movimiento": {
+                String titulo = "Movimiento detectado";
+                String mensaje = "El sensor de movimiento detectó actividad en " + carName + ".";
+                if (!loc.isEmpty()) mensaje += "\n" + loc;
+
+                return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info, carName, "Movimiento", ts);
+            }
+
+            case "puerta": {
+                String estado = ev.getString("estado");
+                boolean open = "open".equals(estado);
+
+                String titulo = open ? "Puertas abiertas" : "Puertas bloqueadas";
+                String mensaje = open
+                        ? "El coche (" + carName + ") se ha desbloqueado."
+                        : "El coche (" + carName + ") se ha bloqueado.";
+                if (!loc.isEmpty()) mensaje += "\n" + loc;
+
+                return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info, carName, "Puertas", ts);
+            }
+
+            case "rfid": {
+                Boolean autorizado = ev.getBoolean("autorizado");
+                boolean ok = autorizado != null && autorizado;
+
+                String titulo = ok ? "RFID: acceso permitido" : "RFID: acceso denegado";
+                String mensaje = ok
+                        ? "Se ha autorizado el acceso en " + carName + "."
+                        : "Se ha denegado el acceso en " + carName + ".";
+                if (!loc.isEmpty()) mensaje += "\n" + loc;
+
+                return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info, carName, "RFID", ts);
+            }
+
+            default: {
+                String titulo = "Evento: " + tipo;
+                String mensaje = "Notificación del coche (" + carName + ").";
+                if (!loc.isEmpty()) mensaje += "\n" + loc;
+
+                return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info, carName, "Otros", ts);
+            }
+        }
+    }
+
+    // ======================================================
+    // ===================== FILTROS ========================
     // ======================================================
 
     private void applyFilters() {
@@ -191,12 +340,10 @@ public class NotificacionesFragment extends Fragment {
             boolean okType = "Todos".equals(filterType) || filterType.equals(n.getCategory());
 
             boolean okTime = true;
-            if (filterFromTs > 0) okTime = n.getTimestamp() >= filterFromTs;
-            if (okTime && filterToTs > 0) okTime = n.getTimestamp() <= filterToTs;
+            if (filterFromTs > 0L) okTime = n.getTimestamp() >= filterFromTs;
+            if (okTime && filterToTs > 0L) okTime = n.getTimestamp() <= filterToTs;
 
-            if (okCar && okType && okTime) {
-                notificaciones.add(n);
-            }
+            if (okCar && okType && okTime) notificaciones.add(n);
         }
 
         adapter.notifyDataSetChanged();
@@ -209,8 +356,7 @@ public class NotificacionesFragment extends Fragment {
     private void openFilterPopup() {
 
         BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
-        View sheet = LayoutInflater.from(requireContext())
-                .inflate(R.layout.filter_notifications, null);
+        View sheet = LayoutInflater.from(requireContext()).inflate(R.layout.filter_notifications, null);
         dialog.setContentView(sheet);
 
         Spinner spCar = sheet.findViewById(R.id.spFilterCar);
@@ -221,50 +367,73 @@ public class NotificacionesFragment extends Fragment {
 
         TextView btnApply = sheet.findViewById(R.id.btnApplyFilters);
         TextView btnClear = sheet.findViewById(R.id.btnClearFilters);
+
         TextView btnClose = sheet.findViewById(R.id.btnCloseSheet);
         TextView btnClearDates = sheet.findViewById(R.id.tvQuickClearDates);
 
         // coches
         Set<String> carsSet = new LinkedHashSet<>();
         carsSet.add("Todos");
-        for (Notificacion n : allNotificaciones) carsSet.add(n.getCarName());
+        for (Notificacion n : allNotificaciones) {
+            if (n.getCarName() != null && !n.getCarName().trim().isEmpty()) {
+                carsSet.add(n.getCarName().trim());
+            }
+        }
         List<String> cars = new ArrayList<>(carsSet);
 
-        spCar.setAdapter(new ArrayAdapter<>(
-                requireContext(),
-                android.R.layout.simple_spinner_dropdown_item,
-                cars
-        ));
-        spCar.setSelection(Math.max(0, cars.indexOf(filterCar)));
-
         // tipos
-        List<String> types = List.of(
-                "Todos", "Alarmas", "Puertas", "Impacto",
-                "Seguridad", "Movimiento", "RFID", "Otros"
-        );
-        spType.setAdapter(new ArrayAdapter<>(
+        List<String> types = new ArrayList<>();
+        types.add("Todos");
+        types.add("Alarmas");
+        types.add("Puertas");
+        types.add("Impacto");
+        types.add("Seguridad");
+        types.add("Movimiento");
+        types.add("RFID");
+        types.add("Otros");
+
+        ArrayAdapter<String> carAdapter = new ArrayAdapter<>(
                 requireContext(),
-                android.R.layout.simple_spinner_dropdown_item,
+                android.R.layout.simple_spinner_item,
+                cars
+        );
+        carAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spCar.setAdapter(carAdapter);
+
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
                 types
-        ));
+        );
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spType.setAdapter(typeAdapter);
+
+        spCar.setSelection(Math.max(0, cars.indexOf(filterCar)));
         spType.setSelection(Math.max(0, types.indexOf(filterType)));
 
-        tvFrom.setText(filterFromTs > 0 ? "Desde: " + formatOnlyDate(filterFromTs) : "Desde: --/--/----");
-        tvTo.setText(filterToTs > 0 ? "Hasta: " + formatOnlyDate(filterToTs) : "Hasta: --/--/----");
+        // mostrar fechas actuales
+        tvFrom.setText(filterFromTs > 0 ? ("Desde: " + formatOnlyDate(filterFromTs)) : "Desde: --/--/----");
+        tvTo.setText(filterToTs > 0 ? ("Hasta: " + formatOnlyDate(filterToTs)) : "Hasta: --/--/----");
 
-        tvFrom.setOnClickListener(v ->
-                openDatePicker(ts -> {
-                    filterFromTs = startOfDay(ts);
-                    tvFrom.setText("Desde: " + formatOnlyDate(filterFromTs));
-                })
-        );
+        tvFrom.setOnClickListener(v -> openDatePicker(true, (ts) -> {
+            filterFromTs = startOfDay(ts);
+            tvFrom.setText("Desde: " + formatOnlyDate(filterFromTs));
 
-        tvTo.setOnClickListener(v ->
-                openDatePicker(ts -> {
-                    filterToTs = endOfDay(ts);
-                    tvTo.setText("Hasta: " + formatOnlyDate(filterToTs));
-                })
-        );
+            if (filterToTs > 0 && filterToTs < filterFromTs) {
+                filterToTs = 0;
+                tvTo.setText("Hasta: --/--/----");
+            }
+        }));
+
+        tvTo.setOnClickListener(v -> openDatePicker(false, (ts) -> {
+            filterToTs = endOfDay(ts);
+            tvTo.setText("Hasta: " + formatOnlyDate(filterToTs));
+
+            if (filterFromTs > 0 && filterToTs < filterFromTs) {
+                filterFromTs = 0;
+                tvFrom.setText("Desde: --/--/----");
+            }
+        }));
 
         btnClearDates.setOnClickListener(v -> {
             filterFromTs = 0L;
@@ -274,8 +443,8 @@ public class NotificacionesFragment extends Fragment {
         });
 
         btnApply.setOnClickListener(v -> {
-            filterCar = spCar.getSelectedItem().toString();
-            filterType = spType.getSelectedItem().toString();
+            filterCar = (String) spCar.getSelectedItem();
+            filterType = (String) spType.getSelectedItem();
             applyFilters();
             dialog.dismiss();
         });
@@ -290,6 +459,32 @@ public class NotificacionesFragment extends Fragment {
         });
 
         btnClose.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private interface DatePickedCallback {
+        void onPicked(long ts);
+    }
+
+    private void openDatePicker(boolean isFrom, DatePickedCallback cb) {
+        Calendar c = Calendar.getInstance();
+
+        long base = isFrom ? filterFromTs : filterToTs;
+        if (base > 0) c.setTimeInMillis(base);
+
+        int y = c.get(Calendar.YEAR);
+        int m = c.get(Calendar.MONTH);
+        int d = c.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog dialog = new DatePickerDialog(requireContext(),
+                (view, year, month, dayOfMonth) -> {
+                    Calendar picked = Calendar.getInstance();
+                    picked.set(Calendar.YEAR, year);
+                    picked.set(Calendar.MONTH, month);
+                    picked.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    cb.onPicked(picked.getTimeInMillis());
+                }, y, m, d);
 
         dialog.show();
     }
@@ -310,11 +505,21 @@ public class NotificacionesFragment extends Fragment {
             Document doc = new Document(pdf);
 
             doc.add(new Paragraph("REPORTE DE NOTIFICACIONES - IOT CAR")
-                    .setBold().setFontSize(18)
+                    .setBold()
+                    .setFontSize(18)
                     .setTextAlignment(TextAlignment.CENTER));
 
-            doc.add(new Paragraph("Filtros: " + filterCar + " / " + filterType)
-                    .setFontSize(11).setItalic().setMarginBottom(10));
+            String filtrosTxt = "Filtros: " + filterCar + " / " + filterType;
+            if (filterFromTs > 0 || filterToTs > 0) {
+                String desde = (filterFromTs > 0) ? formatOnlyDate(filterFromTs) : "--/--/----";
+                String hasta = (filterToTs > 0) ? formatOnlyDate(filterToTs) : "--/--/----";
+                filtrosTxt += "  ( " + desde + " - " + hasta + " )";
+            }
+
+            doc.add(new Paragraph(filtrosTxt)
+                    .setFontSize(11)
+                    .setItalic()
+                    .setMarginBottom(10));
 
             Table table = new Table(UnitValue.createPercentArray(new float[]{25f, 25f, 50f}))
                     .useAllAvailableWidth();
@@ -332,6 +537,7 @@ public class NotificacionesFragment extends Fragment {
             doc.add(table);
             doc.close();
 
+            Toast.makeText(getContext(), "PDF generado con éxito", Toast.LENGTH_SHORT).show();
             abrirPdf(file);
 
         } catch (Exception e) {
@@ -364,131 +570,17 @@ public class NotificacionesFragment extends Fragment {
     }
 
     // ======================================================
-    // ===================== BUILD EVENT ====================
-    // ======================================================
-
-    private Notificacion buildNotificacionFromEvento(
-            String tipo,
-            QueryDocumentSnapshot ev,
-            String carName,
-            String loc,
-            Long ts
-    ) {
-
-        if (tipo == null || ts == null) return null;
-
-        String fecha = formatFecha(ts);
-
-        switch (tipo) {
-
-            case "impacto":
-                return new Notificacion(
-                        "Impacto detectado",
-                        "Impacto en " + carName + (loc.isEmpty() ? "" : "\n" + loc),
-                        fecha,
-                        R.drawable.ic_info,
-                        carName,
-                        "Impacto",
-                        ts
-                );
-
-            case "alerta_sonido": {
-                Long activar = ev.getLong("activar");
-                if (activar == null || activar != 1) return null;
-
-                return new Notificacion(
-                        "Alertas activadas",
-                        "Alertas activadas en " + carName + (loc.isEmpty() ? "" : "\n" + loc),
-                        fecha,
-                        R.drawable.ic_sonido,
-                        carName,
-                        "Alarmas",
-                        ts
-                );
-            }
-
-            case "safe_mode": {
-                Long activar = ev.getLong("activar");
-                boolean on = activar != null && activar == 1;
-
-                return new Notificacion(
-                        "Modo seguro",
-                        (on ? "Activado" : "Desactivado") + " en " + carName + (loc.isEmpty() ? "" : "\n" + loc),
-                        fecha,
-                        R.drawable.ic_escudo,
-                        carName,
-                        "Seguridad",
-                        ts
-                );
-            }
-
-            case "movimiento":
-                return new Notificacion(
-                        "Movimiento detectado",
-                        "Movimiento en " + carName + (loc.isEmpty() ? "" : "\n" + loc),
-                        fecha,
-                        R.drawable.ic_info,
-                        carName,
-                        "Movimiento",
-                        ts
-                );
-
-            case "rfid": {
-                Boolean autorizado = ev.getBoolean("autorizado");
-                boolean ok = autorizado != null && autorizado;
-
-                return new Notificacion(
-                        ok ? "RFID autorizado" : "RFID denegado",
-                        carName + (loc.isEmpty() ? "" : "\n" + loc),
-                        fecha,
-                        R.drawable.ic_info,
-                        carName,
-                        "RFID",
-                        ts
-                );
-            }
-
-            default:
-                return new Notificacion(
-                        "Evento: " + tipo,
-                        "Evento en " + carName + (loc.isEmpty() ? "" : "\n" + loc),
-                        fecha,
-                        R.drawable.ic_info,
-                        carName,
-                        "Otros",
-                        ts
-                );
-        }
-    }
-
-    // ======================================================
     // ===================== UTILS ==========================
     // ======================================================
 
-    private void openDatePicker(DatePickedCallback cb) {
-        Calendar c = Calendar.getInstance();
-        new DatePickerDialog(requireContext(),
-                (v, y, m, d) -> {
-                    Calendar p = Calendar.getInstance();
-                    p.set(y, m, d);
-                    cb.onPicked(p.getTimeInMillis());
-                },
-                c.get(Calendar.YEAR),
-                c.get(Calendar.MONTH),
-                c.get(Calendar.DAY_OF_MONTH)
-        ).show();
-    }
-
-    private interface DatePickedCallback {
-        void onPicked(long ts);
-    }
-
     private String formatFecha(long ts) {
-        return new SimpleDateFormat("HH:mm  dd/MM/yy", Locale.getDefault()).format(new Date(ts));
+        return new SimpleDateFormat("HH:mm  dd/MM/yy", Locale.getDefault())
+                .format(new Date(ts));
     }
 
     private String formatOnlyDate(long ts) {
-        return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date(ts));
+        return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                .format(new Date(ts));
     }
 
     private long startOfDay(long ts) {
@@ -515,13 +607,28 @@ public class NotificacionesFragment extends Fragment {
         if (lat == null || lng == null) return "";
 
         try {
-            Geocoder g = new Geocoder(ctx, Locale.getDefault());
-            List<Address> a = g.getFromLocation(lat, lng, 1);
-            if (a != null && !a.isEmpty()) {
-                Address ad = a.get(0);
-                return ad.getThoroughfare() + " " +
-                        ad.getSubThoroughfare() + ", " +
-                        ad.getLocality();
+            Geocoder geocoder = new Geocoder(ctx, Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+
+            if (addresses != null && !addresses.isEmpty()) {
+                Address a = addresses.get(0);
+
+                String street = a.getThoroughfare();
+                String number = a.getSubThoroughfare();
+                String city = a.getLocality();
+
+                StringBuilder sb = new StringBuilder();
+
+                if (street != null) {
+                    sb.append(street);
+                    if (number != null) sb.append(" ").append(number);
+                }
+                if (city != null) {
+                    if (sb.length() > 0) sb.append(", ");
+                    sb.append(city);
+                }
+
+                return sb.toString();
             }
         } catch (Exception ignored) {}
 
@@ -531,6 +638,10 @@ public class NotificacionesFragment extends Fragment {
     private static class ItemTemp {
         Notificacion notif;
         long ts;
-        ItemTemp(Notificacion n, long t) { notif = n; ts = t; }
+
+        ItemTemp(Notificacion n, long ts) {
+            this.notif = n;
+            this.ts = ts;
+        }
     }
 }
