@@ -52,7 +52,7 @@ public class NotificacionAdapter extends RecyclerView.Adapter<NotificacionAdapte
             }
 
             holder.mensaje.setText(msg.toString().trim());
-            
+
             holder.ubicacion.setText(parts[parts.length - 1].trim());
             holder.ubicacion.setVisibility(View.VISIBLE);
 
