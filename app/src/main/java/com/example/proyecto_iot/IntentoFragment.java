@@ -273,7 +273,7 @@ public class IntentoFragment extends Fragment {
 
                 if (position >= 0 && position < popupItems.size()
                         && popupItems.get(position).contains("Añadir")) {
-                    startActivity(new Intent(requireContext(), PrimerCocheActivity.class));
+                    startActivity(new Intent(requireContext(), AnadirCoche.class));
                     spinnerCars.setSelection(currentCarIndex, false);
                     return;
                 }
