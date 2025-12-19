@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.proyecto_iot.utils.ImpactCaptureHelper;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -174,10 +175,28 @@ public class NotificacionesFragment extends Fragment {
         switch (tipo) {
 
             case "impacto": {
+
+                long ahora = System.currentTimeMillis();
+
+                // Solo impactos recientes (10 segundos)
+                if (ahora - ts < 10_000) {
+                    ImpactCaptureHelper.capture(requireContext(), carName);
+                }
+
                 String titulo = "Impacto detectado";
                 String mensaje = "Tu vehículo " + carName + " ha recibido un impacto.";
-                return new Notificacion(titulo, mensaje, fecha, R.drawable.ic_info, carName, "Impacto", ts);
+
+                return new Notificacion(
+                        titulo,
+                        mensaje,
+                        fecha,
+                        R.drawable.ic_info,
+                        carName,
+                        "Impacto",
+                        ts
+                );
             }
+
 
             case "alerta_sonido": {
                 Long activar = ev.getLong("activar");
