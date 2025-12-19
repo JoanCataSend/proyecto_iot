@@ -36,4 +36,5 @@
     <color name="nav_ripple_color">#22000000</color> <!-- gris suave y elegante -->
 
     <color name="morado_claro">#DEDAEC</color>
+    <color name="gris_ubi">#8A8A8A</color>
 </resources>

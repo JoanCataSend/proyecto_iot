@@ -81,6 +81,7 @@
     </LinearLayout>
 
     <!-- Card: Rango fechas -->
+    <!-- Card: Rango fechas -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -89,13 +90,31 @@
         android:padding="12dp"
         android:background="@drawable/bg_sheet_card">
 
-        <TextView
+        <!-- Header Rango + Quitar rango (MISMA LINEA) -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Rango de fechas"
-            android:textStyle="bold"
-            android:alpha="0.85"
-            android:paddingBottom="10dp" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Rango de fechas"
+                android:textStyle="bold"
+                android:alpha="0.85" />
+
+            <TextView
+                android:id="@+id/tvQuickClearDates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quitar rango"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="6dp"
+                android:background="@drawable/bg_chip_soft" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -129,17 +148,8 @@
                 android:background="@drawable/bg_input_soft" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvQuickClearDates"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Quitar rango"
-            android:layout_marginTop="10dp"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="6dp"
-            android:background="@drawable/bg_chip_soft" />
-
     </LinearLayout>
+
 
     <!-- Footer buttons -->
     <LinearLayout
