@@ -504,7 +504,7 @@ public class NotificacionesFragment extends Fragment {
             PdfDocument pdf = new PdfDocument(writer);
             Document doc = new Document(pdf);
 
-            doc.add(new Paragraph("REPORTE DE NOTIFICACIONES - IOT CAR")
+            doc.add(new Paragraph("REPORTE DE NOTIFICACIONES - KöVA")
                     .setBold()
                     .setFontSize(18)
                     .setTextAlignment(TextAlignment.CENTER));
