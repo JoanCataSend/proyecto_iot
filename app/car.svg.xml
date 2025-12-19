@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 500 300"
+    width="140"
+    height="80"
+    preserveAspectRatio="xMidYMid meet"
+    style="background: transparent; display:block; margin:auto;">
+
+    <style>
+        .wheel {
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: spin 1s linear infinite;
+        }
+
+        .road {
+        animation: move 1s linear infinite;
+        }
+
+        @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+        }
+
+        @keyframes move {
+        from { stroke-dashoffset: 0; }
+        to { stroke-dashoffset: -120; }
+        }
+    </style>
+
+    <!-- RUEDA IZQUIERDA -->
+    <ellipse class="wheel"
+        cx="150" cy="220" rx="45" ry="45"
+        fill="none" stroke="white" stroke-width="10"/>
+
+    <!-- RUEDA DERECHA -->
+    <ellipse class="wheel"
+        cx="350" cy="220" rx="45" ry="45"
+        fill="none" stroke="white" stroke-width="10"/>
+
+    <!-- CUERPO -->
+    <path
+        d="M80 220 L90 180 L160 180 L200 120 L350 120 L380 180 L420 180 L420 220"
+        fill="none" stroke="white" stroke-width="10"
+        stroke-linejoin="round"/>
+
+    <!-- TECHO -->
+    <path
+        d="M200 120 L240 80 L330 80 L350 120"
+        fill="none" stroke="white" stroke-width="10"
+        stroke-linejoin="round"/>
+
+    <!-- CARRETERA -->
+    <line class="road"
+        x1="50" y1="260" x2="450" y2="260"
+        stroke="white" stroke-width="6"
+        stroke-dasharray="20 40"/>
+
+</svg>

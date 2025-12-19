@@ -1,17 +1,19 @@
 package com.example.proyecto_iot;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,19 +29,25 @@ import java.util.Map;
 
 public class RegisterWizardActivity extends AppCompatActivity {
 
+    // STEPS
     private LinearLayout stepNombre, stepEmail, stepPassword;
     private EditText etNombre, etEmail, etPassword, etRepeatPassword;
+
+    // UI
     private TextView tvStep, tvTitle, tvSubtitle, tvSecondaryAction;
     private Button btnPrimary;
-    private ProgressBar progressBar;
+    private ImageButton btnBack;
 
+    // LOADING OVERLAY
+    private FrameLayout loadingOverlay;
+    private WebView carLoader;
+
+    // STATE
     private int currentStep = 0;
-
     private String nombreUsuario, email, password, repeatPassword;
 
+    // FIREBASE
     private FirebaseAuth mAuth;
-    private FrameLayout loadingOverlay;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +56,7 @@ public class RegisterWizardActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        // STEPS
         stepNombre = findViewById(R.id.stepNombre);
         stepEmail = findViewById(R.id.stepEmail);
         stepPassword = findViewById(R.id.stepPassword);
@@ -57,12 +66,17 @@ public class RegisterWizardActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         etRepeatPassword = findViewById(R.id.etRepeatPassword);
 
+        // TEXTS
         tvStep = findViewById(R.id.tvStep);
         tvTitle = findViewById(R.id.tvTitle);
         tvSubtitle = findViewById(R.id.tvSubtitle);
         tvSecondaryAction = findViewById(R.id.tvSecondaryAction);
 
-        // Omitir
+        // BUTTONS
+        btnPrimary = findViewById(R.id.btnPrimary);
+        btnBack = findViewById(R.id.btnBack);
+
+        // SKIP
         TextView tvSkip = findViewById(R.id.tvSkip);
         tvSkip.setPaintFlags(tvSkip.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         tvSkip.setOnClickListener(v -> {
@@ -70,26 +84,42 @@ public class RegisterWizardActivity extends AppCompatActivity {
             finish();
         });
 
-        btnPrimary = findViewById(R.id.btnPrimary);
-
-        // Overlay + loader
-        loadingOverlay = findViewById(R.id.loadingOverlay);
-        progressBar = findViewById(R.id.progressBar);
-
-        ImageButton btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> goPreviousStep());
-
+        // SECONDARY ACTION
         tvSecondaryAction.setPaintFlags(tvSecondaryAction.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         tvSecondaryAction.setOnClickListener(v -> {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         });
 
+        // BACK
+        btnBack.setOnClickListener(v -> goPreviousStep());
+
+        // LOADING OVERLAY + SVG
+        loadingOverlay = findViewById(R.id.loadingOverlay);
+        carLoader = findViewById(R.id.carLoader);
+        configurarWebView();
+
         btnPrimary.setOnClickListener(v -> onPrimaryClicked());
 
         updateUiForStep();
     }
 
+    // ======================================================
+    private void configurarWebView() {
+        carLoader.setBackgroundColor(Color.TRANSPARENT);
+
+        WebSettings settings = carLoader.getSettings();
+        settings.setJavaScriptEnabled(false);
+        settings.setLoadWithOverviewMode(true);
+        settings.setUseWideViewPort(true);
+
+        carLoader.setInitialScale(100);
+
+        carLoader.setVerticalScrollBarEnabled(false);
+        carLoader.setHorizontalScrollBarEnabled(false);
+
+        carLoader.loadUrl("file:///android_asset/car_loader.html");
+    }
 
     // ======================================================
     private void onPrimaryClicked() {
@@ -116,7 +146,7 @@ public class RegisterWizardActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (!esEmailValido(email)) {
+                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     CustomToast.error(this, "Introduce un email válido");
                     return;
                 }
@@ -148,10 +178,7 @@ public class RegisterWizardActivity extends AppCompatActivity {
         }
     }
 
-    private boolean esEmailValido(String email) {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
-    }
-
+    // ======================================================
     private void goPreviousStep() {
         if (currentStep > 0) {
             currentStep--;
@@ -189,7 +216,6 @@ public class RegisterWizardActivity extends AppCompatActivity {
                 btnPrimary.setText("Crear cuenta");
                 break;
         }
-
     }
 
     // ======================================================
@@ -236,24 +262,10 @@ public class RegisterWizardActivity extends AppCompatActivity {
                     }
 
                     FirebaseUser user = mAuth.getCurrentUser();
-
-                    if (user == null) {
-                        CustomToast.error(this, "Error inesperado: usuario nulo.");
-                        return;
-                    }
+                    if (user == null) return;
 
                     user.sendEmailVerification()
-                            .addOnCompleteListener(verificationTask -> {
-
-                                if (!verificationTask.isSuccessful()) {
-                                    CustomToast.error(this,
-                                            "Error enviando correo: " +
-                                                    verificationTask.getException().getMessage());
-                                    return;
-                                }
-
-                                guardarUsuarioEnFirestore(user);
-                            });
+                            .addOnCompleteListener(t -> guardarUsuarioEnFirestore(user));
                 });
     }
 
@@ -307,5 +319,4 @@ public class RegisterWizardActivity extends AppCompatActivity {
             btnPrimary.setEnabled(true);
         }
     }
-
 }
