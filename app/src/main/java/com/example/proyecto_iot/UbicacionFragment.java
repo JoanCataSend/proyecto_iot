@@ -8,8 +8,11 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,16 +45,23 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
     private static final int REQUEST_LOCATION_PERMISSION = 1;
-
+    private static final String TAG = "UBICACION_FRAGMENT";
+    public GoogleMap getMapa() {
+        return mMap;
+    }
     private GoogleMap mMap;
     private BottomSheetBehavior<View> bottomSheetBehavior;
 
@@ -54,17 +69,20 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
     private FirebaseFirestore db;
     private FirebaseAuth auth;
 
-    // 🔐 Guardar targets Glide para poder cancelarlos
+    // ===== LOCALIZACIÓN =====
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback locationCallback;
+    private LocationRequest locationRequest;
+
+    // ⚠️ ID DEL COCHE A ACTUALIZAR (AJUSTA ESTO SI QUIERES DINÁMICO)
+    private String cocheIdActual = "LCj7UMfjTlGwjup494O8";
+
+    // Glide targets
     private final List<CustomTarget<Bitmap>> glideTargets = new ArrayList<>();
 
     // =========================
-    //   GETTER PARA EL ADAPTER
+    //        MAPA
     // =========================
-    public GoogleMap getMapa() {
-        return mMap;
-    }
-
-    @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -76,6 +94,7 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
             ((MainActivity) getActivity()).setBackButtonVisible(false);
         }
 
+        // ===== BOTTOM SHEET =====
         View panel = view.findViewById(R.id.panel_desplegable);
         bottomSheetBehavior = BottomSheetBehavior.from(panel);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -89,11 +108,13 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                 .setOnClickListener(v ->
                         startActivity(new Intent(getActivity(), AnadirCoche.class)));
 
+        // ===== RECYCLER =====
         RecyclerView recycler = view.findViewById(R.id.recyclerCoches);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         CocheMapaAdapter adapter = new CocheMapaAdapter(listaCoches, this);
         recycler.setAdapter(adapter);
 
+        // ===== FIREBASE =====
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
@@ -134,13 +155,12 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                         adapter.notifyDataSetChanged();
                         actualizarMarcadores();
                     })
-                    .addOnFailureListener(e -> {
-                        if (!isAdded()) return;
-                        Toast.makeText(getContext(),
-                                e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
+                    .addOnFailureListener(e ->
+                            Toast.makeText(getContext(),
+                                    e.getMessage(), Toast.LENGTH_SHORT).show());
         }
 
+        // ===== MAPA =====
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager()
                         .findFragmentById(R.id.map);
@@ -150,45 +170,102 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
         }
 
         solicitarPermisoUbicacionSiEsNecesario();
+        inicializarLocalizacion();
+
         return view;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    // =========================
+    //      LOCALIZACIÓN
+    // =========================
+    private void inicializarLocalizacion() {
 
-        for (CustomTarget<Bitmap> t : glideTargets) {
-            Glide.with(this).clear(t);
-        }
-        glideTargets.clear();
+        fusedLocationClient =
+                LocationServices.getFusedLocationProviderClient(requireActivity());
 
-        mMap = null;
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationRequest.setInterval(15000);
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult result) {
+
+                Location loc = result.getLastLocation();
+                if (loc == null) return;
+
+                guardarUbicacionEnFirebase(
+                        loc.getLatitude(),
+                        loc.getLongitude()
+                );
+            }
+        };
     }
 
-    private String obtenerDireccion(double lat, double lng) {
-        if (!isAdded()) return "Ubicación desconocida";
+    private void guardarUbicacionEnFirebase(double lat, double lng) {
 
-        try {
-            Geocoder g = new Geocoder(getContext(), Locale.getDefault());
-            List<Address> list = g.getFromLocation(lat, lng, 1);
-            if (!list.isEmpty()) return list.get(0).getAddressLine(0);
-        } catch (Exception ignored) {}
-        return "Ubicación desconocida";
+        Map<String, Object> data = new HashMap<>();
+        data.put("lat", lat);
+        data.put("lng", lng);
+        data.put("lastUpdate", FieldValue.serverTimestamp());
+
+        db.collection("Coches")
+                .document(cocheIdActual)
+                .set(data, SetOptions.merge())
+                .addOnSuccessListener(unused ->
+                        Log.d(TAG, "✔ Ubicación guardada: " + lat + ", " + lng))
+                .addOnFailureListener(e ->
+                        Log.e(TAG, "❌ Error Firebase", e));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
+        );
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (fusedLocationClient != null && locationCallback != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
+    }
+
+    // =========================
+    //        MAPA
+    // =========================
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+        actualizarMarcadores();
     }
 
     private void actualizarMarcadores() {
         if (mMap == null || listaCoches.isEmpty()) return;
 
         mMap.clear();
-
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-        boolean hayPosicionesValidas = false;
+        boolean hayPosiciones = false;
 
         for (CocheMapa c : listaCoches) {
             if (c.lat == 0 || c.lng == 0) continue;
 
             LatLng pos = new LatLng(c.lat, c.lng);
-            hayPosicionesValidas = true;
+            hayPosiciones = true;
             boundsBuilder.include(pos);
 
             if (c.fotoUrl != null && !c.fotoUrl.isEmpty()) {
@@ -200,40 +277,47 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
             }
         }
 
-        if (!hayPosicionesValidas) return;
+        if (!hayPosiciones) return;
 
-        LatLngBounds bounds = boundsBuilder.build();
-
-        // MUY IMPORTANTE: esperar a que el mapa esté renderizado
         mMap.setOnMapLoadedCallback(() ->
                 mMap.animateCamera(
-                        CameraUpdateFactory.newLatLngBounds(bounds, 120)
-                )
-        );
+                        CameraUpdateFactory.newLatLngBounds(
+                                boundsBuilder.build(), 120)));
+    }
+
+    // =========================
+    //        UTILIDADES
+    // =========================
+    private String obtenerDireccion(double lat, double lng) {
+        try {
+            Geocoder g = new Geocoder(getContext(), Locale.getDefault());
+            List<Address> list = g.getFromLocation(lat, lng, 1);
+            if (!list.isEmpty()) return list.get(0).getAddressLine(0);
+        } catch (Exception ignored) {}
+        return "Ubicación desconocida";
     }
 
     private void cargarIconoPersonalizado(LatLng pos, String url, String nombre) {
-        if (!isAdded() || mMap == null) return;
 
         CustomTarget<Bitmap> target = new CustomTarget<Bitmap>() {
             @Override
             public void onResourceReady(@NonNull Bitmap bitmap,
                                         @Nullable Transition<? super Bitmap> transition) {
 
-                if (!isAdded() || mMap == null) return;
-
                 Bitmap out = Bitmap.createBitmap(
                         bitmap.getWidth() + 20,
                         bitmap.getHeight() + 20,
-                        Bitmap.Config.ARGB_8888
-                );
+                        Bitmap.Config.ARGB_8888);
+
                 Canvas c = new Canvas(out);
                 c.drawBitmap(bitmap, 10, 10, null);
 
-                mMap.addMarker(new MarkerOptions()
-                        .position(pos)
-                        .title(nombre)
-                        .icon(BitmapDescriptorFactory.fromBitmap(out)));
+                if (mMap != null) {
+                    mMap.addMarker(new MarkerOptions()
+                            .position(pos)
+                            .title(nombre)
+                            .icon(BitmapDescriptorFactory.fromBitmap(out)));
+                }
             }
 
             @Override
@@ -251,10 +335,8 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void solicitarPermisoUbicacionSiEsNecesario() {
-        if (!isAdded()) return;
-
         if (ContextCompat.checkSelfPermission(
-                getContext(),
+                requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -266,13 +348,17 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
-        mMap = googleMap;
-        actualizarMarcadores();
+    public void onDestroyView() {
+        super.onDestroyView();
+        for (CustomTarget<Bitmap> t : glideTargets) {
+            Glide.with(this).clear(t);
+        }
+        glideTargets.clear();
+        mMap = null;
     }
 
     // =========================
-    //      MODELO
+    //        MODELO
     // =========================
     public static class CocheMapa {
         public String id, nombre, marca, modelo, matricula, fotoUrl, direccion;
@@ -281,6 +367,7 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
         public CocheMapa(String id, String nombre, String marca, String modelo,
                          String matricula, double lat, double lng,
                          String fotoUrl, String direccion) {
+
             this.id = id;
             this.nombre = nombre;
             this.marca = marca;
