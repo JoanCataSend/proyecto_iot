@@ -76,7 +76,7 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
     private LocationRequest locationRequest;
 
     // ⚠️ COCHE QUE ESTE DISPOSITIVO CONTROLA
-    private String cocheIdActual = "LCj7UMfjTlGwjup494O8";
+    private String cocheIdActual = "ZkB10ikraHvc11ig0vD0";
 
     private final List<CustomTarget<Bitmap>> glideTargets = new ArrayList<>();
 
