@@ -59,10 +59,10 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     private static final String TAG = "UBICACION_FRAGMENT";
-    public GoogleMap getMapa() {
-        return mMap;
-    }
+
     private GoogleMap mMap;
+    public GoogleMap getMapa() { return mMap; }
+
     private BottomSheetBehavior<View> bottomSheetBehavior;
 
     private final ArrayList<CocheMapa> listaCoches = new ArrayList<>();
@@ -74,14 +74,12 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
     private LocationCallback locationCallback;
     private LocationRequest locationRequest;
 
-    // ⚠️ ID DEL COCHE A ACTUALIZAR (AJUSTA ESTO SI QUIERES DINÁMICO)
     private String cocheIdActual = "LCj7UMfjTlGwjup494O8";
 
-    // Glide targets
     private final List<CustomTarget<Bitmap>> glideTargets = new ArrayList<>();
 
     // =========================
-    //        MAPA
+    //        UI
     // =========================
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -94,7 +92,6 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
             ((MainActivity) getActivity()).setBackButtonVisible(false);
         }
 
-        // ===== BOTTOM SHEET =====
         View panel = view.findViewById(R.id.panel_desplegable);
         bottomSheetBehavior = BottomSheetBehavior.from(panel);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -108,13 +105,11 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                 .setOnClickListener(v ->
                         startActivity(new Intent(getActivity(), AnadirCoche.class)));
 
-        // ===== RECYCLER =====
         RecyclerView recycler = view.findViewById(R.id.recyclerCoches);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         CocheMapaAdapter adapter = new CocheMapaAdapter(listaCoches, this);
         recycler.setAdapter(adapter);
 
-        // ===== FIREBASE =====
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
@@ -130,7 +125,6 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                         listaCoches.clear();
 
                         for (DocumentSnapshot doc : query) {
-
                             Double lat = doc.getDouble("lat");
                             Double lng = doc.getDouble("lng");
 
@@ -154,13 +148,9 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
                         adapter.notifyDataSetChanged();
                         actualizarMarcadores();
-                    })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(getContext(),
-                                    e.getMessage(), Toast.LENGTH_SHORT).show());
+                    });
         }
 
-        // ===== MAPA =====
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager()
                         .findFragmentById(R.id.map);
@@ -176,7 +166,7 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
     }
 
     // =========================
-    //      LOCALIZACIÓN
+    //      GPS REAL
     // =========================
     private void inicializarLocalizacion() {
 
@@ -184,7 +174,7 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                 LocationServices.getFusedLocationProviderClient(requireActivity());
 
         locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); // ✅ GPS
         locationRequest.setInterval(15000);
 
         locationCallback = new LocationCallback() {
@@ -193,6 +183,9 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
                 Location loc = result.getLastLocation();
                 if (loc == null) return;
+
+                // 🔐 Filtro básico anti-localizaciones absurdas
+                if (loc.getAccuracy() > 1000) return;
 
                 guardarUbicacionEnFirebase(
                         loc.getLatitude(),
@@ -225,9 +218,7 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
+                != PackageManager.PERMISSION_GRANTED) return;
 
         fusedLocationClient.requestLocationUpdates(
                 locationRequest,
@@ -239,8 +230,7 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onPause() {
         super.onPause();
-
-        if (fusedLocationClient != null && locationCallback != null) {
+        if (fusedLocationClient != null) {
             fusedLocationClient.removeLocationUpdates(locationCallback);
         }
     }
@@ -259,25 +249,23 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
 
         mMap.clear();
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-        boolean hayPosiciones = false;
+        boolean hay = false;
 
         for (CocheMapa c : listaCoches) {
             if (c.lat == 0 || c.lng == 0) continue;
 
             LatLng pos = new LatLng(c.lat, c.lng);
-            hayPosiciones = true;
+            hay = true;
             boundsBuilder.include(pos);
 
             if (c.fotoUrl != null && !c.fotoUrl.isEmpty()) {
                 cargarIconoPersonalizado(pos, c.fotoUrl, c.nombre);
             } else {
-                mMap.addMarker(new MarkerOptions()
-                        .position(pos)
-                        .title(c.nombre));
+                mMap.addMarker(new MarkerOptions().position(pos).title(c.nombre));
             }
         }
 
-        if (!hayPosiciones) return;
+        if (!hay) return;
 
         mMap.setOnMapLoadedCallback(() ->
                 mMap.animateCamera(
@@ -285,9 +273,6 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                                 boundsBuilder.build(), 120)));
     }
 
-    // =========================
-    //        UTILIDADES
-    // =========================
     private String obtenerDireccion(double lat, double lng) {
         try {
             Geocoder g = new Geocoder(getContext(), Locale.getDefault());
@@ -309,8 +294,7 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                         bitmap.getHeight() + 20,
                         Bitmap.Config.ARGB_8888);
 
-                Canvas c = new Canvas(out);
-                c.drawBitmap(bitmap, 10, 10, null);
+                new Canvas(out).drawBitmap(bitmap, 10, 10, null);
 
                 if (mMap != null) {
                     mMap.addMarker(new MarkerOptions()
@@ -320,8 +304,7 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                 }
             }
 
-            @Override
-            public void onLoadCleared(@Nullable Drawable placeholder) {}
+            @Override public void onLoadCleared(@Nullable Drawable placeholder) {}
         };
 
         glideTargets.add(target);
