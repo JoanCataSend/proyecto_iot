@@ -1,151 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/fondo_claro">
 
+    <include
+        android:id="@+id/header_incluido"
+        layout="@layout/header"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Título -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:gravity="center_vertical">
-        <!-- Título centrado -->
-        <TextView
-            android:id="@+id/titleSeguridad"
-            android:layout_width="wrap_content"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        app:layout_constraintTop_toBottomOf="@id/header_incluido"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Añadir coche"
-            android:textColor="@color/icono_normal"
-            android:textSize="20sp"
-            android:fontFamily="@font/roboto_medium"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:paddingBottom="30dp">
 
-    </RelativeLayout>
-    <!-- Descripcion -->
-    <TextView
-        android:id="@+id/descripcion"
-        style="@style/DescripciónActividad"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:fontFamily="@font/roboto_regular"
-        android:text="Rellena los campos para añadir un nuevo coche"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="184dp" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/txtNombre"
-        style="@style/TituloLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/roboto_regular"
-        android:text="@string/marca"
-        app:layout_constraintStart_toStartOf="@+id/etMarcaEditar"
-        app:layout_constraintTop_toBottomOf="@+id/descripcion" />
+                <TextView
+                    android:id="@+id/titleSeguridad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="Añadir coche"
+                    android:textColor="@color/icono_normal"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
 
-    <TextView
-        android:id="@+id/txtModeloE"
-        style="@style/TituloLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:fontFamily="@font/roboto_regular"
-        android:text="@string/modelo"
-        app:layout_constraintStart_toStartOf="@+id/etModeloEditar"
-        app:layout_constraintTop_toBottomOf="@+id/etMarcaEditar" />
+            <TextView
+                android:id="@+id/descripcion"
+                style="@style/DescripciónActividad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="Rellena los campos para añadir un nuevo coche" />
 
-    <TextView
-        android:id="@+id/txtMatriculaE"
-        style="@style/TituloLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:fontFamily="@font/roboto_regular"
-        android:text="@string/matricula"
-        app:layout_constraintStart_toStartOf="@+id/etMatriculaEditar"
-        app:layout_constraintTop_toBottomOf="@+id/etModeloEditar" />
+            <TextView style="@style/TituloLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="@string/marca" />
+            <EditText android:id="@+id/etMarcaEditar" style="@style/EditText" android:layout_width="match_parent" android:layout_height="45dp" android:layout_marginTop="7dp" android:inputType="text" />
 
-    <TextView
-        android:id="@+id/txtNombreE"
-        style="@style/TituloLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:fontFamily="@font/roboto_regular"
-        android:text="@string/nombre_coche"
-        app:layout_constraintStart_toStartOf="@+id/etNombreCocheEditar"
-        app:layout_constraintTop_toBottomOf="@+id/etMatriculaEditar" />
+            <TextView style="@style/TituloLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:text="@string/modelo" />
+            <EditText android:id="@+id/etModeloEditar" style="@style/EditText" android:layout_width="match_parent" android:layout_height="45dp" android:layout_marginTop="7dp" android:inputType="text" />
 
-    <EditText
-        android:id="@+id/etMarcaEditar"
-        android:layout_width="310dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="7dp"
-        android:ems="10"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtNombre"
-        style="@style/EditText" />
+            <TextView style="@style/TituloLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:text="@string/matricula" />
+            <EditText android:id="@+id/etMatriculaEditar" style="@style/EditText" android:layout_width="match_parent" android:layout_height="45dp" android:layout_marginTop="7dp" android:inputType="text" />
 
-    <EditText
-        android:id="@+id/etModeloEditar"
-        style="@style/EditText"
-        android:layout_width="310dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="7dp"
-        android:ems="10"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtModeloE" />
+            <TextView style="@style/TituloLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="15dp" android:text="@string/nombre_coche" />
+            <EditText android:id="@+id/etNombreCocheEditar" style="@style/EditText" android:layout_width="match_parent" android:layout_height="45dp" android:layout_marginTop="7dp" android:inputType="text" />
 
-    <EditText
-        android:id="@+id/etMatriculaEditar"
-        style="@style/EditText"
-        android:layout_width="310dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="7dp"
-        android:ems="10"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtMatriculaE" />
+            <Button
+                android:id="@+id/btnGuardarCambios"
+                style="@style/BotonPrincipal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:text="Guardar coche" />
 
-    <EditText
-        android:id="@+id/etNombreCocheEditar"
-        style="@style/EditText"
-        android:layout_width="310dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="7dp"
-        android:ems="10"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtNombreE" />
-
-    <!-- Botón para Guardar cambios -->
-    <Button
-        android:id="@+id/btnGuardarCambios"
-        style="@style/BotonPrincipal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
-        android:text="Guardar coche"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etNombreCocheEditar" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

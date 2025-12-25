@@ -25,11 +25,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
@@ -175,14 +177,19 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void actualizarMarcadores() {
-        if (!isAdded() || mMap == null) return;
+        if (mMap == null || listaCoches.isEmpty()) return;
 
         mMap.clear();
+
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        boolean hayPosicionesValidas = false;
 
         for (CocheMapa c : listaCoches) {
             if (c.lat == 0 || c.lng == 0) continue;
 
             LatLng pos = new LatLng(c.lat, c.lng);
+            hayPosicionesValidas = true;
+            boundsBuilder.include(pos);
 
             if (c.fotoUrl != null && !c.fotoUrl.isEmpty()) {
                 cargarIconoPersonalizado(pos, c.fotoUrl, c.nombre);
@@ -192,6 +199,17 @@ public class UbicacionFragment extends Fragment implements OnMapReadyCallback {
                         .title(c.nombre));
             }
         }
+
+        if (!hayPosicionesValidas) return;
+
+        LatLngBounds bounds = boundsBuilder.build();
+
+        // MUY IMPORTANTE: esperar a que el mapa esté renderizado
+        mMap.setOnMapLoadedCallback(() ->
+                mMap.animateCamera(
+                        CameraUpdateFactory.newLatLngBounds(bounds, 120)
+                )
+        );
     }
 
     private void cargarIconoPersonalizado(LatLng pos, String url, String nombre) {

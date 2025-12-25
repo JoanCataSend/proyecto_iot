@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- CONTENIDO PRINCIPAL -->
     <LinearLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
@@ -45,26 +44,36 @@
             android:textColor="@color/icono_normal" />
 
         <!-- MAPA -->
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/map_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="40dp" />
+            android:layout_marginBottom="40dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            android:clipToOutline="true">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"/>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 
-    <!-- PANEL DESPLEGABLE -->
+    <!-- ================= PANEL DESPLEGABLE ================= -->
     <LinearLayout
         android:id="@+id/panel_desplegable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/desplegable_navbar"
         android:orientation="vertical"
+        android:background="@drawable/desplegable_navbar"
         android:paddingStart="30dp"
         android:paddingEnd="30dp"
         android:maxHeight="460dp"
@@ -78,58 +87,45 @@
             android:layout_marginTop="15dp"
             android:background="@color/boton_oscuro" />
 
-        <!-- ================= CONTENIDO SCROLL ================= -->
-        <androidx.core.widget.NestedScrollView
+        <!-- TÍTULO -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Mis coches registrados"
+                android:textColor="@color/icono_normal"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_medium"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- DESCRIPCIÓN -->
+        <TextView
+            android:id="@+id/panel_descrip"
+            style="@style/DescripciónActividad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/descripcion_mis_coches"
+            android:textColor="@color/icono_normal"
+            android:layout_marginTop="8dp" />
+
+        <!-- ================= SOLO ESTO SCROLLEA ================= -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerCoches"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:overScrollMode="never">
+            android:layout_marginTop="10dp"
+            android:overScrollMode="never"
+            android:nestedScrollingEnabled="true" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <!-- TÍTULO -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:text="Mis coches registrados"
-                        android:textColor="@color/icono_normal"
-                        android:textSize="20sp"
-                        android:fontFamily="@font/roboto_medium"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-
-                <!-- DESCRIPCIÓN -->
-                <TextView
-                    android:id="@+id/panel_descrip"
-                    style="@style/DescripciónActividad"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/descripcion_mis_coches"
-                    android:textColor="@color/icono_normal"
-                    android:layout_marginTop="8dp" />
-
-                <!-- LISTA -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerCoches"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:overScrollMode="never"
-                    android:nestedScrollingEnabled="false"/>
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-
-        <!-- ================= BOTÓN FIJO ================= -->
+        <!-- BOTÓN FIJO -->
         <LinearLayout
             android:id="@+id/btnAnadirCoche"
             android:layout_width="match_parent"

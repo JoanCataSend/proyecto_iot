@@ -40,7 +40,6 @@ import java.util.Map;
 
 public class CameraFragment extends Fragment {
 
-
     private static final String TAG = "CameraFragment";
 
     // ID DEL COCHE
@@ -107,8 +106,7 @@ public class CameraFragment extends Fragment {
         adapter = new CapturasAdapter(listaCapturas, getContext());
         recyclerCapturas.setAdapter(adapter);
 
-        // LISTENER DE ACCIONES (DESCARGAR / ELIMINAR)
-
+        // LISTENER DE ACCIONES
         adapter.setOnAccionesListener(new CapturasAdapter.OnAccionesListener() {
             @Override
             public void onDescargar(String url, String nombre) {
@@ -117,12 +115,11 @@ public class CameraFragment extends Fragment {
 
             @Override
             public void onEliminar(CapturaItem item) {
-                // Confirmamos eliminación
                 eliminarCaptura(item);
             }
         });
 
-        // Webcams
+        // STREAMING
         configurarWebCam(webCamView, STREAM_URL_ESP32);
         configurarWebCam(webCamView2, STREAM_URL_RPI);
 
@@ -136,6 +133,38 @@ public class CameraFragment extends Fragment {
         });
 
         cargarCapturas();
+    }
+
+    // 🔧 CERRAR STREAMS AL SALIR
+    @Override
+    public void onPause() {
+        super.onPause();
+        detenerStreaming();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        detenerStreaming();
+    }
+
+    private void detenerStreaming() {
+        cerrarWebView(webCamView);
+        cerrarWebView(webCamView2);
+        webCamView = null;
+        webCamView2 = null;
+    }
+
+    private void cerrarWebView(WebView webView) {
+        if (webView != null) {
+            webView.stopLoading();
+            webView.loadUrl("about:blank");
+            webView.clearHistory();
+            webView.clearCache(true);
+            webView.onPause();
+            webView.removeAllViews();
+            webView.destroy();
+        }
     }
 
     // ---------------- TABS ----------------
@@ -164,6 +193,7 @@ public class CameraFragment extends Fragment {
     private void configurarWebCam(WebView webView, String url) {
         WebSettings ws = webView.getSettings();
         ws.setJavaScriptEnabled(true);
+        ws.setMediaPlaybackRequiresUserGesture(false);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(url);
     }
@@ -281,18 +311,16 @@ public class CameraFragment extends Fragment {
                         Log.e(TAG, "Error cargando capturas", e));
     }
 
-    // ---------------- ELIMINAR (NUEVO) ----------------
-    // Borra de Storage y luego busca el documento por nombre en Firestore para borrarlo
+    // ---------------- ELIMINAR ----------------
+
     private void eliminarCaptura(CapturaItem item) {
         Toast.makeText(getContext(), "Eliminando...", Toast.LENGTH_SHORT).show();
 
         String nombreArchivo = item.getNombre();
-
-        // 1. Borrar imagen física en Storage
-        StorageReference refImagen = storageRef.child("capturas/" + cocheId + "/" + nombreArchivo);
+        StorageReference refImagen =
+                storageRef.child("capturas/" + cocheId + "/" + nombreArchivo);
 
         refImagen.delete().addOnSuccessListener(aVoid -> {
-            // 2. Buscar en Firestore el documento que tiene ese nombre y borrarlo
             db.collection("Coches")
                     .document(cocheId)
                     .collection("capturas")
@@ -302,16 +330,19 @@ public class CameraFragment extends Fragment {
                         for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshot) {
                             doc.getReference().delete();
                         }
-                        Toast.makeText(getContext(), "Eliminado correctamente", Toast.LENGTH_SHORT).show();
-                        cargarCapturas(); // Recargar lista
+                        Toast.makeText(getContext(),
+                                "Eliminado correctamente",
+                                Toast.LENGTH_SHORT).show();
+                        cargarCapturas();
                     })
                     .addOnFailureListener(e ->
                             Log.e(TAG, "Error buscando doc para borrar", e)
                     );
-
-        }).addOnFailureListener(e -> {
-            Toast.makeText(getContext(), "Error al borrar imagen", Toast.LENGTH_SHORT).show();
-        });
+        }).addOnFailureListener(e ->
+                Toast.makeText(getContext(),
+                        "Error al borrar imagen",
+                        Toast.LENGTH_SHORT).show()
+        );
     }
 
     // ---------------- DESCARGA ----------------
@@ -322,7 +353,8 @@ public class CameraFragment extends Fragment {
                     (DownloadManager) requireContext()
                             .getSystemService(Context.DOWNLOAD_SERVICE);
 
-            DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
+            DownloadManager.Request req =
+                    new DownloadManager.Request(Uri.parse(url));
             req.setTitle(nombre);
             req.setNotificationVisibility(
                     DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
