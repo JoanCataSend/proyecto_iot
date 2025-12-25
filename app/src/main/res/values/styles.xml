@@ -80,4 +80,11 @@
         <item name="android:backgroundTint">@null</item>
     </style>
 
+    <!--Esquinas redondeadas para img de cuenta y perfil-->
+    <style name="RoundedSquareImage">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+
 </resources>

@@ -32,8 +32,8 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:scaleType="centerCrop"
-            style="@style/ImagenCircular"
-            android:src="@drawable/foto_perfil_default" />
+            android:src="@drawable/foto_perfil_default"
+            app:shapeAppearanceOverlay="@style/RoundedSquareImage" />
 
         <ImageButton
             android:id="@+id/btnEditarFoto"
