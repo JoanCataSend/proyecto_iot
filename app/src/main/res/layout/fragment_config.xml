@@ -61,12 +61,11 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginEnd="16dp"
-                    android:adjustViewBounds="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="0dp"
-                    android:scaleType="fitCenter"
-                    style="@style/ImagenCircular"
+                    android:background="@drawable/bg_profile_rounded"
+                    android:clipToOutline="true"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/ic_perfil2" />
+
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -305,7 +304,6 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- 🌟 FAB DEL CHATBOT (bien colocado y sin romper nada) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabChatbot"
         android:layout_width="wrap_content"
