@@ -79,6 +79,15 @@ public class IntentoFragment extends Fragment {
     private String doorExpectedState = null; // "open" o "closed"
     private long doorExpectedUntilTs = 0L;
     private boolean doorCommandInFlight = false;
+    // ===== SISTEMA / WIFI =====
+    private View viewSystemDot;
+    private TextView tvSystemStatus;
+    private TextView tvLastUpdate;
+
+    // ===== TIEMPO =====
+    private TextView tvWeatherTitle;
+    private TextView tvWeatherDesc;
+    private ImageView ivWeather;
 
     // =========================
     //      FIRESTORE / DATOS
@@ -231,9 +240,38 @@ public class IntentoFragment extends Fragment {
 
         // referencia para poder desactivar/activar cámaras
         layoutCamarasRef = view.findViewById(R.id.layoutCamaras);
+        viewSystemDot = view.findViewById(R.id.viewSystemDot);
+        tvSystemStatus = view.findViewById(R.id.tvSystemStatus);
+        tvLastUpdate = view.findViewById(R.id.tvLastUpdate);
+
+        tvWeatherTitle = view.findViewById(R.id.tvWeatherTitle);
+        tvWeatherDesc = view.findViewById(R.id.tvWeatherDesc);
+        ivWeather = view.findViewById(R.id.ivWeather);
 
     }
+    private void actualizarUiClima(String clima) {
 
+        if (clima == null) clima = "";
+
+        clima = clima.toLowerCase(Locale.ROOT);
+
+        if (clima.contains("lluvia") || clima.contains("rain")) {
+            tvWeatherDesc.setText("Conduce con precaución");
+            ivWeather.setImageResource(R.drawable.ic_tiempo3);
+
+        } else if (clima.contains("nube") || clima.contains("cloud")) {
+            tvWeatherDesc.setText("Condiciones normales");
+            ivWeather.setImageResource(R.drawable.ic_tiempo2);
+
+        } else if (clima.contains("cielo") || clima.contains("clear")) {
+            tvWeatherDesc.setText("Puedes conducir con seguridad");
+            ivWeather.setImageResource(R.drawable.ic_tiempo);
+
+        } else {
+            tvWeatherDesc.setText("Consulta el estado del clima");
+            ivWeather.setImageResource(R.drawable.ic_warning);
+        }
+    }
     private void setupSpinner(Context context, SharedPreferences prefs) {
 
         ArrayAdapter<String> carsAdapter = new ArrayAdapter<String>(
@@ -937,6 +975,7 @@ public class IntentoFragment extends Fragment {
                         addressPillView.setOnClickListener(null);
                         return;
                     }
+                    obtenerTiempo(lat, lng);
 
                     String direccion = "Ubicación desconocida";
                     try {
@@ -968,7 +1007,105 @@ public class IntentoFragment extends Fragment {
                     tvAddress.setText("Ubicación desconocida");
                     addressPillView.setOnClickListener(null);
                 });
+
     }
+    private void obtenerTiempo(double lat, double lng) {
+
+        // UI mientras carga
+        runOnMainThreadSafe(() -> {
+            if (tvWeatherTitle != null) tvWeatherTitle.setText("Tiempo: Cargando...");
+            if (tvWeatherDesc != null) tvWeatherDesc.setText("Obteniendo datos...");
+            if (ivWeather != null) ivWeather.setImageResource(R.drawable.ic_warning);
+        });
+
+        new Thread(() -> {
+
+            java.net.HttpURLConnection conn = null;
+
+            try {
+                String apiKey = "8f40d25d985593b645b6554752e809f4";
+                String urlStr = "https://api.openweathermap.org/data/2.5/weather"
+                        + "?lat=" + lat
+                        + "&lon=" + lng
+                        + "&lang=es"
+                        + "&units=metric"
+                        + "&appid=" + apiKey;
+
+                java.net.URL url = new java.net.URL(urlStr);
+                conn = (java.net.HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setConnectTimeout(10_000);
+                conn.setReadTimeout(10_000);
+
+                int code = conn.getResponseCode();
+
+                java.io.InputStream is = (code >= 200 && code < 300)
+                        ? conn.getInputStream()
+                        : conn.getErrorStream();
+
+                String response = readStream(is);
+
+                android.util.Log.d("WEATHER_API", "HTTP " + code + " -> " + response);
+
+                if (code < 200 || code >= 300) {
+                    runOnMainThreadSafe(() -> {
+                        if (tvWeatherTitle != null) tvWeatherTitle.setText("Tiempo: No disponible");
+                        if (tvWeatherDesc != null) tvWeatherDesc.setText("Error API (" + code + ")");
+                        if (ivWeather != null) ivWeather.setImageResource(R.drawable.ic_warning);
+                    });
+                    return;
+                }
+
+                org.json.JSONObject json = new org.json.JSONObject(response);
+
+                String description = json.getJSONArray("weather")
+                        .getJSONObject(0)
+                        .getString("description");
+
+                double temp = json.getJSONObject("main").getDouble("temp");
+
+                String titulo = "Tiempo: " + capitalizar(description) + " · " + Math.round(temp) + "°C";
+
+                runOnMainThreadSafe(() -> {
+                    if (tvWeatherTitle != null) tvWeatherTitle.setText(titulo);
+                    actualizarUiClima(description);
+                });
+
+            } catch (Exception e) {
+                android.util.Log.e("WEATHER_API", "Fallo obteniendo clima", e);
+                runOnMainThreadSafe(() -> {
+                    if (tvWeatherTitle != null) tvWeatherTitle.setText("Tiempo: No disponible");
+                    if (tvWeatherDesc != null) tvWeatherDesc.setText("Error de red");
+                    if (ivWeather != null) ivWeather.setImageResource(R.drawable.ic_warning);
+                });
+            } finally {
+                if (conn != null) conn.disconnect();
+            }
+
+        }).start();
+    }
+
+    private String readStream(java.io.InputStream is) throws java.io.IOException {
+        if (is == null) return "";
+        java.io.BufferedReader br = new java.io.BufferedReader(new java.io.InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) sb.append(line);
+        br.close();
+        return sb.toString();
+    }
+
+    /**
+     * Evita crashear si el Fragment ya no está añadido al Activity
+     */
+    private void runOnMainThreadSafe(Runnable r) {
+        if (!isAdded()) return;
+        requireActivity().runOnUiThread(() -> {
+            if (!isAdded()) return;
+            r.run();
+        });
+    }
+
 
     // =========================
     //      UI - CANDADO
@@ -1094,6 +1231,18 @@ public class IntentoFragment extends Fragment {
     // =========================
     //      HELPERS
     // =========================
+    private String capitalizar(String s) {
+        if (s == null || s.length() == 0) return s;
+        return s.substring(0,1).toUpperCase() + s.substring(1);
+    }
+
+    private String mensajeClima(String clima) {
+        if (clima.contains("lluvia")) return "Conduce con precaución";
+        if (clima.contains("nube")) return "Condiciones normales";
+        if (clima.contains("sol")) return "Puedes conducir con seguridad";
+        return "Consulta el estado del clima";
+    }
+
     private SharedPreferences getPrefs(Context ctx) {
         return ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
@@ -1158,10 +1307,44 @@ public class IntentoFragment extends Fragment {
                     actualizarUiPuertas();
                     actualizarUiAlarmas();
                     actualizarUiCamaras();
+                    actualizarEstadoSistema(carId);
                 });
+
     }
 
+    private void actualizarEstadoSistema(String carId) {
+        firestore.collection("Coches")
+                .document(carId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (!isAdded() || !doc.exists()) return;
 
+                    Date lastUpdate = doc.getDate("lastUpdate");
+
+                    if (safeModeEnabled) {
+                        tvSystemStatus.setText("Sistema activo y vigilando");
+                        viewSystemDot.setBackgroundResource(R.drawable.bg_dot_ok);
+                    } else {
+                        tvSystemStatus.setText("Sistema desactivado");
+                        viewSystemDot.setBackgroundResource(R.drawable.bg_dot_nook);
+                    }
+
+                    if (lastUpdate != null) {
+                        long diff = System.currentTimeMillis() - lastUpdate.getTime();
+                        tvLastUpdate.setText("Última conexión " + tiempoHumano(diff));
+                    } else {
+                        tvLastUpdate.setText("Última conexión desconocida");
+                    }
+                });
+    }
+    private String tiempoHumano(long millis) {
+        long segundos = millis / 1000;
+        if (segundos < 60) return "hace unos segundos";
+        long minutos = segundos / 60;
+        if (minutos < 60) return "hace " + minutos + " minutos";
+        long horas = minutos / 60;
+        return "hace " + horas + " horas";
+    }
     private void setSafeModeFirestore(String carId, boolean activar) {
 
         Map<String, Object> updates = new HashMap<>();
