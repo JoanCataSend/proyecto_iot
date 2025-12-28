@@ -6,18 +6,30 @@
     android:layout_height="match_parent">
 
     <!-- Título -->
-    <TextView
-        android:id="@+id/titulo"
-        style="@style/Seccion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cuenta_perfil"
-        android:textColor="@color/icono_normal"
-        android:textSize="20sp"
-        android:paddingBottom="16dp"
+    <RelativeLayout
+        android:id="@+id/headerCuentaPerfil"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_vertical"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/titulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/cuenta_perfil"
+            android:textColor="@color/icono_normal"
+            android:textSize="20sp"
+            android:fontFamily="@font/roboto_medium"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -25,15 +37,15 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titulo">
+        app:layout_constraintTop_toBottomOf="@id/headerCuentaPerfil">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/fotoPerfil"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:scaleType="centerCrop"
-            style="@style/ImagenCircular"
-            android:src="@drawable/foto_perfil_default" />
+            android:src="@drawable/foto_perfil_default"
+            app:shapeAppearanceOverlay="@style/RoundedSquareImage" />
 
         <ImageButton
             android:id="@+id/btnEditarFoto"
