@@ -33,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="Configuracion"
+                    android:text="Configuración"
                     android:textColor="@color/icono_normal"
                     android:textSize="20sp"
                     android:fontFamily="@font/roboto_medium"
@@ -126,7 +126,7 @@
                     android:layout_height="1dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
-                    android:background="#DDDDDD" />
+                    android:background="@color/linea_finita" />
 
                 <LinearLayout
                     android:id="@+id/cuenta_perfil"
@@ -161,7 +161,7 @@
                     android:layout_height="1dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
-                    android:background="#DDDDDD" />
+                    android:background="@color/linea_finita" />
 
                 <LinearLayout
                     android:id="@+id/coches_registrados"
@@ -196,7 +196,7 @@
                     android:layout_height="1dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
-                    android:background="#DDDDDD" />
+                    android:background="@color/linea_finita" />
 
                 <LinearLayout
                     android:id="@+id/layout_notificaciones"
@@ -234,7 +234,7 @@
                     android:layout_height="1dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
-                    android:background="#DDDDDD" />
+                    android:background="@color/linea_finita" />
 
                 <LinearLayout
                     android:id="@+id/layoutSeguridad"
@@ -269,7 +269,7 @@
                     android:layout_height="1dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="32dp"
-                    android:background="#DDDDDD" />
+                    android:background="@color/linea_finita" />
 
                 <LinearLayout
                     android:id="@+id/layoutAyudaySoporte"

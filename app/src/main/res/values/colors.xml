@@ -26,10 +26,12 @@
 
     <color name="lavender_divider">#FFEAE2F8</color>
     <color name="verdeoscuro">#0FA600</color>
+    <color name="pill_darkmode">#282828</color>
 
     <color name="nav_background_light">#FFFFFF</color> <!-- Blanco grisáceo suave -->
     <color name="nav_icon_dark_inactive">#2E2E2E</color> <!-- Gris oscuro para iconos -->
     <color name="nav_icon_dark_active">#000000</color>   <!-- Negro puro al seleccionar -->
+    <color name="linea_finita">#DDDDDD</color> <!--linea finita de los ajustes -->
 
     <color name="primary">#ECE5F5</color>
 
