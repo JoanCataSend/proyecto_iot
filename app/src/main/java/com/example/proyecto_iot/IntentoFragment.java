@@ -252,22 +252,56 @@ public class IntentoFragment extends Fragment {
     private void actualizarUiClima(String clima) {
 
         if (clima == null) clima = "";
-
         clima = clima.toLowerCase(Locale.ROOT);
-
-        if (clima.contains("lluvia") || clima.contains("rain")) {
+        if (
+                clima.contains("rain") ||
+                        clima.contains("drizzle") ||
+                        clima.contains("lluvia") ||
+                        clima.contains("lluvioso") ||
+                        clima.contains("storm") ||
+                        clima.contains("thunder") ||
+                        clima.contains("tormenta") ||
+                        clima.contains("snow") ||
+                        clima.contains("nieve") ||
+                        clima.contains("fog") ||
+                        clima.contains("mist") ||
+                        clima.contains("haze") ||
+                        clima.contains("smoke") ||
+                        clima.contains("niebla") ||
+                        clima.contains("bruma")
+        ) {
             tvWeatherDesc.setText("Conduce con precaución");
             ivWeather.setImageResource(R.drawable.ic_tiempo3);
-
-        } else if (clima.contains("nube") || clima.contains("cloud")) {
+        }
+        else if (
+                clima.contains("cloud") ||
+                        clima.contains("clouds") ||
+                        clima.contains("overcast") ||
+                        clima.contains("broken") ||
+                        clima.contains("scattered") ||
+                        clima.contains("few clouds") ||
+                        clima.contains("nube") ||
+                        clima.contains("nubes") ||
+                        clima.contains("nuboso") ||
+                        clima.contains("cubierto")
+        ) {
             tvWeatherDesc.setText("Condiciones normales");
             ivWeather.setImageResource(R.drawable.ic_tiempo2);
-
-        } else if (clima.contains("cielo") || clima.contains("clear")) {
+        }
+        else if (
+                clima.contains("clear") ||
+                        clima.contains("clear sky") ||
+                        clima.contains("sun") ||
+                        clima.contains("sunny") ||
+                        clima.contains("cielo") ||
+                        clima.contains("despejado") ||
+                        clima.contains("soleado")
+        ) {
             tvWeatherDesc.setText("Puedes conducir con seguridad");
             ivWeather.setImageResource(R.drawable.ic_tiempo);
+        }
 
-        } else {
+        else {
             tvWeatherDesc.setText("Consulta el estado del clima");
             ivWeather.setImageResource(R.drawable.ic_warning);
         }
@@ -1237,7 +1271,7 @@ public class IntentoFragment extends Fragment {
     }
 
     private String mensajeClima(String clima) {
-        if (clima.contains("lluvia")) return "Conduce con precaución";
+        if (clima.contains("lluvia") ) return "Conduce con precaución";
         if (clima.contains("nube")) return "Condiciones normales";
         if (clima.contains("sol")) return "Puedes conducir con seguridad";
         return "Consulta el estado del clima";

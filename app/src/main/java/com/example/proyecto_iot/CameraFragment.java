@@ -46,11 +46,11 @@ public class CameraFragment extends Fragment {
     private final String cocheId = "ZkB10ikraHvc11ig0vD0";
 
     // STREAMS
-    private static final String STREAM_URL_ESP32 = "http://172.20.10.5:81/stream";
+    private static final String STREAM_URL_ESP32 = "http://172.20.10.3:81/stream";
     private static final String STREAM_URL_RPI   = "http://192.168.1.91:8080/?action=stream";
 
     // CAPTURA ESP32
-    private static final String CAPTURE_URL_ESP32 = "http://172.20.10.5/capture";
+    private static final String CAPTURE_URL_ESP32 = "http://172.20.10.3/capture";
 
     // UI
     private WebView webCamView, webCamView2;
