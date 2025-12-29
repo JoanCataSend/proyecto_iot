@@ -3,6 +3,7 @@ package com.example.proyecto_iot;
 import android.animation.ValueAnimator;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -608,6 +609,7 @@ public class IntentoFragment extends Fragment {
 
         Context ctx = requireContext();
 
+        // 🔔 Vibración (la mantienes)
         vibrator = (Vibrator) ctx.getSystemService(Context.VIBRATOR_SERVICE);
         if (vibrator != null) {
             if (Build.VERSION.SDK_INT >= 26) {
@@ -618,23 +620,31 @@ public class IntentoFragment extends Fragment {
             }
         }
 
-        String titulo = "Impacto detectado";
-        String mensaje = "Tu vehículo ha recibido un impacto";
+        // 👉 FULL SCREEN INTENT
+        Intent intent = new Intent(ctx, MainActivity.class);
+        intent.putExtra("OPEN_CAMERA_IMPACT", true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        notifyAndSave(
-                NOTIFICATION_ID_IMPACTO,
-                titulo,
-                mensaje,
-                R.drawable.ic_info,
-                "Impacto"
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                ctx,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        requireActivity()
-                .getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, new CameraFragment())
-                .addToBackStack(null)
-                .commit();
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(ctx, CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_warning)
+                        .setContentTitle("⚠️ IMPACTO DETECTADO")
+                        .setContentText("Se ha detectado un impacto en tu vehículo")
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setCategory(NotificationCompat.CATEGORY_ALARM)
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
+                        .setFullScreenIntent(pendingIntent, true);
+
+        NotificationManagerCompat.from(ctx)
+                .notify(NOTIFICATION_ID_IMPACTO, builder.build());
     }
 
     private void guardarLockEnPrefs(boolean locked) {

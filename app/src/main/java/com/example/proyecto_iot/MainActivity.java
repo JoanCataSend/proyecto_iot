@@ -35,9 +35,11 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment activeFragment;
 
-    // ✅ FIX: listener para saber cuándo cambia el backstack y actualizar UI
+    // Listener para mostrar/ocultar botón back
     private final FragmentManager.OnBackStackChangedListener backStackListener =
-            () -> setBackButtonVisible(getSupportFragmentManager().getBackStackEntryCount() > 0);
+            () -> setBackButtonVisible(
+                    getSupportFragmentManager().getBackStackEntryCount() > 0
+            );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,11 +66,9 @@ public class MainActivity extends AppCompatActivity {
         attachIconTouchAnimation(navSettings);
 
         FragmentManager fm = getSupportFragmentManager();
-
-        // ✅ FIX: escuchar cambios en backstack para mostrar/ocultar flecha correctamente
         fm.addOnBackStackChangedListener(backStackListener);
 
-        // ===== RESTAURAR FRAGMENTS SI EXISTEN =====
+        // ===== RESTAURAR / CREAR FRAGMENTS =====
         homeFragment = fm.findFragmentByTag(TAG_HOME);
         carFragment = fm.findFragmentByTag(TAG_CAR);
         notificationsFragment = fm.findFragmentByTag(TAG_NOTIFICATIONS);
@@ -78,6 +78,11 @@ public class MainActivity extends AppCompatActivity {
         if (carFragment == null) carFragment = new UbicacionFragment();
         if (notificationsFragment == null) notificationsFragment = new NotificacionesFragment();
         if (settingsFragment == null) settingsFragment = new ConfigFragment();
+
+        // 🚨 SI VIENE DE IMPACTO (FULL SCREEN INTENT)
+        if (getIntent() != null && getIntent().getBooleanExtra("OPEN_CAMERA_IMPACT", false)) {
+            abrirCamaraPorImpacto();
+        }
 
         if (savedInstanceState == null) {
             FragmentTransaction ft = fm.beginTransaction();
@@ -93,56 +98,47 @@ public class MainActivity extends AppCompatActivity {
             updateNavbarSelection(R.id.nav_home);
             setBackButtonVisible(false);
         } else {
-            // ✅ FIX: en restauración, intenta recuperar el activeFragment de forma segura
             activeFragment = fm.findFragmentByTag(TAG_HOME);
             if (activeFragment == null) activeFragment = homeFragment;
-
-            // ✅ FIX: si ya hay backstack, mostrar flecha
             setBackButtonVisible(fm.getBackStackEntryCount() > 0);
         }
 
         // ===== NAVBAR =====
-        navHome.setOnClickListener(v -> {
-            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                // ✅ FIX: si estás en una pantalla secundaria, limpiamos backstack al cambiar de tab
-                clearBackStack();
-            }
-            updateNavbarSelection(R.id.nav_home);
-            switchFragment(homeFragment);
-            setBackButtonVisible(false);
-        });
-
-        navCar.setOnClickListener(v -> {
-            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                clearBackStack();
-            }
-            updateNavbarSelection(R.id.nav_car);
-            switchFragment(carFragment);
-            setBackButtonVisible(false);
-        });
-
-        navNotifications.setOnClickListener(v -> {
-            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                clearBackStack();
-            }
-            updateNavbarSelection(R.id.nav_notifications);
-            switchFragment(notificationsFragment);
-            setBackButtonVisible(false);
-        });
-
-        navSettings.setOnClickListener(v -> {
-            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                clearBackStack();
-            }
-            updateNavbarSelection(R.id.nav_settings);
-            switchFragment(settingsFragment);
-            setBackButtonVisible(false);
-        });
+        navHome.setOnClickListener(v -> cambiarTab(homeFragment, R.id.nav_home));
+        navCar.setOnClickListener(v -> cambiarTab(carFragment, R.id.nav_car));
+        navNotifications.setOnClickListener(v -> cambiarTab(notificationsFragment, R.id.nav_notifications));
+        navSettings.setOnClickListener(v -> cambiarTab(settingsFragment, R.id.nav_settings));
     }
 
     // =========================
-    //  CAMBIO DE FRAGMENT CACHE
+    //  🚨 ABRIR CÁMARA POR IMPACTO (FIX REAL)
     // =========================
+    private void abrirCamaraPorImpacto() {
+
+        CameraFragment fragment = new CameraFragment();
+
+        Bundle args = new Bundle();
+        args.putBoolean("AUTO_CAPTURE", true); // 👈 autocaptura automática
+        fragment.setArguments(args);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commitAllowingStateLoss();
+    }
+
+    // =========================
+    //  CAMBIO DE TAB
+    // =========================
+    private void cambiarTab(Fragment target, int navId) {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            clearBackStack();
+        }
+        updateNavbarSelection(navId);
+        switchFragment(target);
+        setBackButtonVisible(false);
+    }
+
     private void switchFragment(Fragment target) {
         if (activeFragment == target) return;
 
@@ -162,19 +158,15 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnTouchListener((v, event) -> {
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
-                    v.animate().cancel();
                     v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-                    v.animate()
-                            .scaleX(0.88f).scaleY(0.88f).alpha(0.9f)
+                    v.animate().scaleX(0.88f).scaleY(0.88f).alpha(0.9f)
                             .setDuration(10)
                             .setInterpolator(inInterpolator)
                             .start();
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    v.animate().cancel();
-                    v.animate()
-                            .scaleX(1f).scaleY(1f).alpha(1f)
+                    v.animate().scaleX(1f).scaleY(1f).alpha(1f)
                             .setDuration(10)
                             .setInterpolator(outInterpolator)
                             .start();
@@ -185,47 +177,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // =========================
-    //  MÉTODO PARA ABRIR PANTALLAS "SECUNDARIAS"
+    //  BACKSTACK
     // =========================
-    public void replaceFragment(Fragment fragment, boolean addToBackstack) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.setReorderingAllowed(true);
-        ft.replace(R.id.fragment_container, fragment);
-
-        if (addToBackstack) {
-            ft.addToBackStack(null);
-            // ✅ FIX: mostrar flecha al entrar a secundaria
-            setBackButtonVisible(true);
-        }
-
-        ft.commit();
-    }
-
-    // ✅ FIX: limpiar el backstack cuando cambias de tab
     private void clearBackStack() {
         FragmentManager fm = getSupportFragmentManager();
         fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-        // ✅ FIX: re-montar tabs (porque replace pudo haber quitado el root visual)
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.setReorderingAllowed(true);
-
-        // Asegura que están añadidos
-        if (fm.findFragmentByTag(TAG_HOME) == null) ft.add(R.id.fragment_container, homeFragment, TAG_HOME).hide(homeFragment);
-        if (fm.findFragmentByTag(TAG_CAR) == null) ft.add(R.id.fragment_container, carFragment, TAG_CAR).hide(carFragment);
-        if (fm.findFragmentByTag(TAG_NOTIFICATIONS) == null) ft.add(R.id.fragment_container, notificationsFragment, TAG_NOTIFICATIONS).hide(notificationsFragment);
-        if (fm.findFragmentByTag(TAG_SETTINGS) == null) ft.add(R.id.fragment_container, settingsFragment, TAG_SETTINGS).hide(settingsFragment);
-
-        // vuelve a dejar visible el activeFragment
-        ft.show(activeFragment);
-        ft.commit();
-
         setBackButtonVisible(false);
     }
 
-    // =========================
-    //  UI HELPERS
-    // =========================
     private void updateNavbarSelection(int selectedNavId) {
         indicatorHome.setVisibility(selectedNavId == R.id.nav_home ? View.VISIBLE : View.INVISIBLE);
         indicatorCar.setVisibility(selectedNavId == R.id.nav_car ? View.VISIBLE : View.INVISIBLE);
@@ -234,21 +193,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setBackButtonVisible(boolean visible) {
-        if (btnBack != null) {
-            btnBack.setVisibility(visible ? View.VISIBLE : View.GONE);
-        }
+        btnBack.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    // =========================
-    //  BACK CENTRALIZADO
-    // =========================
     private void handleBack() {
-
         FragmentManager fm = getSupportFragmentManager();
 
         if (fm.getBackStackEntryCount() > 0) {
             fm.popBackStack();
-            // ✅ FIX: el listener se encarga de mostrar/ocultar la flecha
             return;
         }
 
@@ -270,7 +222,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // ✅ FIX: evitar leaks
         getSupportFragmentManager().removeOnBackStackChangedListener(backStackListener);
     }
 }
