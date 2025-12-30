@@ -368,6 +368,8 @@ public class IntentoFragment extends Fragment {
                     primerSnapshotSafeMode = true;
                     ultimoSafeModeNotificado = null;
                     listenSafeMode(carId);
+                    actualizarEstadoSistema(carId);
+
                 } else {
                     updateCarImage(position);
                 }
@@ -484,6 +486,7 @@ public class IntentoFragment extends Fragment {
                         primerSnapshotSafeMode = true;
                         ultimoSafeModeNotificado = null;
                         listenSafeMode(carId);
+                        actualizarEstadoSistema(carId);
                     }
                 });
     }
@@ -1315,13 +1318,14 @@ public class IntentoFragment extends Fragment {
         safeModeListener = firestore.collection("Coches")
                 .document(carId)
                 .addSnapshotListener((doc, error) -> {
+
                     if (!isAdded()) return;
                     if (error != null || doc == null || !doc.exists()) return;
 
                     Boolean v = doc.getBoolean("safeMode");
                     if (v == null) v = true;
 
-                    // 1) Primer snapshot: solo inicializa, NO notificar
+                    // 1️⃣ Primer snapshot: solo inicializa
                     if (primerSnapshotSafeMode) {
                         primerSnapshotSafeMode = false;
                         safeModeEnabled = v;
@@ -1331,10 +1335,13 @@ public class IntentoFragment extends Fragment {
                         actualizarUiPuertas();
                         actualizarUiAlarmas();
                         actualizarUiCamaras();
+
+                        // ✅ CLAVE: reaplicar estado MQTT
+                        actualizarEstadoSistema(carId);
                         return;
                     }
 
-                    // 2) Si cambió respecto al último valor notificado → notifica
+                    // 2️⃣ Cambios posteriores → notificar si cambia
                     if (ultimoSafeModeNotificado == null || !v.equals(ultimoSafeModeNotificado)) {
                         mostrarNotifSafeMode(v);
                         ultimoSafeModeNotificado = v;
@@ -1351,30 +1358,62 @@ public class IntentoFragment extends Fragment {
                     actualizarUiPuertas();
                     actualizarUiAlarmas();
                     actualizarUiCamaras();
+
+                    // ✅ SIEMPRE al final
                     actualizarEstadoSistema(carId);
                 });
-
+    }
+    private void mostrarSistemaDesconectado() {
+        tvSystemStatus.setText("Sistema desactivado");
+        viewSystemDot.setBackgroundResource(R.drawable.bg_dot_nook);
     }
 
+    private ListenerRegistration estadoSistemaListener;
+
     private void actualizarEstadoSistema(String carId) {
-        firestore.collection("Coches")
+
+        if (estadoSistemaListener != null) {
+            estadoSistemaListener.remove();
+            estadoSistemaListener = null;
+        }
+
+        estadoSistemaListener = firestore
+                .collection("Coches")
                 .document(carId)
-                .get()
-                .addOnSuccessListener(doc -> {
-                    if (!isAdded() || !doc.exists()) return;
+                .collection("estado")
+                .document("actual")
+                .addSnapshotListener((doc, error) -> {
 
-                    Date lastUpdate = doc.getDate("lastUpdate");
+                    if (!isAdded()) return;
 
-                    if (safeModeEnabled) {
+                    if (error != null || doc == null || !doc.exists()) {
+                        mostrarSistemaDesconectado();
+                        tvLastUpdate.setText("Última conexión desconocida");
+                        return;
+                    }
+
+                    // 🔎 LECTURA ROBUSTA
+                    Object rawConnected = doc.get("mqttConnected");
+                    boolean conectado = false;
+
+                    if (rawConnected instanceof Boolean) {
+                        conectado = (Boolean) rawConnected;
+                    } else if (rawConnected instanceof String) {
+                        conectado = Boolean.parseBoolean((String) rawConnected);
+                    }
+
+                    // 🟢 / 🔴 ESTADO
+                    if (conectado) {
                         tvSystemStatus.setText("Sistema activo y vigilando");
                         viewSystemDot.setBackgroundResource(R.drawable.bg_dot_ok);
                     } else {
-                        tvSystemStatus.setText("Sistema desactivado");
-                        viewSystemDot.setBackgroundResource(R.drawable.bg_dot_nook);
+                        mostrarSistemaDesconectado();
                     }
 
-                    if (lastUpdate != null) {
-                        long diff = System.currentTimeMillis() - lastUpdate.getTime();
+                    // ⏱️ ÚLTIMA CONEXIÓN
+                    Date mqttLastSeen = doc.getDate("mqttLastSeen");
+                    if (mqttLastSeen != null) {
+                        long diff = System.currentTimeMillis() - mqttLastSeen.getTime();
                         tvLastUpdate.setText("Última conexión " + tiempoHumano(diff));
                     } else {
                         tvLastUpdate.setText("Última conexión desconocida");
