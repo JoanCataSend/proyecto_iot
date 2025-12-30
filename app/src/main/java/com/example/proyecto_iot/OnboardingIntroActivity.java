@@ -45,19 +45,19 @@ public class OnboardingIntroActivity extends AppCompatActivity {
         pages.add(new OnboardingPage(
                 "Convierte tu coche en un vehículo inteligente",
                 "Convierte tu coche en un vehículo conectado. Instala Köva y controla todo desde tu móvil, estés donde estés.",
-                R.drawable.primerpaso));
+                R.drawable.primerpasosinf));
         pages.add(new OnboardingPage(
                 "Protección activa las 24 horas",
                 "Detecta golpes, vibraciones e intentos de acceso al instante. Köva te avisa siempre que algo importante ocurre.",
-                R.drawable.segundopaso));
+                R.drawable.segundopasosinf));
         pages.add(new OnboardingPage(
                 "Control total desde tu móvil",
                 "Abre, cierra, activa vigilancia o emite señales remotas. Tu coche responde a ti, incluso cuando estás lejos.",
-                R.drawable.tercerpaso));
+                R.drawable.tercerpasosinf));
         pages.add(new OnboardingPage(
                 "Siempre localizado y bajo tu control",
                 "Consulta la ubicación en tiempo real, revisa rutas y gestiona varios vehículos en una sola app, de forma sencilla y segura.",
-                R.drawable.cuartopaso));
+                R.drawable.cuartopasosinf));
 
         adapter = new OnboardingPagerAdapter(pages);
         viewPager.setAdapter(adapter);
