@@ -304,16 +304,20 @@
 
     </androidx.core.widget.NestedScrollView>
 
+
+
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabChatbot"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="Chatbot de seguridad"
+        android:id="@+id/fabAssistant"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="18dp"
+        android:contentDescription="@string/assistant"
         android:src="@drawable/ic_ia"
-        app:tint="@android:color/white"
-        app:backgroundTint="@color/boton_oscuro"
+        app:tint="@color/texto_claro"
+        app:backgroundTint="@color/icono_normal"
+        app:elevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

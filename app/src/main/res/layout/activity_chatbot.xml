@@ -2,159 +2,171 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F7F8FA">
+    android:background="@color/fondo_claro">
 
-    <!-- Top bar (tipo app moderna) -->
+    <!-- Top bar -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/topBar"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="6dp"
-        app:cardUseCompatPadding="false"
+        android:layout_height="64dp"
+        android:layout_margin="12dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="2dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/linea_finita"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:background="#FFFFFF">
+            android:layout_height="match_parent"
+            android:paddingHorizontal="14dp">
 
             <ImageButton
-                android:id="@+id/btnClose"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
+                android:id="@+id/btnBackChat"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="10dp"
                 android:src="@drawable/ic_flecha_atras"
-                android:contentDescription="Cerrar"
-                app:tint="#111827"/>
+                app:tint="@color/icono_normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="Asistente IA"
-                android:textColor="#111827"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <View
+                android:id="@+id/tvTitleChat"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/roboto_medium"
+                android:maxLines="1"
+                android:text="Tu asistente virtual"
+                android:textColor="@color/texto_oscuro"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@id/btnBackChat"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Chat area -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollView"
+    <!-- Chat list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerChat"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:fillViewport="true"
-        android:overScrollMode="never"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="8dp"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/topBar"
-        app:layout_constraintBottom_toTopOf="@id/inputContainer"
+        app:layout_constraintBottom_toTopOf="@id/bottomComposer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- typing indicator -->
+    <LinearLayout
+        android:id="@+id/typingBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="18dp"
+        android:paddingVertical="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottomComposer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <LinearLayout
-            android:id="@+id/chatContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="12dp"/>
-    </androidx.core.widget.NestedScrollView>
+        <ProgressBar
+            android:id="@+id/typingProgress"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:indeterminate="true"/>
 
-    <!-- Input container -->
+        <TextView
+            android:id="@+id/typingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Escribiendo…"
+            android:textColor="@color/gris_ubi"
+            android:textSize="13sp"
+            android:fontFamily="@font/roboto_regular_ttf"/>
+    </LinearLayout>
+
+    <!-- Bottom composer -->
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/inputContainer"
+        android:id="@+id/bottomComposer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="12dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="10dp"
-        app:cardUseCompatPadding="true"
+        android:layout_margin="12dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="2dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/linea_finita"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="10dp"
-            android:background="#FFFFFF">
+            android:padding="10dp">
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:boxBackgroundMode="filled"
-                app:boxBackgroundColor="#F3F4F6"
-                app:boxCornerRadiusTopStart="14dp"
-                app:boxCornerRadiusTopEnd="14dp"
-                app:boxCornerRadiusBottomStart="14dp"
-                app:boxCornerRadiusBottomEnd="14dp"
-                app:boxStrokeWidth="0dp"
-                app:hintEnabled="false"
+                app:boxBackgroundMode="outline"
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusBottomEnd="16dp"
+                app:boxStrokeColor="@color/icono_normal"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="2dp"
+                app:hintTextColor="@color/gris_ubi"
+                android:hint="Escribe tu mensaje…"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnSend"
                 android:layout_marginEnd="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etMessage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Escribe tu duda..."
-                    android:paddingStart="14dp"
-                    android:paddingEnd="14dp"
-                    android:paddingTop="12dp"
-                    android:paddingBottom="12dp"
-                    android:textColor="#111827"
-                    android:textColorHint="#6B7280"
-                    android:textSize="14sp"
-                    android:maxLines="4"
-                    android:inputType="textMultiLine"
-                    android:background="@android:color/transparent"/>
+                    android:maxLines="5"
+                    android:minLines="1"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:textColor="@color/texto_oscuro"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/roboto_regular_ttf"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.button.MaterialButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btnSend"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:insetLeft="0dp"
-                android:insetRight="0dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:cornerRadius="14dp"
-                app:icon="@drawable/ic_flecha_derecha"
-                app:iconTint="#FFFFFF"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                android:contentDescription="Enviar"
-                android:text=""
-                android:backgroundTint="@color/boton_oscuro"
-                app:rippleColor="#1D4ED8"/>
-        </LinearLayout>
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:src="@drawable/ic_flecha_derecha"
+                app:tint="@color/texto_claro"
+                app:backgroundTint="@color/icono_normal"
+                app:elevation="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
