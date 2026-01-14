@@ -30,7 +30,7 @@
         android:background="@drawable/bg_card_soft"
         app:cardUseCompatPadding="true"
         app:cardPreventCornerOverlap="true"
-        app:cardBackgroundColor="@color/fondo_claro">
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
