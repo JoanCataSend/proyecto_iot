@@ -1,8 +1,8 @@
 package com.example.proyecto_iot;
 
 import android.content.Intent;
+import com.example.proyecto_iot.chat.ChatbotActivity;
 import android.os.Bundle;
-import com.example.proyecto_iot.utils.ChatbotActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -91,6 +91,23 @@ public class ConfigFragment extends Fragment {
                 });
             });
         }
+        // =========================
+// BOTÓN IA (CHATBOT)
+// =========================
+        FloatingActionButton fabAssistant = view.findViewById(R.id.fabAssistant);
+        if (fabAssistant != null) {
+            fabAssistant.setOnClickListener(v -> {
+                try {
+                    Intent i = new Intent(requireContext(), ChatbotActivity.class);
+                    startActivity(i);
+                } catch (Exception e) {
+                    Log.e("ConfigFragment", "Error abriendo ChatbotActivity", e);
+                }
+            });
+        } else {
+            Log.e("ConfigFragment", "fabAssistant no encontrado en fragment_config.xml");
+        }
+
 
 
         // =========================
@@ -155,18 +172,6 @@ public class ConfigFragment extends Fragment {
                 ((MainActivity) requireActivity()).setBackButtonVisible(true);
             });
         }
-
-        // =========================
-        // CHATBOT DE SEGURIDAD
-        // =========================
-        FloatingActionButton fabChatbot = view.findViewById(R.id.fabChatbot);
-        if (fabChatbot != null) {
-            fabChatbot.setOnClickListener(v -> {
-                Intent intent = new Intent(requireContext(), ChatbotActivity.class);
-                startActivity(intent);
-            });
-        }
-
         // =========================
         // CARGAR DATOS DEL USUARIOo (Firestore)
         // =========================

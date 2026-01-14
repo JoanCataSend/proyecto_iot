@@ -100,6 +100,8 @@
     <string name="cambios_ubicacion">Cambios de ubicación</string>
     <string name="apertura_puertas">Apertura de puertas</string>
     <string name="puertas">Abrir</string>
+    <string name="assistant">Asistente</string>
+
 
     <string name="guardar_cambios">Guardar</string>
     <string name="apertura_vehiculo">Apertura vehiculo</string>

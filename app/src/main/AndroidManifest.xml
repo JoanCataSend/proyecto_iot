@@ -58,12 +58,6 @@
         <!-- =======================================================
              SPLASH SCREEN (Launcher)
         ======================================================= -->
-        <!-- ✨ ChatbotActivity en el paquete utils -->
-        <activity
-            android:name=".utils.ChatbotActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-
         <!-- Splash -->
         <activity
             android:name=".SplashActivity"
@@ -184,6 +178,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <activity
+            android:name=".chat.ChatbotActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
     </application>
 
 
