@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Selecciona el coche:"
-                android:textColor="#505050"
+                android:textColor="@color/texto_oscuro"
                 android:textSize="16sp"
                 android:layout_marginBottom="7dp" />
 
@@ -257,7 +257,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Su coche se encuentra en:"
-                android:textColor="#505050"
+                android:textColor="@color/texto_oscuro"
                 android:textSize="16sp"
                 android:layout_marginBottom="7dp"/>
 
