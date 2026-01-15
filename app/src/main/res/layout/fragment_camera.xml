@@ -67,6 +67,7 @@
                         android:textColor="@color/icono_normal" />
 
                     <FrameLayout
+                        android:id="@+id/frameCam1"
                         android:layout_width="match_parent"
                         android:layout_height="250dp"
                         android:layout_marginTop="6dp"
@@ -78,8 +79,43 @@
                             android:id="@+id/webCamView"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"/>
+
+                        <!-- OVERLAY CAM 1 -->
+                        <LinearLayout
+                            android:id="@+id/overlayCam1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="16dp"
+                            android:background="#CCFFFFFF"
+                            android:visibility="visible">
+
+                            <ImageView
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:src="@drawable/ic_car_broken"
+                                android:contentDescription="@string/camara_no_conectada" />
+
+                            <TextView
+                                android:id="@+id/txtOverlayCam1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Cámara no conectada"
+                                android:textStyle="bold"
+                                android:textColor="@color/icono_normal"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Comprueba Wi-Fi/IP o reinicia la cámara"
+                                android:textColor="@color/icono_normal"/>
+                        </LinearLayout>
                     </FrameLayout>
 
+                    <!-- Cámara Interior -->
                     <!-- Cámara Interior -->
                     <TextView
                         android:layout_width="match_parent"
@@ -90,6 +126,7 @@
                         android:textColor="@color/icono_normal" />
 
                     <FrameLayout
+                        android:id="@+id/frameCam2"
                         android:layout_width="match_parent"
                         android:layout_height="250dp"
                         android:layout_marginTop="6dp"
@@ -101,6 +138,41 @@
                             android:id="@+id/webCamView2"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"/>
+
+                        <!-- OVERLAY CAM 2 -->
+                        <LinearLayout
+                            android:id="@+id/overlayCam2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="16dp"
+                            android:background="#CCFFFFFF"
+                            android:visibility="visible">
+
+                            <ImageView
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:src="@drawable/ic_car_broken"
+                                android:contentDescription="@string/camara_no_conectada" />
+
+                            <TextView
+                                android:id="@+id/txtOverlayCam2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Cámara no conectada"
+                                android:textStyle="bold"
+                                android:textColor="@color/icono_normal"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Comprueba Wi-Fi/IP o reinicia la cámara"
+                                android:textColor="@color/icono_normal"/>
+                        </LinearLayout>
+
                     </FrameLayout>
 
                 </LinearLayout>

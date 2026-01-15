@@ -75,6 +75,9 @@ public class CameraFragment extends Fragment {
     private boolean autoCapture = false;
     private boolean autoCaptureExecuted = false;
 
+    private View overlayCam1, overlayCam2;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -97,8 +100,16 @@ public class CameraFragment extends Fragment {
         storageRef = FirebaseStorage.getInstance().getReference();
 
         // Views
+        overlayCam1 = view.findViewById(R.id.overlayCam1);
+        overlayCam2 = view.findViewById(R.id.overlayCam2);
         webCamView = view.findViewById(R.id.webCamView);
         webCamView2 = view.findViewById(R.id.webCamView2);
+
+
+        // De inicio: mostramos overlays hasta que cargue algo
+        overlayCam1.setVisibility(View.VISIBLE);
+        overlayCam2.setVisibility(View.VISIBLE);
+
 
         tabCamera = view.findViewById(R.id.tabCamera);
         layoutStreaming = view.findViewById(R.id.layoutStreaming);
@@ -130,8 +141,9 @@ public class CameraFragment extends Fragment {
         });
 
         // STREAMING
-        configurarWebCam(webCamView, STREAM_URL_ESP32);
-        configurarWebCam(webCamView2, STREAM2_URL_ESP32);
+        configurarWebCam(webCamView, STREAM_URL_ESP32, overlayCam1);
+        configurarWebCam(webCamView2, STREAM2_URL_ESP32, overlayCam2);
+
 
         setupTabs();
 
@@ -155,6 +167,17 @@ public class CameraFragment extends Fragment {
                 capturarAmbasCamaras();
             }, 1000); // ⏱️ tiempo seguro
         }
+
+        overlayCam1.setOnClickListener(v -> {
+            overlayCam1.setVisibility(View.VISIBLE);
+            if (webCamView != null) webCamView.reload();
+        });
+
+        overlayCam2.setOnClickListener(v -> {
+            overlayCam2.setVisibility(View.VISIBLE);
+            if (webCamView2 != null) webCamView2.reload();
+        });
+
     }
 
     // ================= STREAM CLEANUP =================
@@ -213,13 +236,44 @@ public class CameraFragment extends Fragment {
 
     // ================= WEBCAM =================
 
-    private void configurarWebCam(WebView webView, String url) {
+    private void configurarWebCam(WebView webView, String url, View overlay) {
+        if (webView == null || overlay == null) return;
         WebSettings ws = webView.getSettings();
         ws.setJavaScriptEnabled(true);
         ws.setMediaPlaybackRequiresUserGesture(false);
-        webView.setWebViewClient(new WebViewClient());
+
+        webView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                // Si llega a terminar de cargar, asumimos que hay contenido
+                overlay.setVisibility(View.GONE);
+            }
+
+            @Override
+            @SuppressWarnings("deprecation")
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                overlay.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onReceivedError(WebView view,
+                                        android.webkit.WebResourceRequest request,
+                                        android.webkit.WebResourceError error) {
+                overlay.setVisibility(View.VISIBLE);
+            }
+        });
+
         webView.loadUrl(url);
+
+        // Fallback: si en X segundos no se ha podido cargar bien, mostramos overlay
+        webView.postDelayed(() -> {
+            if (isAdded() && overlay.getVisibility() != View.GONE) {
+                overlay.setVisibility(View.VISIBLE);
+            }
+        }, 2500);
     }
+
 
     // ================= CAPTURA (DOBLE) =================
     private void capturarAmbasCamaras() {
