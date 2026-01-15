@@ -1,129 +1,107 @@
-# Köva
+#  KöVa
 
-> **Estado del proyecto:** En fase inicial de diseño y definición de prototipo.  
-> *(El nombre final del proyecto está aún por definir.)*
+> Proyecto académico desarrollado en la Universitat Politècnica de València (UPV)
 
----
-
-### Equipo 2.2  
-**Categorías de la App:** Seguridad · Hogar & Estilo de vida · Herramientas · Utilidades · Vehículos · Viajes  
+*(Las imágenes, iconos y recursos gráficos se añadirán en la rama `main`. Una vez incorporados, se realizará un `git push` desde `main` a la rama individual de cada integrante del equipo.)*
 
 ---
 
-## Descripción general
+##  Descripción general
 
-**Köva** es una solución inteligente diseñada para mejorar la **seguridad y el control de vehículos**, especialmente aquellos de entre 5 y 10 años que aún funcionan correctamente pero carecen de tecnología moderna.
+**KöVa** es una solución tecnológica orientada a mejorar la **seguridad, el control y la supervisión de vehículos**, especialmente aquellos con una antigüedad aproximada de entre 5 y 10 años que no disponen de sistemas inteligentes de serie.
 
-Su objetivo es ofrecer **una capa adicional de inteligencia y control** instalable en cualquier vehículo, sin necesidad de sustituirlo por uno nuevo.  
-Desde una aplicación móvil, el usuario puede **monitorizar, proteger y localizar su vehículo en tiempo real**.
-
----
-
-## Problema que resuelve
-
-El proyecto aborda diversas situaciones cotidianas y preocupaciones frecuentes entre los propietarios de vehículos:
-
-- Olvido de si se ha cerrado el coche (tras salir de un restaurante, reunión o centro comercial).  
-- Duda sobre la ubicación exacta del vehículo (en parkings o zonas desconocidas).  
-- Sensación de inseguridad al dejar el coche en zonas poco iluminadas o transitadas.  
-- Falta de aviso ante daños leves o arañazos.  
-- Limitaciones tecnológicas en coches de 5–10 años que no cuentan con apertura remota, cámaras o sensores modernos.  
+El proyecto consiste en la instalación de un **prototipo físico** en el vehículo, conectado a una **aplicación móvil**, que permite al usuario monitorizar el estado del coche, gestionar funciones básicas y recibir alertas en tiempo real. De esta forma, se añade una **capa adicional de inteligencia** al vehículo sin necesidad de sustituirlo por uno nuevo.
 
 ---
 
-## Propuesta de valor
+##  Objetivo del proyecto
 
-- Control total desde el móvil: apertura/cierre, localización y señales visuales/sonoras.  
-- Seguridad y tranquilidad gracias a la supervisión constante del vehículo.  
-- Modernización de vehículos antiguos, añadiendo funcionalidades de coches actuales.  
-- Instalación sencilla y adaptable a cualquier modelo sin necesidad de cambiar de coche.  
+El objetivo principal de KöVa es **modernizar vehículos existentes** mediante una solución accesible, modular y adaptable, proporcionando funcionalidades similares a las de los vehículos actuales, tales como control remoto, localización GPS, vigilancia y notificaciones de seguridad.
 
 ---
 
-## Público objetivo
+##  Problema que aborda
 
-Köva está dirigido a:
-
-- Propietarios de coches de 5–10 años que buscan más seguridad sin cambiar de vehículo.  
-- Personas que viven en ciudades grandes y aparcan en la calle o parkings públicos.  
-- Familias con varios conductores o usuarios del mismo coche.  
-- Personas mayores que puedan olvidar si cerraron el coche o dónde lo aparcaron.  
-- Usuarios preocupados por la seguridad que deseen una solución accesible y moderna.  
-- Empresas con flotas de coches, motos o furgonetas (transporte, logística, delivery…).  
-- Viajeros frecuentes que dejan su coche estacionado durante largos periodos.  
+Los propietarios de vehículos sin tecnología avanzada suelen enfrentarse a limitaciones como:
+- Falta de confirmación sobre el estado de cierre del vehículo.
+- Dificultad para localizar el coche en parkings o zonas desconocidas.
+- Ausencia de avisos ante impactos, movimientos o intentos de acceso no autorizados.
+- Sensación de inseguridad al estacionar en determinadas zonas.
 
 ---
 
-## Interactividad bidireccional
+##  Propuesta de valor
 
-### Desde la App → Prototipo
-1. Abrir o cerrar puertas remotamente.  
-2. Activar o desactivar el modo vigilancia.  
-3. Hacer que el coche emita señales (pitido/luces) para localizarlo.  
-4. Controlar cámaras y visualizar video en vivo.  
-
-### Desde el Prototipo → App
-1. Notificaciones ante impactos, movimiento o vibraciones.  
-2. Envío de imágenes o video al detectarse un evento.  
-3. Transmisión de ubicación GPS en tiempo real.  
-4. Confirmación de estados (puertas bloqueadas/desbloqueadas, alarma activa, etc.).  
+- Control remoto del vehículo desde la aplicación móvil.
+- Supervisión continua y aumento de la seguridad mediante sensores y alertas.
+- Modernización de vehículos sin necesidad de sustitución.
+- Instalación modular y adaptable utilizando recursos universitarios.
 
 ---
 
-## Idea inicial del prototipo
+##  Interacción del sistema
 
-**Plataforma:**  
-- ESP32 o Raspberry Pi.  
+### App → Prototipo
+- Apertura y cierre remoto.
+- Activación del modo vigilancia.
+- Emisión de señales de localización.
+- Visualización de cámaras en tiempo real.
 
-**Sensores principales:**  
-- Módulo KI031 – Sensor de impacto.  
-- Servomotor SG90 – Apertura y cierre de puertas.  
-- Sensor magnético – Detección de cierre activado.  
-- Sensor GPS NEO-6M – Ubicación GPS.  
-- Speaker SFM-20B – Emisión de sonido en señales o detección de impacto.  
-- LEDs – Indicadores visuales.  
-- Cámaras (2 o 3) – Modo vigilancia, capturas, video en vivo.  
-
-**Extras:**  
-- Módulo de cámara.  
-- Módulo de conectividad WiFi y/o 4G.  
+### Prototipo → App
+- Notificaciones de impacto y movimiento.
+- Envío de imágenes y vídeo.
+- Ubicación GPS en tiempo real.
+- Confirmación del estado del vehículo.
 
 ---
 
-## App móvil
+##  Prototipo y hardware
 
-La aplicación incluirá:
+El prototipo se ha desarrollado utilizando **recursos proporcionados por la universidad**.
 
-- Pantalla de autenticación.  
-- Vista principal con el estado del coche (puertas, alarma, ubicación).  
-- Botones de acción (abrir/cerrar, activar vigilancia, localizar, ver cámara).  
-- Recepción de notificaciones y alertas en tiempo real.  
-
----
-
-## Tecnologías sugeridas
-
-- **Hardware:** ESP32 / Raspberry Pi, sensores GPS, cámaras, servomotores, módulos de comunicación.  
-- **Software:** App móvil (Android/iOS) desarrollada con Flutter o React Native.  
-- **Comunicación:** WiFi o red 4G para sincronización con la app.  
-- **Prototipado:** Arduino IDE / Python según el microcontrolador.  
+- ESP32 y Raspberry Pi
+- Sensor de impacto KY-031
+- Servomotores SG90
+- Sensor magnético
+- Módulo GPS NEO-6M
+- Cámaras y módulos de comunicación WiFi / 4G
 
 ---
 
-## Equipo de desarrollo
+##  Aplicación móvil
+
+La aplicación permite autenticación de usuarios, visualización del estado del vehículo, control remoto y recepción de notificaciones en tiempo real, con una interfaz clara y accesible.
+
+---
+
+##  Tecnologías utilizadas
+
+- Hardware: ESP32, Raspberry Pi
+- Software: App móvil multiplataforma
+- Comunicación: WiFi / 4G
+- Prototipado: Arduino IDE y Python
+
+---
+
+##  Equipo de desarrollo
 
 **Equipo 2.2**  
-*(Integrantes por definir o añadir aquí los nombres y roles del equipo)*  
+Universitat Politècnica de València
+Álvaro Ballester Grau
+Aarón Blasco Blay
+Enrique Buerbaum del Río
+Matilde Calleja García
+Joan Catalá Sendra
+Julia Valén de Oliveira
 
 ---
 
-## Licencia
+##  Estado del proyecto
 
-Este proyecto es de carácter académico y está desarrollado con fines educativos en el marco de la **Universidad Politécnica de Valencia (UPV)**.
+El proyecto se encuentra **prácticamente finalizado**, con el prototipo funcional y las principales características implementadas utilizando los recursos disponibles en la universidad.
 
 ---
 
-## Notas del repositorio
+##  Licencia
 
-Faltan poner imágenes, iconos y demás en la rama `main`.  
-Cuando estén, se realizará un **git push** de `main` a la rama de cada integrante.
+Proyecto académico con fines educativos desarrollado en la **Universitat Politècnica de València (UPV)**.
