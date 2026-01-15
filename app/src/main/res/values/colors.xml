@@ -40,5 +40,5 @@
     <color name="morado_claro">#DEDAEC</color>
     <color name="gris_ubi">#8A8A8A</color>
     <color name="mi_color_principal">#5B47A0</color>
-    <color name="tutorial_mask">#E62E2E2E</color> <!-- Gris muy oscuro con transparencia -->
+    <color name="tutorial_mask">#E65B47A0</color> <!-- Morado (Primary) con transparencia -->
 </resources>

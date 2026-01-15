@@ -177,8 +177,9 @@ public class IntentoFragment extends Fragment {
         // if (tutorialShown) return;
 
         ShowcaseConfig config = new ShowcaseConfig();
-        config.setDelay(500); // medio segundo de espera
+        config.setDelay(100); // espera más breve para fluidez
         config.setShapePadding(10); // padding general
+        config.setMaskColor(getResources().getColor(R.color.tutorial_mask, null));
 
         // ID dinámico para que se muestre siempre (modo pruebas), cámbialo a fijo luego
         MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(requireActivity(), String.valueOf(System.currentTimeMillis()));
@@ -193,6 +194,8 @@ public class IntentoFragment extends Fragment {
                         .setShape(new RoundedRectangleShape(50)) // Radio 50
                         .setDismissOnTouch(true)
                         .setMaskColour(getResources().getColor(R.color.tutorial_mask, null))
+                        .setFadeDuration(500)
+                        .renderOverNavigationBar()
                         .build()
         );
 
@@ -205,6 +208,8 @@ public class IntentoFragment extends Fragment {
                         .setShape(new RoundedRectangleShape(50))
                         .setDismissOnTouch(true)
                         .setMaskColour(getResources().getColor(R.color.tutorial_mask, null))
+                        .setFadeDuration(500)
+                        .renderOverNavigationBar()
                         .build()
         );
 
@@ -217,6 +222,8 @@ public class IntentoFragment extends Fragment {
                         .setShape(new RoundedRectangleShape(50))
                         .setDismissOnTouch(true)
                         .setMaskColour(getResources().getColor(R.color.tutorial_mask, null))
+                        .setFadeDuration(500)
+                        .renderOverNavigationBar()
                         .build()
         );
 
@@ -367,7 +374,7 @@ public class IntentoFragment extends Fragment {
 
         ArrayAdapter<String> carsAdapter = new ArrayAdapter<String>(
                 context, R.layout.spinner_coches, carNames
-        ) {
+        ) {     
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 // Mantener el “valor visible” como el coche actual (Código1/2)
