@@ -51,7 +51,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-// ✅ AÑADIDOS (tutorial)
+// ✅ Tutorial (última versión)
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
@@ -79,9 +79,9 @@ public class IntentoFragment extends Fragment {
 
     private static final long SIGNALS_DURATION_MS = 5_000;
 
-    // Anti-rebote puertas (Código2)
-    private static final long DOOR_COOLDOWN_MS = 3000; // 3s (sube si tu hardware rebota)
-    private String doorExpectedState = null; // "open" o "closed"
+    // Anti-rebote puertas
+    private static final long DOOR_COOLDOWN_MS = 3000;
+    private String doorExpectedState = null;
     private long doorExpectedUntilTs = 0L;
     private boolean doorCommandInFlight = false;
 
@@ -134,7 +134,6 @@ public class IntentoFragment extends Fragment {
     private String ultimaPuerta = null;
     private boolean ultimoImpacto = false;
 
-    // Listener robusto (Código2)
     private boolean primerSnapshotEstado = true;
     private String ultimoCarIdListener = null;
 
@@ -152,12 +151,13 @@ public class IntentoFragment extends Fragment {
     private LinearLayout layoutSafeMode;
     private ImageView ivSafe;
     private TextView tvSafeState;
-    private LinearLayout layoutCamarasRef; // para poder desactivar cámaras desde aquí
-    private boolean safeModeEnabled = true; // por defecto ON (cámbialo si quieres)
+    private LinearLayout layoutCamarasRef;
+    private boolean safeModeEnabled = true;
     private ListenerRegistration safeModeListener;
 
-    // ✅ AÑADIDO (tutorial): clave de prefs para mostrar una sola vez
+    // ✅ Tutorial: mostrar una sola vez
     private static final String PREF_TUTORIAL_SHOWN = "tutorial_shown_intento";
+    private static final String TUTORIAL_SEQUENCE_ID = "intento_fragment_tutorial_v1"; // ✅ ID FIJO
 
     // =========================
     //      LIFECYCLE
@@ -200,7 +200,6 @@ public class IntentoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Mantener comportamiento del Código1
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).setBackButtonVisible(false);
         }
@@ -216,76 +215,139 @@ public class IntentoFragment extends Fragment {
         int savedPosition = prefs.getInt(PREF_KEY_SELECTED_CAR, 0);
         currentCarIndex = savedPosition;
 
-        // Estado candado inicial
         isLocked = prefs.getBoolean(getLockPrefKeyForIndex(currentCarIndex), true);
         updateLockUi();
 
         loadCarsFromFirestore(savedPosition, (ArrayAdapter<String>) spinnerCars.getAdapter());
 
-        // ✅ AÑADIDO (tutorial) -> al final, sin tocar nada más
+        // ✅ Mostrar tutorial solo una vez
         showTutorial(context, prefs);
     }
 
-    // ✅ AÑADIDO (tutorial): método para mostrar el tutorial una sola vez sin romper clicks
+    // =========================================================
+    // ✅ TUTORIAL (SOLO UNA VEZ)
+    // =========================================================
     private void showTutorial(Context context, SharedPreferences prefs) {
-        boolean shown = prefs.getBoolean(PREF_TUTORIAL_SHOWN, false);
-        if (shown) return;
+        boolean tutorialShown = prefs.getBoolean(PREF_TUTORIAL_SHOWN, false);
+        if (tutorialShown) return;
 
-        // Espera a que la vista esté renderizada para que encuentre bien los targets
+        // ✅ marcar YA como mostrado para evitar re-entradas (cámara, volver, etc.)
+        prefs.edit().putBoolean(PREF_TUTORIAL_SHOWN, true).apply();
+
         requireView().post(() -> {
-            try {
-                ShowcaseConfig config = new ShowcaseConfig();
-                config.setDelay(150);
 
-                MaterialShowcaseSequence sequence =
-                        new MaterialShowcaseSequence(requireActivity(), "tutorial_intento");
-                sequence.setConfig(config);
+            ShowcaseConfig config = new ShowcaseConfig();
+            config.setDelay(100);
+            config.setShapePadding(10);
+            config.setMaskColor(getResources().getColor(R.color.tutorial_mask, null));
 
-                View actionsRow = requireView().findViewById(R.id.actionsRow);
-                View vehicleSelector = requireView().findViewById(R.id.vehicleSelector);
-                View addressPill = requireView().findViewById(R.id.addressPill);
+            // ✅ ID FIJO (no System.currentTimeMillis)
+            MaterialShowcaseSequence sequence =
+                    new MaterialShowcaseSequence(requireActivity(), TUTORIAL_SEQUENCE_ID);
+            sequence.setConfig(config);
 
-                if (actionsRow != null) {
-                    sequence.addSequenceItem(
-                            new MaterialShowcaseView.Builder(requireActivity())
-                                    .setTarget(actionsRow)
-                                    .setDismissText("ENTENDIDO")
-                                    .setContentText("Panel de Control\nAquí podrás controlar el coche y verificar su estado en tiempo real.")
-                                    .setDismissOnTouch(true)
-                                    .build()
-                    );
-                }
+            View actionsRow = requireView().findViewById(R.id.actionsRow);
+            View vehicleSelector = requireView().findViewById(R.id.vehicleSelector);
+            View addressPill = requireView().findViewById(R.id.addressPill);
 
-                if (vehicleSelector != null) {
-                    sequence.addSequenceItem(
-                            new MaterialShowcaseView.Builder(requireActivity())
-                                    .setTarget(vehicleSelector)
-                                    .setDismissText("ENTENDIDO")
-                                    .setContentText("Selección de Vehículo\nPulsa aquí para cambiar de vehículo.")
-                                    .setDismissOnTouch(true)
-                                    .build()
-                    );
-                }
-
-                if (addressPill != null) {
-                    sequence.addSequenceItem(
-                            new MaterialShowcaseView.Builder(requireActivity())
-                                    .setTarget(addressPill)
-                                    .setDismissText("ENTENDIDO")
-                                    .setContentText("Ubicación en vivo\nAquí verás la ubicación del coche. Pulsa para abrir Google Maps.")
-                                    .setDismissOnTouch(true)
-                                    .build()
-                    );
-                }
-
-                // Marcar como mostrado (así no aparece siempre)
-                prefs.edit().putBoolean(PREF_TUTORIAL_SHOWN, true).apply();
-
-                sequence.start();
-            } catch (Exception ignored) {
-                // Si falla, no bloqueamos la app
+            if (actionsRow != null) {
+                sequence.addSequenceItem(
+                        new MaterialShowcaseView.Builder(requireActivity())
+                                .setTarget(actionsRow)
+                                .setDismissText("ENTENDIDO")
+                                .setContentText("Panel de Control\nEsta es la barra de acciones, aquí podrás controlar el coche y verificar su estado en tiempo real.")
+                                .setShape(new RoundedRectangleShape(50))
+                                .setDismissOnTouch(true)
+                                .setMaskColour(getResources().getColor(R.color.tutorial_mask, null))
+                                .setFadeDuration(500)
+                                .renderOverNavigationBar()
+                                .build()
+                );
             }
+
+            if (vehicleSelector != null) {
+                sequence.addSequenceItem(
+                        new MaterialShowcaseView.Builder(requireActivity())
+                                .setTarget(vehicleSelector)
+                                .setDismissText("ENTENDIDO")
+                                .setContentText("Selección de Vehículo\nPulsa aquí para cambiar de vehículo si tienes más de uno configurado.")
+                                .setShape(new RoundedRectangleShape(50))
+                                .setDismissOnTouch(true)
+                                .setMaskColour(getResources().getColor(R.color.tutorial_mask, null))
+                                .setFadeDuration(500)
+                                .renderOverNavigationBar()
+                                .build()
+                );
+            }
+
+            if (addressPill != null) {
+                sequence.addSequenceItem(
+                        new MaterialShowcaseView.Builder(requireActivity())
+                                .setTarget(addressPill)
+                                .setDismissText("ENTENDIDO")
+                                .setContentText("Ubicación en vivo\nAquí puedes ver la ubicación exacta de tu coche en tiempo real.")
+                                .setShape(new RoundedRectangleShape(50))
+                                .setDismissOnTouch(true)
+                                .setMaskColour(getResources().getColor(R.color.tutorial_mask, null))
+                                .setFadeDuration(500)
+                                .renderOverNavigationBar()
+                                .build()
+                );
+            }
+
+            sequence.start();
         });
+    }
+
+    /**
+     * Clase auxiliar para rectángulos redondeados con MaterialShowcaseView
+     */
+    private static class RoundedRectangleShape implements uk.co.deanwild.materialshowcaseview.shape.Shape {
+        private final int radius;
+        private int width = 0;
+        private int height = 0;
+        private final android.graphics.RectF rect = new android.graphics.RectF();
+        private int padding;
+
+        public RoundedRectangleShape(int radius) {
+            this.radius = radius;
+        }
+
+        @Override
+        public void setPadding(int padding) {
+            this.padding = padding;
+        }
+
+        @Override
+        public void updateTarget(uk.co.deanwild.materialshowcaseview.target.Target target) {
+            if (target != null && target.getBounds() != null) {
+                width = target.getBounds().width();
+                height = target.getBounds().height();
+            }
+        }
+
+        @Override
+        public void draw(android.graphics.Canvas canvas, android.graphics.Paint paint, int x, int y) {
+            if (width > 0 && height > 0) {
+                rect.set(
+                        x - width / 2 - padding,
+                        y - height / 2 - padding,
+                        x + width / 2 + padding,
+                        y + height / 2 + padding
+                );
+                canvas.drawRoundRect(rect, radius, radius, paint);
+            }
+        }
+
+        @Override
+        public int getWidth() { return width; }
+
+        @Override
+        public int getHeight() { return height; }
+
+        public int getTotalRadius() {
+            return (int) Math.sqrt(width * width + height * height) / 2;
+        }
     }
 
     // =========================
@@ -309,7 +371,6 @@ public class IntentoFragment extends Fragment {
         ivSafe = view.findViewById(R.id.ivSafe);
         tvSafeState = view.findViewById(R.id.tvSafeState);
 
-        // referencia para poder desactivar/activar cámaras
         layoutCamarasRef = view.findViewById(R.id.layoutCamaras);
         viewSystemDot = view.findViewById(R.id.viewSystemDot);
         tvSystemStatus = view.findViewById(R.id.tvSystemStatus);
@@ -320,10 +381,11 @@ public class IntentoFragment extends Fragment {
         ivWeather = view.findViewById(R.id.ivWeather);
     }
 
-    private void actualizarUiClima(String clima) {
 
+private void actualizarUiClima(String clima) {
         if (clima == null) clima = "";
         clima = clima.toLowerCase(Locale.ROOT);
+
         if (
                 clima.contains("rain") ||
                         clima.contains("drizzle") ||
@@ -343,8 +405,7 @@ public class IntentoFragment extends Fragment {
         ) {
             tvWeatherDesc.setText("Conduce con precaución");
             ivWeather.setImageResource(R.drawable.ic_tiempo3);
-        }
-        else if (
+        } else if (
                 clima.contains("cloud") ||
                         clima.contains("clouds") ||
                         clima.contains("overcast") ||
@@ -358,8 +419,7 @@ public class IntentoFragment extends Fragment {
         ) {
             tvWeatherDesc.setText("Condiciones normales");
             ivWeather.setImageResource(R.drawable.ic_tiempo2);
-        }
-        else if (
+        } else if (
                 clima.contains("clear") ||
                         clima.contains("clear sky") ||
                         clima.contains("sun") ||
@@ -370,9 +430,7 @@ public class IntentoFragment extends Fragment {
         ) {
             tvWeatherDesc.setText("Puedes conducir con seguridad");
             ivWeather.setImageResource(R.drawable.ic_tiempo);
-        }
-
-        else {
+        } else {
             tvWeatherDesc.setText("Consulta el estado del clima");
             ivWeather.setImageResource(R.drawable.ic_warning);
         }
@@ -385,7 +443,6 @@ public class IntentoFragment extends Fragment {
         ) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                // Mantener el “valor visible” como el coche actual (Código1/2)
                 return super.getView(currentCarIndex, convertView, parent);
             }
 
@@ -427,7 +484,6 @@ public class IntentoFragment extends Fragment {
                 currentCarIndex = position;
                 prefs.edit().putInt(PREF_KEY_SELECTED_CAR, position).apply();
 
-                // Guardar también ID real (Código1)
                 if (position < carIds.size()) {
                     String carId = carIds.get(position);
                     prefs.edit().putString(PREF_KEY_SELECTED_CAR_ID, carId).apply();
@@ -463,14 +519,12 @@ public class IntentoFragment extends Fragment {
 
         vehicleSelector.setOnClickListener(v -> spinnerCars.performClick());
 
-        // ✅ Candado: SOLO el contenedor (Código2) + seguridad puertas (Código1)
         View.OnClickListener lockClickListener = v -> {
             if (!puertasHabilitadas) return;
             toggleLockAndNotify(prefs);
         };
         flLock.setOnClickListener(lockClickListener);
 
-        // Evitar doble disparo (Código2)
         ivLock.setClickable(false);
         ivLock.setFocusable(false);
 
@@ -491,7 +545,6 @@ public class IntentoFragment extends Fragment {
             setSafeModeFirestore(carId, nuevoEstado);
         });
 
-        // Señales: SOLO contenedor (Código2)
         View.OnClickListener signalsClick = v -> handleSignalsClick(context, prefs, ivSignals);
         flSignals.setOnClickListener(signalsClick);
 
@@ -545,7 +598,6 @@ public class IntentoFragment extends Fragment {
                     if (pos < carIds.size()) {
                         String carId = carIds.get(pos);
 
-                        // Inicialización completa (Código1)
                         getPrefs(requireContext())
                                 .edit()
                                 .putString(PREF_KEY_SELECTED_CAR_ID, carId)
@@ -572,7 +624,6 @@ public class IntentoFragment extends Fragment {
             estadoListener = null;
         }
 
-        // Reset robusto al cambiar de coche (Código2)
         if (ultimoCarIdListener == null || !ultimoCarIdListener.equals(carId)) {
             primerSnapshotEstado = true;
             ultimaPuerta = null;
@@ -602,7 +653,6 @@ public class IntentoFragment extends Fragment {
 
                     long now = System.currentTimeMillis();
 
-                    // ---- PRIMER SNAPSHOT: solo inicializa, NO notifiques ----
                     if (primerSnapshotEstado) {
                         primerSnapshotEstado = false;
 
@@ -614,7 +664,6 @@ public class IntentoFragment extends Fragment {
                             guardarLockEnPrefs(lockedInit);
                         }
                     } else {
-                        // ✅ Filtro anti-rebote: si esperamos un estado y llega el contrario dentro del cooldown -> ignorar
                         if (doorExpectedState != null && now < doorExpectedUntilTs) {
                             if (puerta != null && !puerta.equals(doorExpectedState)) {
                                 return;
@@ -1105,6 +1154,7 @@ public class IntentoFragment extends Fragment {
                     tvAddress.setText("Ubicación desconocida");
                     addressPillView.setOnClickListener(null);
                 });
+
     }
 
     private void obtenerTiempo(double lat, double lng) {
